@@ -1,6 +1,6 @@
 ---
 name: ambient-spanish
-description: Persistent opt-in ambient Spanish learning overlay for ordinary conversations. Use automatically on every user-facing reply after the user enables this skill, and when the user asks about Spanish progress, learned words, pacing, state, pause or resume, dialect, or configuration. Introduce and review at most one Spanish item on an eligible local-calendar day using durable state; never advance from message count.
+description: Persistent opt-in ambient Spanish learning overlay for ordinary conversations. Use automatically on every user-facing reply after the user enables this skill, and when the user asks about Spanish progress, learned words, exposure, pacing, state, pause or resume, dialect, or configuration. Target the configured percentage of replies with at most one unlocked Spanish item, while new vocabulary advances only from elapsed calendar time and never from message count.
 ---
 
 # Ambient Spanish
@@ -9,11 +9,13 @@ Weave Spanish into otherwise normal conversations at a deliberately slow, real-w
 
 ## Runtime workflow
 
-1. Before composing the first user-facing reply in a task, resolve this skill's directory as `<skill-root>` and run:
+1. Before composing each user-facing reply, resolve this skill's directory as `<skill-root>` and run exactly once:
 
    ```bash
    python3 <skill-root>/scripts/ambient_state.py context
    ```
+
+   If `context` returns an error, answer normally without ambient Spanish and do not run `record`.
 
 2. Read the JSON result:
    - If `focus` is `null`, write the reply normally and add no ambient Spanish.
@@ -26,20 +28,23 @@ Weave Spanish into otherwise normal conversations at a deliberately slow, real-w
 
    ```bash
    python3 <skill-root>/scripts/ambient_state.py record \
-     --term <focus.term.id> --kind <focus.action>
+     --term <focus.term.id> --kind <focus.action> \
+     --decision <focus.decision_id>
    ```
 
-5. Treat `ok: true` as recorded. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, omit the planned insertion and answer normally. Never claim progress was saved when it was not.
+5. Treat `ok: true` as recorded. Each decision id is single-use and binds the selected reply to its permitted item. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, omit the planned insertion and answer normally. Never claim progress was saved when it was not.
 
-Run `context` only once per task unless the task crosses a local calendar day or the user changes the skill configuration.
+Run `context` once per reply. Do not retry a skipped exposure to force a different 50% decision.
 
 ## Teaching rules
 
 - Preserve the requested answer's accuracy, tone, and concision.
-- Insert no more than one curriculum item in a reply and no more than one ambient item per local calendar day. The state script enforces the daily limit.
+- Insert no more than one curriculum item per reply. The state script returns at most one focus.
+- Target `config.exposure_percent` of eligible replies. The default is 50%. A skipped roll means write the reply normally; never reroll.
 - Unlock at most one new item per configured number of elapsed calendar days. The default is seven days.
 - Never accelerate because the user sends many messages, answers correctly, seems fluent, or asks many questions.
-- Reuse due items according to elapsed time. Do not invent extra Spanish outside the returned item, except when Spanish is independently required by the user's request.
+- Between new-item dates, naturally reuse only already-unlocked items. Prefer due reviews, then the least-used unlocked item.
+- Do not invent extra Spanish outside the returned item, except when Spanish is independently required by the user's request.
 - Keep insertions short and natural. Do not add quizzes, exercises, grammar explanations, corrections, streak pressure, or lesson summaries unless explicitly requested.
 - Never alter code, commands, paths, JSON, logs, errors, quotations, citations, generated artifacts, or other exact text to insert Spanish.
 - Use Spain Spanish (`es-ES`) by default. Respect the configured dialect.
@@ -57,6 +62,7 @@ python3 <skill-root>/scripts/ambient_state.py status
 python3 <skill-root>/scripts/ambient_state.py configure --pause
 python3 <skill-root>/scripts/ambient_state.py configure --resume
 python3 <skill-root>/scripts/ambient_state.py configure --cadence-days 10
+python3 <skill-root>/scripts/ambient_state.py configure --exposure-percent 50
 python3 <skill-root>/scripts/ambient_state.py configure --dialect es-ES
 ```
 

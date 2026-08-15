@@ -1,7 +1,7 @@
 interface:
   display_name: "Ambient Spanish"
-  short_description: "Learn Spanish gently through everyday chats"
-  default_prompt: "Use $ambient-spanish to weave Spanish into our conversations at a slow, calendar-based pace."
+  short_description: "Time-paced Spanish in everyday chats"
+  default_prompt: "Use $ambient-spanish with weekly new vocabulary and 50% exposure across ordinary replies."
 
 policy:
   allow_implicit_invocation: true
