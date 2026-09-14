@@ -16,6 +16,8 @@ Weave Spanish into otherwise normal conversations by **substituting known vocabu
 
 Tiers come from the calendar alone. Every `cadence_days` (default 3), a new batch of `batch_size` (default 3) terms becomes `learning`, and the previous batch is promoted to `known` — whether or not its terms were ever actually used.
 
+The first `baseline_known_count` curriculum entries are treated as already known and are never taught as a batch. They hold the user's pre-existing vocabulary — currently a CEFR A1 core — so `known` starts large and grows from there.
+
 ## Runtime workflow
 
 1. Before composing each user-facing reply, resolve this skill's directory as `<skill-root>` and run exactly once:
@@ -72,6 +74,7 @@ python3 <skill-root>/scripts/ambient_state.py configure --pause
 python3 <skill-root>/scripts/ambient_state.py configure --resume
 python3 <skill-root>/scripts/ambient_state.py configure --cadence-days 3
 python3 <skill-root>/scripts/ambient_state.py configure --batch-size 3
+python3 <skill-root>/scripts/ambient_state.py configure --baseline-known 109
 python3 <skill-root>/scripts/ambient_state.py configure --dialect es-ES
 ```
 

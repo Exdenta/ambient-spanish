@@ -931,6 +931,13 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
                 raise StateError("batch_size must be at least 1")
             config["batch_size"] = args.batch_size
             changes["batch_size"] = args.batch_size
+        if args.baseline_known is not None:
+            if args.baseline_known < 0:
+                raise StateError("baseline_known_count must not be negative")
+            if args.baseline_known > len(curriculum):
+                raise StateError("baseline_known_count exceeds the curriculum size")
+            config["baseline_known_count"] = args.baseline_known
+            changes["baseline_known_count"] = args.baseline_known
         if args.dialect is not None:
             config["dialect"] = args.dialect
             changes["dialect"] = args.dialect
@@ -1008,6 +1015,11 @@ def _parser() -> argparse.ArgumentParser:
     _add_common(configure)
     configure.add_argument("--cadence-days", type=int)
     configure.add_argument("--batch-size", type=int)
+    configure.add_argument(
+        "--baseline-known",
+        type=int,
+        help="Leading curriculum items treated as already known, never taught",
+    )
     configure.add_argument("--dialect")
     configure.add_argument("--timezone")
     pause_group = configure.add_mutually_exclusive_group()

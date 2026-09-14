@@ -357,6 +357,29 @@ class ConfigurationTests(CliTestCase):
         self.assertEqual(["t00", "t01", "t02", "t03"], self.ids(context["known"]))
         self.assertEqual(["t04", "t05"], self.ids(context["learning"]))
 
+    def test_configure_baseline_known_shifts_the_tier_boundary(self) -> None:
+        self.init()
+        changed = self.run_cli(
+            "configure", "--baseline-known", "6", "--now", "2026-08-15T09:30:00+02:00"
+        )
+        self.assertEqual({"baseline_known_count": 6}, changed["changes"])
+        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        self.assertEqual(
+            ["t00", "t01", "t02", "t03", "t04", "t05"], self.ids(context["known"])
+        )
+        self.assertEqual(["t06", "t07", "t08"], self.ids(context["learning"]))
+
+    def test_configure_rejects_an_out_of_range_baseline(self) -> None:
+        self.init()
+        too_large = self.run_cli(
+            "configure", "--baseline-known", "13", "--now", "2026-08-15T09:30:00+02:00", ok=False
+        )
+        self.assertIn("exceeds the curriculum size", too_large["error"])
+        negative = self.run_cli(
+            "configure", "--baseline-known", "-1", "--now", "2026-08-15T09:30:00+02:00", ok=False
+        )
+        self.assertIn("must not be negative", negative["error"])
+
     def test_invalid_configuration_is_rejected(self) -> None:
         self.init()
         for flag, value in (("--cadence-days", "0"), ("--batch-size", "0")):
