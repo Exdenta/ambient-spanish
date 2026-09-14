@@ -1,7 +1,7 @@
 interface:
   display_name: "Ambient Spanish"
   short_description: "Time-paced Spanish in everyday chats"
-  default_prompt: "Use $ambient-spanish with weekly new vocabulary and 50% exposure across ordinary replies."
+  default_prompt: "Use $ambient-spanish: substitute every known term in each reply, gloss the current batch in brackets, and unlock 3 new words every 3 days."
 
 policy:
   allow_implicit_invocation: true

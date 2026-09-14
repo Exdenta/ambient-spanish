@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Calendar-governed curriculum and per-reply exposure for ambient Spanish."""
+"""Calendar-governed batch curriculum and per-reply substitution set for ambient Spanish."""
 
 from __future__ import annotations
 
@@ -21,11 +21,13 @@ except ImportError:  # pragma: no cover - Unix is the supported Codex runtime.
     fcntl = None
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+LEGACY_SCHEMA_VERSIONS = (1, 2)
 DEFAULT_TIMEZONE = "Europe/Madrid"
 DEFAULT_DIALECT = "es-ES"
-DEFAULT_CADENCE_DAYS = 7
-DEFAULT_EXPOSURE_PERCENT = 50
+DEFAULT_CADENCE_DAYS = 3
+DEFAULT_BATCH_SIZE = 3
+DEFAULT_EXPOSURE_PERCENT = 50  # Legacy v2 field, retained only for migration.
 MAX_PENDING_DECISIONS = 128
 MAX_DECISION_AGE_SECONDS = 24 * 60 * 60
 DEFAULT_STATE_PATH = Path.home() / ".codex" / "state" / "ambient-spanish" / "state.json"
@@ -171,26 +173,29 @@ def _new_state(
     timezone_name: str,
     dialect: str,
     cadence_days: int,
-    exposure_percent: int,
+    batch_size: int,
+    baseline_known_count: int = 0,
     start_date: date | None = None,
 ) -> dict[str, Any]:
     if cadence_days < 1:
         raise StateError("cadence_days must be at least 1")
-    if not 0 <= exposure_percent <= 100:
-        raise StateError("exposure_percent must be between 0 and 100")
+    if batch_size < 1:
+        raise StateError("batch_size must be at least 1")
+    if baseline_known_count < 0:
+        raise StateError("baseline_known_count must not be negative")
     return {
         "schema_version": SCHEMA_VERSION,
         "config": {
             "timezone": timezone_name,
             "dialect": dialect,
             "cadence_days": cadence_days,
-            "exposure_percent": exposure_percent,
+            "batch_size": batch_size,
+            "baseline_known_count": baseline_known_count,
             "paused": False,
             "start_date": (start_date or now.date()).isoformat(),
         },
         "progress": {
             "last_exposure_at": None,
-            "last_new_term_at": None,
             "pending_decisions": {},
             "terms": {},
         },
@@ -199,28 +204,27 @@ def _new_state(
     }
 
 
-def _validate_state_version(
+def _validate_legacy_state(
     state: Any,
     curriculum: list[dict[str, str]],
     *,
     version: int,
 ) -> dict[str, Any]:
+    """Validate a schema v1 or v2 document. Used only on the migration path."""
+    if version not in LEGACY_SCHEMA_VERSIONS:
+        raise StateError(f"No legacy validator exists for state schema_version {version}")
     if not isinstance(state, dict):
         raise StateError("State root must be an object")
-    if type(state.get("schema_version")) is not int or state.get(
-        "schema_version"
-    ) != version:
+    if type(state.get("schema_version")) is not int or state.get("schema_version") != version:
         raise StateError(
             f"Unsupported state schema_version {state.get('schema_version')}; expected {version}"
         )
-    if version not in (1, SCHEMA_VERSION):
-        raise StateError(f"No validator exists for state schema_version {version}")
     config = state.get("config")
     progress = state.get("progress")
     if not isinstance(config, dict) or not isinstance(progress, dict):
         raise StateError("State requires config and progress objects")
     config_keys = ["timezone", "dialect", "cadence_days", "paused", "start_date"]
-    if version == SCHEMA_VERSION:
+    if version == 2:
         config_keys.append("exposure_percent")
     for key in config_keys:
         if key not in config:
@@ -236,7 +240,7 @@ def _validate_state_version(
     cadence = config["cadence_days"]
     if type(cadence) is not int or cadence < 1:
         raise StateError("config.cadence_days must be an integer of at least 1")
-    if version == SCHEMA_VERSION:
+    if version == 2:
         exposure_percent = config["exposure_percent"]
         if (
             type(exposure_percent) is not int
@@ -251,11 +255,9 @@ def _validate_state_version(
             raise StateError(f"State requires string {field}")
         _parse_timestamp(state[field], config["timezone"], field=field)
 
-    exposure_field = (
-        "last_any_insertion_at" if version == 1 else "last_exposure_at"
-    )
+    exposure_field = "last_any_insertion_at" if version == 1 else "last_exposure_at"
     progress_keys = [exposure_field, "last_new_term_at", "terms"]
-    if version == SCHEMA_VERSION:
+    if version == 2:
         progress_keys.append("pending_decisions")
     for key in progress_keys:
         if key not in progress:
@@ -299,9 +301,7 @@ def _validate_state_version(
         last_used_times.append(last_used_at)
 
     introduced_ids = set(terms)
-    introduced_prefix = {
-        term["id"] for term in curriculum[: len(introduced_ids)]
-    }
+    introduced_prefix = {term["id"] for term in curriculum[: len(introduced_ids)]}
     if introduced_ids != introduced_prefix:
         raise StateError("Introduced terms must form a curriculum prefix")
     if version == 1:
@@ -324,7 +324,7 @@ def _validate_state_version(
                 )
             previous_introduced_on = introduced_on
 
-    if version == SCHEMA_VERSION:
+    if version == 2:
         pending = progress["pending_decisions"]
         if not isinstance(pending, dict):
             raise StateError("progress.pending_decisions must be an object")
@@ -341,64 +341,197 @@ def _validate_state_version(
                 raise StateError(f"Pending decision {decision_id} has unknown term")
             if not isinstance(decision["created_at"], str):
                 raise StateError(f"Pending decision {decision_id} requires created_at")
-            _parse_timestamp(
-                decision["created_at"], config["timezone"], field="created_at"
-            )
+            _parse_timestamp(decision["created_at"], config["timezone"], field="created_at")
     if terms and progress[exposure_field] is None:
         raise StateError(f"Introduced terms require {exposure_field}")
     if terms and progress["last_new_term_at"] is None:
         raise StateError("Introduced terms require last_new_term_at")
     if not terms and (
-        progress[exposure_field] is not None
-        or progress["last_new_term_at"] is not None
+        progress[exposure_field] is not None or progress["last_new_term_at"] is not None
     ):
         raise StateError("Empty term history requires null enforcement timestamps")
     if terms:
         last_exposure = _parse_timestamp(
-            progress[exposure_field],
-            config["timezone"],
-            field=exposure_field,
+            progress[exposure_field], config["timezone"], field=exposure_field
         )
         last_new = _parse_timestamp(
-            progress["last_new_term_at"],
-            config["timezone"],
-            field="last_new_term_at",
+            progress["last_new_term_at"], config["timezone"], field="last_new_term_at"
         )
         latest_used = max(last_used_times, key=lambda value: value.timestamp())
-        latest_introduced = max(
-            introduced_times, key=lambda value: value.timestamp()
-        )
+        latest_introduced = max(introduced_times, key=lambda value: value.timestamp())
         if last_exposure.timestamp() != latest_used.timestamp():
-            raise StateError(
-                f"{exposure_field} must equal the latest term last_used_at"
-            )
+            raise StateError(f"{exposure_field} must equal the latest term last_used_at")
         if last_new.timestamp() != latest_introduced.timestamp():
-            raise StateError(
-                "last_new_term_at must equal the latest term introduced_at"
-            )
+            raise StateError("last_new_term_at must equal the latest term introduced_at")
     return state
 
 
 def _validate_state(state: Any, curriculum: list[dict[str, str]]) -> dict[str, Any]:
-    return _validate_state_version(state, curriculum, version=SCHEMA_VERSION)
+    """Validate a schema v3 document. Unknown or legacy versions fail closed here."""
+    if not isinstance(state, dict):
+        raise StateError("State root must be an object")
+    if type(state.get("schema_version")) is not int or state.get("schema_version") != SCHEMA_VERSION:
+        raise StateError(
+            f"Unsupported state schema_version {state.get('schema_version')}; expected {SCHEMA_VERSION}"
+        )
+    config = state.get("config")
+    progress = state.get("progress")
+    if not isinstance(config, dict) or not isinstance(progress, dict):
+        raise StateError("State requires config and progress objects")
+    for key in (
+        "timezone",
+        "dialect",
+        "cadence_days",
+        "batch_size",
+        "baseline_known_count",
+        "paused",
+        "start_date",
+    ):
+        if key not in config:
+            raise StateError(f"State config is missing {key}")
+    if not isinstance(config["timezone"], str):
+        raise StateError("config.timezone must be a string")
+    if not isinstance(config["dialect"], str) or not config["dialect"].strip():
+        raise StateError("config.dialect must be a non-empty string")
+    if not isinstance(config["start_date"], str):
+        raise StateError("config.start_date must be a string")
+    _timezone(config["timezone"])
+    _parse_date(config["start_date"], "start_date")
+    if type(config["cadence_days"]) is not int or config["cadence_days"] < 1:
+        raise StateError("config.cadence_days must be an integer of at least 1")
+    if type(config["batch_size"]) is not int or config["batch_size"] < 1:
+        raise StateError("config.batch_size must be an integer of at least 1")
+    baseline = config["baseline_known_count"]
+    if type(baseline) is not int or baseline < 0:
+        raise StateError("config.baseline_known_count must be a non-negative integer")
+    if baseline > len(curriculum):
+        raise StateError("config.baseline_known_count exceeds the curriculum size")
+    if not isinstance(config["paused"], bool):
+        raise StateError("config.paused must be a boolean")
+    for field in ("created_at", "updated_at"):
+        if not isinstance(state.get(field), str):
+            raise StateError(f"State requires string {field}")
+        _parse_timestamp(state[field], config["timezone"], field=field)
+
+    for key in ("last_exposure_at", "pending_decisions", "terms"):
+        if key not in progress:
+            raise StateError(f"State progress is missing {key}")
+    exposure_value = progress["last_exposure_at"]
+    if exposure_value is not None and not isinstance(exposure_value, str):
+        raise StateError("progress.last_exposure_at must be a string or null")
+    if exposure_value is not None:
+        _parse_timestamp(exposure_value, config["timezone"], field="last_exposure_at")
+
+    terms = progress["terms"]
+    if not isinstance(terms, dict):
+        raise StateError("progress.terms must be an object")
+    known_ids = {term["id"] for term in curriculum}
+    unknown = sorted(set(terms) - known_ids)
+    if unknown:
+        raise StateError(f"State contains unknown curriculum ids: {', '.join(unknown)}")
+    last_used_times: list[datetime] = []
+    for term_id, term_state in terms.items():
+        if not isinstance(term_state, dict):
+            raise StateError(f"State term {term_id} must be an object")
+        for field in ("introduced_at", "last_used_at", "use_count"):
+            if field not in term_state:
+                raise StateError(f"State term {term_id} is missing {field}")
+        if not isinstance(term_state["introduced_at"], str) or not isinstance(
+            term_state["last_used_at"], str
+        ):
+            raise StateError(f"State term {term_id} timestamps must be strings")
+        introduced_at = _parse_timestamp(
+            term_state["introduced_at"], config["timezone"], field="introduced_at"
+        )
+        last_used_at = _parse_timestamp(
+            term_state["last_used_at"], config["timezone"], field="last_used_at"
+        )
+        if last_used_at.timestamp() < introduced_at.timestamp():
+            raise StateError(f"State term {term_id} was used before introduction")
+        if type(term_state["use_count"]) is not int or term_state["use_count"] < 1:
+            raise StateError(f"State term {term_id} use_count must be at least 1")
+        last_used_times.append(last_used_at)
+
+    pending = progress["pending_decisions"]
+    if not isinstance(pending, dict):
+        raise StateError("progress.pending_decisions must be an object")
+    for decision_id, decision in pending.items():
+        if not isinstance(decision_id, str) or not decision_id:
+            raise StateError("Pending decision ids must be non-empty strings")
+        if not isinstance(decision, dict):
+            raise StateError(f"Pending decision {decision_id} must be an object")
+        if set(decision) != {"term_ids", "created_at"}:
+            raise StateError(f"Pending decision {decision_id} has invalid fields")
+        term_ids = decision["term_ids"]
+        if not isinstance(term_ids, list) or not term_ids:
+            raise StateError(f"Pending decision {decision_id} requires a non-empty term_ids list")
+        if len(set(term_ids)) != len(term_ids):
+            raise StateError(f"Pending decision {decision_id} has duplicate term_ids")
+        for term_id in term_ids:
+            if not isinstance(term_id, str) or term_id not in known_ids:
+                raise StateError(f"Pending decision {decision_id} has unknown term {term_id}")
+        if not isinstance(decision["created_at"], str):
+            raise StateError(f"Pending decision {decision_id} requires created_at")
+        _parse_timestamp(decision["created_at"], config["timezone"], field="created_at")
+
+    # Usage history is observational under v3: tiers come from the calendar, so
+    # terms need not form a curriculum prefix. The exposure timestamp is still
+    # pinned to the newest use so a rolled-back clock is detectable.
+    if terms and exposure_value is None:
+        raise StateError("Recorded terms require last_exposure_at")
+    if not terms and exposure_value is not None:
+        raise StateError("Empty term history requires a null last_exposure_at")
+    if terms:
+        last_exposure = _parse_timestamp(
+            exposure_value, config["timezone"], field="last_exposure_at"
+        )
+        latest_used = max(last_used_times, key=lambda value: value.timestamp())
+        if last_exposure.timestamp() != latest_used.timestamp():
+            raise StateError("last_exposure_at must equal the latest term last_used_at")
+    return state
 
 
 def _migrate_v1_state(
     state: dict[str, Any], curriculum: list[dict[str, str]]
 ) -> dict[str, Any]:
-    _validate_state_version(state, curriculum, version=1)
+    _validate_legacy_state(state, curriculum, version=1)
     migrated = json.loads(json.dumps(state))
-    migrated["schema_version"] = SCHEMA_VERSION
+    migrated["schema_version"] = 2
     migrated["config"]["exposure_percent"] = DEFAULT_EXPOSURE_PERCENT
     migrated["progress"]["last_exposure_at"] = migrated["progress"].pop(
         "last_any_insertion_at"
     )
     migrated["progress"]["pending_decisions"] = {}
+    return _validate_legacy_state(migrated, curriculum, version=2)
+
+
+def _migrate_v2_state(
+    state: dict[str, Any], curriculum: list[dict[str, str]], now: datetime
+) -> dict[str, Any]:
+    """Convert one-item-per-reply pacing into batch pacing.
+
+    Every term already introduced under v2 becomes part of the baseline known
+    set, and the batch calendar restarts today so the first v3 batch is the
+    next `batch_size` unseen curriculum items.
+    """
+    _validate_legacy_state(state, curriculum, version=2)
+    migrated = json.loads(json.dumps(state))
+    migrated["schema_version"] = SCHEMA_VERSION
+    config = migrated["config"]
+    config.pop("exposure_percent", None)
+    config["batch_size"] = DEFAULT_BATCH_SIZE
+    config["baseline_known_count"] = len(migrated["progress"]["terms"])
+    config["start_date"] = now.astimezone(_timezone(config["timezone"])).date().isoformat()
+    progress = migrated["progress"]
+    progress.pop("last_new_term_at", None)
+    progress["pending_decisions"] = {}
     return _validate_state(migrated, curriculum)
 
 
-def _preserve_migration_source(state_path: Path, source: dict[str, Any]) -> bool:
-    backup_path = state_path.with_name(f"{state_path.name}.schema-v1.backup")
+def _preserve_migration_source(
+    state_path: Path, source: dict[str, Any], *, version: int
+) -> bool:
+    backup_path = state_path.with_name(f"{state_path.name}.schema-v{version}.backup")
     if backup_path.exists():
         if _read_json(backup_path) != source:
             raise StateError(
@@ -427,11 +560,18 @@ def _load_or_create_state(
         if not isinstance(timezone_name, str):
             timezone_name = DEFAULT_TIMEZONE
         now = _parse_now(now_value, timezone_name)
-        if provisional.get("schema_version") == 1:
-            migrated = _migrate_v1_state(provisional, curriculum)
+        version = provisional.get("schema_version")
+        if version in LEGACY_SCHEMA_VERSIONS:
+            source_version = version
+            staged = provisional
+            if source_version == 1:
+                staged = _migrate_v1_state(staged, curriculum)
+            migrated = _migrate_v2_state(staged, curriculum, now)
             migrated["updated_at"] = now.isoformat()
             _validate_state(migrated, curriculum)
-            backup_durable = _preserve_migration_source(state_path, provisional)
+            backup_durable = _preserve_migration_source(
+                state_path, provisional, version=source_version
+            )
             state_durable = _atomic_write(state_path, migrated)
             durability = "confirmed" if backup_durable and state_durable else "uncertain"
             return migrated, now, durability
@@ -443,205 +583,101 @@ def _load_or_create_state(
         timezone_name=DEFAULT_TIMEZONE,
         dialect=DEFAULT_DIALECT,
         cadence_days=DEFAULT_CADENCE_DAYS,
-        exposure_percent=DEFAULT_EXPOSURE_PERCENT,
+        batch_size=DEFAULT_BATCH_SIZE,
     )
     durable = _atomic_write(state_path, state)
     return state, now, "confirmed" if durable else "uncertain"
 
 
-def _as_local_date(timestamp: str | None, timezone_name: str) -> date | None:
-    if timestamp is None:
-        return None
-    return _parse_timestamp(timestamp, timezone_name, field="timestamp").date()
-
-
-def _eligible_count(state: dict[str, Any], curriculum_size: int, today: date) -> int:
+def _batch_index(state: dict[str, Any], today: date) -> int:
     config = state["config"]
     start = _parse_date(config["start_date"], "start_date")
     if today < start:
-        return 0
-    elapsed = (today - start).days
-    return min(curriculum_size, 1 + elapsed // config["cadence_days"])
+        return -1
+    return (today - start).days // config["cadence_days"]
 
 
-def _review_gap_days(age_days: int) -> int:
-    if age_days < 1:
-        return 1
-    if age_days < 3:
-        return 2
-    if age_days < 7:
-        return 4
-    if age_days < 14:
-        return 7
-    if age_days < 30:
-        return 14
-    if age_days < 60:
-        return 30
-    return 60
+def _tiers(
+    state: dict[str, Any], curriculum: list[dict[str, str]], today: date
+) -> tuple[list[dict[str, str]], list[dict[str, str]], int]:
+    """Split the curriculum into (known, learning, batch_index) for a local date.
 
-
-def _gloss_mode(action: str, introduced_on: date | None, today: date) -> str:
-    if action == "introduce" or introduced_on is None:
-        return "required"
-    age_days = (today - introduced_on).days
-    if age_days <= 21:
-        return "required"
-    if age_days <= 60:
-        return "optional"
-    return "omit"
-
-
-def _exposure_roll() -> int:
-    override = os.environ.get("AMBIENT_SPANISH_EXPOSURE_ROLL")
-    if override is None:
-        return secrets.randbelow(100)
-    if os.environ.get("AMBIENT_SPANISH_ALLOW_EXPOSURE_OVERRIDE") != "1":
-        raise StateError(
-            "AMBIENT_SPANISH_EXPOSURE_ROLL is disabled outside deterministic tests"
-        )
-    try:
-        roll = int(override)
-    except ValueError as exc:
-        raise StateError("Exposure roll override must be an integer from 0 to 99") from exc
-    if str(roll) != override or not 0 <= roll <= 99:
-        raise StateError("Exposure roll override must be an integer from 0 to 99")
-    return roll
-
-
-def _candidate(
-    state: dict[str, Any],
-    curriculum: list[dict[str, str]],
-    now: datetime,
-) -> tuple[dict[str, Any] | None, str]:
+    `known` is used bare and unglossed. `learning` is the current batch and is
+    the only tier that carries a bracketed English gloss. Both are derived
+    purely from elapsed calendar time, so a batch is promoted on its date
+    whether or not its words were ever actually used.
+    """
     config = state["config"]
-    progress = state["progress"]
-    timezone_name = config["timezone"]
-    today = now.date()
-    introduced = progress["terms"]
-    eligible_count = _eligible_count(state, len(curriculum), today)
-    curriculum_index = {term["id"]: index for index, term in enumerate(curriculum)}
-
-    last_new_date = _as_local_date(progress.get("last_new_term_at"), timezone_name)
-    intro_allowed = last_new_date is None or (
-        today - last_new_date
-    ).days >= config["cadence_days"]
-    next_new = next(
-        (term for term in curriculum[:eligible_count] if term["id"] not in introduced),
-        None,
+    batch_index = _batch_index(state, today)
+    if batch_index < 0:
+        return [], [], batch_index
+    size = len(curriculum)
+    learning_start = min(
+        size, config["baseline_known_count"] + batch_index * config["batch_size"]
     )
-    if next_new is not None and intro_allowed:
-        return (
-            {
-                "action": "introduce",
-                "term": next_new,
-                "gloss": "required",
-                "guidance": "Use once and include a brief English gloss at the natural first mention.",
-            },
-            "new_item_ready",
-        )
-
-    due: list[tuple[int, int, dict[str, str], dict[str, Any]]] = []
-    for term_id, term_state in introduced.items():
-        introduced_on = _as_local_date(term_state.get("introduced_at"), timezone_name)
-        last_used_on = _as_local_date(term_state.get("last_used_at"), timezone_name)
-        if introduced_on is None or last_used_on is None:
-            raise StateError(f"Introduced term {term_id} lacks timestamps")
-        age_at_last_use = max(0, (last_used_on - introduced_on).days)
-        gap = _review_gap_days(age_at_last_use)
-        overdue = (today - last_used_on).days - gap
-        if overdue >= 0:
-            term = curriculum[curriculum_index[term_id]]
-            due.append((overdue, -curriculum_index[term_id], term, term_state))
-
-    if due:
-        _, _, term, term_state = max(due, key=lambda row: (row[0], row[1]))
-        introduced_on = _as_local_date(term_state["introduced_at"], timezone_name)
-        return (
-            {
-                "action": "review",
-                "term": term,
-                "gloss": _gloss_mode("review", introduced_on, today),
-                "guidance": "Use once, naturally, without turning the reply into a lesson.",
-            },
-            "review_due",
-        )
-
-    if introduced:
-        term_id, term_state = min(
-            introduced.items(),
-            key=lambda row: (
-                row[1]["use_count"],
-                _parse_timestamp(
-                    row[1]["last_used_at"], timezone_name, field="last_used_at"
-                ).timestamp(),
-                curriculum_index[row[0]],
-            ),
-        )
-        introduced_on = _as_local_date(term_state["introduced_at"], timezone_name)
-        return (
-            {
-                "action": "review",
-                "term": curriculum[curriculum_index[term_id]],
-                "gloss": _gloss_mode("review", introduced_on, today),
-                "guidance": "Reuse once, naturally, without turning the reply into a lesson.",
-            },
-            "ambient_reuse_ready",
-        )
-
-    if next_new is not None:
-        return None, "introduction_cadence_not_elapsed"
-    return None, "no_item_due"
+    learning_end = min(size, learning_start + config["batch_size"])
+    return curriculum[:learning_start], curriculum[learning_start:learning_end], batch_index
 
 
-def _next_introduction_date(
-    state: dict[str, Any], curriculum: list[dict[str, str]]
+def _next_batch_date(
+    state: dict[str, Any], curriculum: list[dict[str, str]], today: date
 ) -> date | None:
     config = state["config"]
-    progress = state["progress"]
-    introduced = progress["terms"]
-    next_index = next(
-        (index for index, term in enumerate(curriculum) if term["id"] not in introduced),
-        None,
-    )
-    if next_index is None:
-        return None
     start = _parse_date(config["start_date"], "start_date")
-    curriculum_date = start + timedelta(days=next_index * config["cadence_days"])
-    last_new_date = _as_local_date(
-        progress.get("last_new_term_at"), config["timezone"]
+    batch_index = _batch_index(state, today)
+    if batch_index < 0:
+        return start
+    next_index = batch_index + 1
+    next_learning_start = (
+        config["baseline_known_count"] + next_index * config["batch_size"]
     )
-    if last_new_date is None:
-        return curriculum_date
-    cadence_date = last_new_date + timedelta(days=config["cadence_days"])
-    return max(curriculum_date, cadence_date)
+    if next_learning_start >= len(curriculum):
+        return None
+    return start + timedelta(days=next_index * config["cadence_days"])
 
 
 def _reserve_decision(
-    state: dict[str, Any], focus: dict[str, Any], now: datetime
+    state: dict[str, Any], term_ids: list[str], now: datetime
 ) -> str:
     pending = state["progress"]["pending_decisions"]
     timezone_name = state["config"]["timezone"]
-    expired = []
+    ages: list[tuple[float, str]] = []
     for decision_id, decision in pending.items():
         created_at = _parse_timestamp(
             decision["created_at"], timezone_name, field="created_at"
         )
-        if now.timestamp() - created_at.timestamp() > MAX_DECISION_AGE_SECONDS:
-            expired.append(decision_id)
-    for decision_id in expired:
-        del pending[decision_id]
+        age = now.timestamp() - created_at.timestamp()
+        if age > MAX_DECISION_AGE_SECONDS:
+            ages.append((float("inf"), decision_id))
+        else:
+            ages.append((age, decision_id))
+    for age, decision_id in ages:
+        if age == float("inf"):
+            del pending[decision_id]
 
-    if len(pending) >= MAX_PENDING_DECISIONS:
-        raise StateError(
-            "Too many unconsumed exposure decisions; finish or wait for existing decisions to expire"
+    # Replies that legitimately used no Spanish leave their reservation behind.
+    # Evicting the oldest keeps `context` working instead of failing closed on a
+    # queue of never-consumed tokens.
+    while len(pending) >= MAX_PENDING_DECISIONS:
+        oldest = max(
+            (
+                (
+                    _parse_timestamp(
+                        decision["created_at"], timezone_name, field="created_at"
+                    ).timestamp(),
+                    decision_id,
+                )
+                for decision_id, decision in pending.items()
+            ),
+            key=lambda row: (-row[0], row[1]),
         )
+        del pending[oldest[1]]
 
     decision_id = f"d_{secrets.token_urlsafe(18)}"
     while decision_id in pending:
         decision_id = f"d_{secrets.token_urlsafe(18)}"
     pending[decision_id] = {
-        "action": focus["action"],
-        "term_id": focus["term"]["id"],
+        "term_ids": list(term_ids),
         "created_at": now.isoformat(),
     }
     return decision_id
@@ -653,28 +689,37 @@ def _combined_durability(initial: str, written: bool) -> str:
     return "confirmed"
 
 
+def _term_view(
+    term: dict[str, str], tier: str, term_state: dict[str, Any] | None
+) -> dict[str, Any]:
+    return {
+        **term,
+        "tier": tier,
+        "gloss": "bracketed" if tier == "learning" else "omit",
+        "use_count": int(term_state["use_count"]) if term_state else 0,
+    }
+
+
 def _context(
     state: dict[str, Any],
     curriculum: list[dict[str, str]],
     now: datetime,
     state_path: Path,
-    *,
-    apply_exposure_gate: bool = True,
 ) -> dict[str, Any]:
     config = state["config"]
     progress = state["progress"]
     timezone_name = config["timezone"]
     today = now.date()
-    eligible_count = _eligible_count(state, len(curriculum), today)
-    introduced = progress["terms"]
+    terms = progress["terms"]
+    known, learning, batch_index = _tiers(state, curriculum, today)
     last_exposure_timestamp = progress.get("last_exposure_at")
 
-    focus: dict[str, Any] | None = None
-    reason = "no_item_due"
-    exposure_selected = False
-
+    active = True
+    reason = "active"
     if config["paused"]:
-        reason = "paused"
+        active, reason = False, "paused"
+    elif batch_index < 0:
+        active, reason = False, "before_start_date"
     elif any(
         now.timestamp()
         < _parse_timestamp(
@@ -682,34 +727,23 @@ def _context(
         ).timestamp()
         for decision in progress["pending_decisions"].values()
     ):
-        reason = "clock_before_pending_decision"
+        active, reason = False, "clock_before_pending_decision"
     elif last_exposure_timestamp is not None and now.timestamp() < _parse_timestamp(
         last_exposure_timestamp, timezone_name, field="last_exposure_at"
     ).timestamp():
-        reason = "clock_before_last_exposure"
-    else:
-        candidate, candidate_reason = _candidate(state, curriculum, now)
-        if candidate is not None and apply_exposure_gate:
-            percent = config["exposure_percent"]
-            exposure_selected = percent == 100 or (
-                percent > 0 and _exposure_roll() < percent
-            )
-            if exposure_selected:
-                focus = candidate
-                reason = candidate_reason
-            else:
-                reason = "exposure_skipped"
-        else:
-            focus = candidate
-            reason = candidate_reason
-            exposure_selected = candidate is not None
+        active, reason = False, "clock_before_last_exposure"
+    elif not known and not learning:
+        active, reason = False, "curriculum_exhausted"
+    elif not learning:
+        # Every term is known. Substitution continues unglossed; only new
+        # vocabulary has run out.
+        reason = "curriculum_complete"
 
-    start = _parse_date(config["start_date"], "start_date")
-    next_index = min(eligible_count, len(curriculum) - 1)
-    next_unlock = None
-    if eligible_count < len(curriculum):
-        next_unlock = (start + timedelta(days=next_index * config["cadence_days"])).isoformat()
-    next_introduction = _next_introduction_date(state, curriculum)
+    known_view = [_term_view(term, "known", terms.get(term["id"])) for term in known]
+    learning_view = [
+        _term_view(term, "learning", terms.get(term["id"])) for term in learning
+    ]
+    next_batch = _next_batch_date(state, curriculum, today)
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -718,19 +752,28 @@ def _context(
         "timezone": timezone_name,
         "dialect": config["dialect"],
         "cadence_days": config["cadence_days"],
-        "exposure_percent": config["exposure_percent"],
-        "exposure_selected": exposure_selected,
+        "batch_size": config["batch_size"],
         "paused": config["paused"],
         "state_path": str(state_path),
-        "eligible_count": eligible_count,
-        "introduced_count": len(introduced),
-        "next_unlock_date": next_unlock,
-        "next_introduction_date": (
-            next_introduction.isoformat() if next_introduction is not None else None
-        ),
-        "focus": focus,
+        "batch_index": batch_index,
+        "known_count": len(known_view),
+        "learning_count": len(learning_view),
+        "known": known_view if active else [],
+        "learning": learning_view if active else [],
+        "next_batch_date": next_batch.isoformat() if next_batch is not None else None,
+        "active": active,
         "reason": reason,
     }
+
+
+def _split_ids(raw: str) -> list[str]:
+    ids = [chunk.strip() for chunk in raw.split(",")]
+    ids = [chunk for chunk in ids if chunk]
+    if not ids:
+        raise StateError("--used requires at least one curriculum id")
+    if len(set(ids)) != len(ids):
+        raise StateError("--used contains duplicate curriculum ids")
+    return ids
 
 
 def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
@@ -740,13 +783,16 @@ def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
     start = _parse_date(args.start_date, "start_date") if args.start_date else now.date()
     with _locked(state_path):
         if state_path.exists() and not args.force:
-            raise StateError(f"State already exists: {state_path}; use --force only for an explicit reset")
+            raise StateError(
+                f"State already exists: {state_path}; use --force only for an explicit reset"
+            )
         state = _new_state(
             now,
             timezone_name=args.timezone,
             dialect=args.dialect,
             cadence_days=args.cadence_days,
-            exposure_percent=args.exposure_percent,
+            batch_size=args.batch_size,
+            baseline_known_count=args.baseline_known,
             start_date=start,
         )
         _validate_state(state, curriculum)
@@ -767,9 +813,11 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
             state_path, curriculum, now_value=args.now
         )
         result = _context(state, curriculum, now, state_path)
-        if result["focus"] is not None:
-            decision_id = _reserve_decision(state, result["focus"], now)
-            result["focus"] = {**result["focus"], "decision_id": decision_id}
+        result["decision_id"] = None
+        if result["active"]:
+            term_ids = [term["id"] for term in result["known"] + result["learning"]]
+            decision_id = _reserve_decision(state, term_ids, now)
+            result["decision_id"] = decision_id
             state["updated_at"] = now.isoformat()
             _validate_state(state, curriculum)
             durable = _atomic_write(state_path, state)
@@ -782,20 +830,22 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum = _load_curriculum(_curriculum_path(args.curriculum))
     by_id = {term["id"]: term for term in curriculum}
-    if args.term not in by_id:
-        raise StateError(f"Unknown curriculum term: {args.term}")
+    used = _split_ids(args.used)
+    unknown = sorted(term_id for term_id in used if term_id not in by_id)
+    if unknown:
+        raise StateError(f"Unknown curriculum terms: {', '.join(unknown)}")
 
     with _locked(state_path):
-        state, now, _ = _load_or_create_state(
-            state_path, curriculum, now_value=args.now
-        )
+        state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         progress = state["progress"]
         decision = progress["pending_decisions"].get(args.decision)
         if decision is None:
             raise StateError("Unknown, expired, or already-used exposure decision")
-        if decision["term_id"] != args.term or decision["action"] != args.kind:
+        permitted = set(decision["term_ids"])
+        outside = sorted(term_id for term_id in used if term_id not in permitted)
+        if outside:
             raise StateError(
-                f"Requested record does not match reserved focus: {decision['action']} {decision['term_id']}"
+                f"Terms were not part of the reserved active set: {', '.join(outside)}"
             )
         created_at = _parse_timestamp(
             decision["created_at"], state["config"]["timezone"], field="created_at"
@@ -812,29 +862,18 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
             raise StateError("Clock is before the last recorded exposure")
 
         terms = progress["terms"]
-        if args.kind == "introduce":
-            if args.term in terms:
-                raise StateError(f"Term is already introduced: {args.term}")
-            current_candidate, _ = _candidate(state, curriculum, now)
-            if (
-                current_candidate is None
-                or current_candidate["action"] != "introduce"
-                or current_candidate["term"]["id"] != args.term
-            ):
-                raise StateError(
-                    "Reserved introduction is no longer eligible under the current calendar pacing"
-                )
-            terms[args.term] = {
-                "introduced_at": now.isoformat(),
-                "last_used_at": now.isoformat(),
-                "use_count": 1,
-            }
-            progress["last_new_term_at"] = now.isoformat()
-        else:
-            if args.term not in terms:
-                raise StateError(f"Cannot review an unintroduced term: {args.term}")
-            terms[args.term]["last_used_at"] = now.isoformat()
-            terms[args.term]["use_count"] = int(terms[args.term].get("use_count", 0)) + 1
+        first_uses: list[str] = []
+        for term_id in used:
+            if term_id in terms:
+                terms[term_id]["last_used_at"] = now.isoformat()
+                terms[term_id]["use_count"] = int(terms[term_id].get("use_count", 0)) + 1
+            else:
+                terms[term_id] = {
+                    "introduced_at": now.isoformat(),
+                    "last_used_at": now.isoformat(),
+                    "use_count": 1,
+                }
+                first_uses.append(term_id)
 
         progress["last_exposure_at"] = now.isoformat()
         del progress["pending_decisions"][args.decision]
@@ -844,7 +883,7 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "ok": True,
         "write_durability": "confirmed" if durable else "uncertain",
-        "recorded": {"term": args.term, "kind": args.kind, "at": now.isoformat()},
+        "recorded": {"used": used, "first_uses": first_uses, "at": now.isoformat()},
         "state_path": str(state_path),
     }
 
@@ -859,9 +898,11 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
         )
     context = _context(state, curriculum, now, state_path)
     context["write_durability"] = write_durability
-    learned = []
+    context["baseline_known_count"] = state["config"]["baseline_known_count"]
+    context["start_date"] = state["config"]["start_date"]
+    used_terms = []
     for term_id, term_state in state["progress"]["terms"].items():
-        learned.append(
+        used_terms.append(
             {
                 **by_id[term_id],
                 "introduced_at": term_state["introduced_at"],
@@ -869,7 +910,7 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
                 "use_count": term_state["use_count"],
             }
         )
-    context["learned_terms"] = learned
+    context["used_terms"] = sorted(used_terms, key=lambda term: -term["use_count"])
     return context
 
 
@@ -877,9 +918,7 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum = _load_curriculum(_curriculum_path(args.curriculum))
     with _locked(state_path):
-        state, now, _ = _load_or_create_state(
-            state_path, curriculum, now_value=args.now
-        )
+        state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         config = state["config"]
         changes: dict[str, Any] = {}
         if args.cadence_days is not None:
@@ -887,11 +926,11 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
                 raise StateError("cadence_days must be at least 1")
             config["cadence_days"] = args.cadence_days
             changes["cadence_days"] = args.cadence_days
-        if args.exposure_percent is not None:
-            if not 0 <= args.exposure_percent <= 100:
-                raise StateError("exposure_percent must be between 0 and 100")
-            config["exposure_percent"] = args.exposure_percent
-            changes["exposure_percent"] = args.exposure_percent
+        if args.batch_size is not None:
+            if args.batch_size < 1:
+                raise StateError("batch_size must be at least 1")
+            config["batch_size"] = args.batch_size
+            changes["batch_size"] = args.batch_size
         if args.dialect is not None:
             config["dialect"] = args.dialect
             changes["dialect"] = args.dialect
@@ -927,7 +966,7 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Persistent calendar pacing and per-reply exposure for ambient Spanish."
+        description="Persistent calendar batch pacing for ambient Spanish substitution."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -936,21 +975,28 @@ def _parser() -> argparse.ArgumentParser:
     init.add_argument("--timezone", default=DEFAULT_TIMEZONE)
     init.add_argument("--dialect", default=DEFAULT_DIALECT)
     init.add_argument("--cadence-days", type=int, default=DEFAULT_CADENCE_DAYS)
+    init.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
     init.add_argument(
-        "--exposure-percent", type=int, default=DEFAULT_EXPOSURE_PERCENT
+        "--baseline-known",
+        type=int,
+        default=0,
+        help="Leading curriculum items to treat as already known at start",
     )
     init.add_argument("--start-date")
     init.add_argument("--force", action="store_true")
     init.set_defaults(handler=_cmd_init)
 
-    context = subparsers.add_parser("context", help="Get this reply's permitted ambient item")
+    context = subparsers.add_parser(
+        "context", help="Get this reply's known and learning term sets"
+    )
     _add_common(context)
     context.set_defaults(handler=_cmd_context)
 
-    record = subparsers.add_parser("record", help="Record an item actually used")
+    record = subparsers.add_parser("record", help="Record the terms actually used")
     _add_common(record)
-    record.add_argument("--term", required=True)
-    record.add_argument("--kind", choices=("introduce", "review"), required=True)
+    record.add_argument(
+        "--used", required=True, help="Comma-separated curriculum ids actually used"
+    )
     record.add_argument("--decision", required=True)
     record.set_defaults(handler=_cmd_record)
 
@@ -961,7 +1007,7 @@ def _parser() -> argparse.ArgumentParser:
     configure = subparsers.add_parser("configure", help="Change non-destructive settings")
     _add_common(configure)
     configure.add_argument("--cadence-days", type=int)
-    configure.add_argument("--exposure-percent", type=int)
+    configure.add_argument("--batch-size", type=int)
     configure.add_argument("--dialect")
     configure.add_argument("--timezone")
     pause_group = configure.add_mutually_exclusive_group()
