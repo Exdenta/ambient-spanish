@@ -1,5 +1,747 @@
 [
   {
+    "id": "tambien",
+    "spanish": "también",
+    "english": "also / too",
+    "kind": "adverb",
+    "usage": "Use where the reply adds a second point of the same kind."
+  },
+  {
+    "id": "muy",
+    "spanish": "muy",
+    "english": "very",
+    "kind": "adverb",
+    "usage": "Use directly before an adjective or adverb."
+  },
+  {
+    "id": "mas",
+    "spanish": "más",
+    "english": "more",
+    "kind": "adverb",
+    "usage": "Use for a comparative or an increase."
+  },
+  {
+    "id": "menos",
+    "spanish": "menos",
+    "english": "less / fewer",
+    "kind": "adverb",
+    "usage": "Use for a comparative or a decrease."
+  },
+  {
+    "id": "casi",
+    "spanish": "casi",
+    "english": "almost",
+    "kind": "adverb",
+    "usage": "Use for something very close but not complete."
+  },
+  {
+    "id": "bastante",
+    "spanish": "bastante",
+    "english": "quite / fairly",
+    "kind": "adverb",
+    "usage": "Use to soften an adjective without exaggerating it."
+  },
+  {
+    "id": "demasiado",
+    "spanish": "demasiado",
+    "english": "too much / too many",
+    "kind": "adverb",
+    "usage": "Use for an excess that causes a problem."
+  },
+  {
+    "id": "solo",
+    "spanish": "solo",
+    "english": "only / just",
+    "kind": "adverb",
+    "usage": "Use to narrow a statement to one case."
+  },
+  {
+    "id": "ya",
+    "spanish": "ya",
+    "english": "already",
+    "kind": "adverb",
+    "usage": "Use when something has happened sooner than expected."
+  },
+  {
+    "id": "todavia",
+    "spanish": "todavía",
+    "english": "still / yet",
+    "kind": "adverb",
+    "usage": "Use for a state that has not changed."
+  },
+  {
+    "id": "siempre",
+    "spanish": "siempre",
+    "english": "always",
+    "kind": "adverb",
+    "usage": "Use for something with no exception."
+  },
+  {
+    "id": "nunca",
+    "spanish": "nunca",
+    "english": "never",
+    "kind": "adverb",
+    "usage": "Use for something that does not happen at all."
+  },
+  {
+    "id": "bien",
+    "spanish": "bien",
+    "english": "well / fine",
+    "kind": "adverb",
+    "usage": "Use for something working correctly."
+  },
+  {
+    "id": "mal",
+    "spanish": "mal",
+    "english": "badly / wrong",
+    "kind": "adverb",
+    "usage": "Use for something working incorrectly."
+  },
+  {
+    "id": "rapido",
+    "spanish": "rápido",
+    "english": "fast / quickly",
+    "kind": "adverb",
+    "usage": "Use for speed of an action or a result."
+  },
+  {
+    "id": "despacio",
+    "spanish": "despacio",
+    "english": "slowly",
+    "kind": "adverb",
+    "usage": "Use for a deliberately slow pace."
+  },
+  {
+    "id": "juntos",
+    "spanish": "juntos",
+    "english": "together",
+    "kind": "adverb",
+    "usage": "Use for things that act or ship as a pair."
+  },
+  {
+    "id": "aparte",
+    "spanish": "aparte",
+    "english": "separately / aside",
+    "kind": "adverb",
+    "usage": "Use to set one item apart from the rest."
+  },
+  {
+    "id": "ahora",
+    "spanish": "ahora",
+    "english": "now",
+    "kind": "adverb",
+    "usage": "Use for the present moment."
+  },
+  {
+    "id": "hoy",
+    "spanish": "hoy",
+    "english": "today",
+    "kind": "noun",
+    "usage": "Use for the current day."
+  },
+  {
+    "id": "manana",
+    "spanish": "mañana",
+    "english": "tomorrow / morning",
+    "kind": "noun",
+    "usage": "Use for the next day; context disambiguates the morning sense."
+  },
+  {
+    "id": "ayer",
+    "spanish": "ayer",
+    "english": "yesterday",
+    "kind": "noun",
+    "usage": "Use for the previous day."
+  },
+  {
+    "id": "antes",
+    "spanish": "antes",
+    "english": "before / earlier",
+    "kind": "adverb",
+    "usage": "Use for what came previously."
+  },
+  {
+    "id": "despues",
+    "spanish": "después",
+    "english": "after / afterwards",
+    "kind": "adverb",
+    "usage": "Use for what follows."
+  },
+  {
+    "id": "luego",
+    "spanish": "luego",
+    "english": "then / later",
+    "kind": "adverb",
+    "usage": "Use for the next step in a sequence."
+  },
+  {
+    "id": "entonces",
+    "spanish": "entonces",
+    "english": "then / so",
+    "kind": "connector",
+    "usage": "Use for a consequence in a narrated sequence."
+  },
+  {
+    "id": "pronto",
+    "spanish": "pronto",
+    "english": "soon",
+    "kind": "adverb",
+    "usage": "Use for something expected shortly."
+  },
+  {
+    "id": "tarde",
+    "spanish": "tarde",
+    "english": "late",
+    "kind": "adverb",
+    "usage": "Use when something happens after it should."
+  },
+  {
+    "id": "temprano",
+    "spanish": "temprano",
+    "english": "early",
+    "kind": "adverb",
+    "usage": "Use when something happens sooner than planned."
+  },
+  {
+    "id": "otra-vez",
+    "spanish": "otra vez",
+    "english": "again",
+    "kind": "phrase",
+    "usage": "Use for a repeat of the same action."
+  },
+  {
+    "id": "dia",
+    "spanish": "día",
+    "english": "day",
+    "kind": "noun",
+    "usage": "Use for a calendar day or a daily cadence."
+  },
+  {
+    "id": "semana",
+    "spanish": "semana",
+    "english": "week",
+    "kind": "noun",
+    "usage": "Use for a weekly period or cadence."
+  },
+  {
+    "id": "mes",
+    "spanish": "mes",
+    "english": "month",
+    "kind": "noun",
+    "usage": "Use for a monthly period."
+  },
+  {
+    "id": "ano",
+    "spanish": "año",
+    "english": "year",
+    "kind": "noun",
+    "usage": "Use for a yearly period."
+  },
+  {
+    "id": "hora",
+    "spanish": "hora",
+    "english": "hour / time of day",
+    "kind": "noun",
+    "usage": "Use for a duration in hours or a clock time."
+  },
+  {
+    "id": "vez",
+    "spanish": "vez",
+    "english": "time / occurrence",
+    "kind": "noun",
+    "usage": "Use for a countable occurrence of an event."
+  },
+  {
+    "id": "momento",
+    "spanish": "momento",
+    "english": "moment",
+    "kind": "noun",
+    "usage": "Use for a specific point in time."
+  },
+  {
+    "id": "aqui",
+    "spanish": "aquí",
+    "english": "here",
+    "kind": "adverb",
+    "usage": "Use to point at the current file, line, or context."
+  },
+  {
+    "id": "alli",
+    "spanish": "allí",
+    "english": "there",
+    "kind": "adverb",
+    "usage": "Use to point at a different location."
+  },
+  {
+    "id": "cerca",
+    "spanish": "cerca",
+    "english": "near / close",
+    "kind": "adverb",
+    "usage": "Use for physical or figurative closeness."
+  },
+  {
+    "id": "lejos",
+    "spanish": "lejos",
+    "english": "far",
+    "kind": "adverb",
+    "usage": "Use for distance, literal or figurative."
+  },
+  {
+    "id": "pero",
+    "spanish": "pero",
+    "english": "but",
+    "kind": "connector",
+    "usage": "Use for a simple contrast inside one sentence."
+  },
+  {
+    "id": "porque",
+    "spanish": "porque",
+    "english": "because",
+    "kind": "connector",
+    "usage": "Use to give the direct reason for something."
+  },
+  {
+    "id": "aunque",
+    "spanish": "aunque",
+    "english": "although",
+    "kind": "connector",
+    "usage": "Use to concede a point while keeping the main claim."
+  },
+  {
+    "id": "ademas",
+    "spanish": "además",
+    "english": "besides / moreover",
+    "kind": "connector",
+    "usage": "Use to add a reinforcing point."
+  },
+  {
+    "id": "asi",
+    "spanish": "así",
+    "english": "like this / that way",
+    "kind": "adverb",
+    "usage": "Use to point at the manner just described."
+  },
+  {
+    "id": "mucho",
+    "spanish": "mucho",
+    "english": "a lot / much",
+    "kind": "adjective",
+    "usage": "Use for a large quantity or degree."
+  },
+  {
+    "id": "poco",
+    "spanish": "poco",
+    "english": "little / few",
+    "kind": "adjective",
+    "usage": "Use for a small quantity or degree."
+  },
+  {
+    "id": "todo",
+    "spanish": "todo",
+    "english": "all / everything",
+    "kind": "adjective",
+    "usage": "Use for the complete set."
+  },
+  {
+    "id": "nada",
+    "spanish": "nada",
+    "english": "nothing",
+    "kind": "noun",
+    "usage": "Use for the empty case or a null result."
+  },
+  {
+    "id": "algo",
+    "spanish": "algo",
+    "english": "something",
+    "kind": "noun",
+    "usage": "Use for an unspecified thing."
+  },
+  {
+    "id": "alguien",
+    "spanish": "alguien",
+    "english": "someone",
+    "kind": "noun",
+    "usage": "Use for an unspecified person."
+  },
+  {
+    "id": "nadie",
+    "spanish": "nadie",
+    "english": "nobody",
+    "kind": "noun",
+    "usage": "Use when no person is involved."
+  },
+  {
+    "id": "cada",
+    "spanish": "cada",
+    "english": "each / every",
+    "kind": "adjective",
+    "usage": "Use for per-item iteration."
+  },
+  {
+    "id": "varios",
+    "spanish": "varios",
+    "english": "several",
+    "kind": "adjective",
+    "usage": "Use for an unspecified plural, more than two."
+  },
+  {
+    "id": "otro",
+    "spanish": "otro",
+    "english": "other / another",
+    "kind": "adjective",
+    "usage": "Use for an additional or alternative item."
+  },
+  {
+    "id": "mismo",
+    "spanish": "mismo",
+    "english": "same",
+    "kind": "adjective",
+    "usage": "Use for identity between two things."
+  },
+  {
+    "id": "bueno",
+    "spanish": "bueno",
+    "english": "good",
+    "kind": "adjective",
+    "usage": "Use for a positive quality or outcome."
+  },
+  {
+    "id": "malo",
+    "spanish": "malo",
+    "english": "bad",
+    "kind": "adjective",
+    "usage": "Use for a negative quality or outcome."
+  },
+  {
+    "id": "grande",
+    "spanish": "grande",
+    "english": "big / large",
+    "kind": "adjective",
+    "usage": "Use for size or scale."
+  },
+  {
+    "id": "pequeno",
+    "spanish": "pequeño",
+    "english": "small",
+    "kind": "adjective",
+    "usage": "Use for size or scope."
+  },
+  {
+    "id": "nuevo",
+    "spanish": "nuevo",
+    "english": "new",
+    "kind": "adjective",
+    "usage": "Use for something recently added."
+  },
+  {
+    "id": "viejo",
+    "spanish": "viejo",
+    "english": "old",
+    "kind": "adjective",
+    "usage": "Use for something long-standing or outdated."
+  },
+  {
+    "id": "facil",
+    "spanish": "fácil",
+    "english": "easy",
+    "kind": "adjective",
+    "usage": "Use for low effort or low difficulty."
+  },
+  {
+    "id": "dificil",
+    "spanish": "difícil",
+    "english": "difficult / hard",
+    "kind": "adjective",
+    "usage": "Use for high effort or high difficulty."
+  },
+  {
+    "id": "largo",
+    "spanish": "largo",
+    "english": "long",
+    "kind": "adjective",
+    "usage": "Use for length or duration."
+  },
+  {
+    "id": "corto",
+    "spanish": "corto",
+    "english": "short",
+    "kind": "adjective",
+    "usage": "Use for brevity in length or duration."
+  },
+  {
+    "id": "lento",
+    "spanish": "lento",
+    "english": "slow",
+    "kind": "adjective",
+    "usage": "Use for low speed or poor performance."
+  },
+  {
+    "id": "listo",
+    "spanish": "listo",
+    "english": "ready",
+    "kind": "adjective",
+    "usage": "Use when something is prepared to run or ship."
+  },
+  {
+    "id": "seguro",
+    "spanish": "seguro",
+    "english": "sure / safe",
+    "kind": "adjective",
+    "usage": "Use for certainty or for safety."
+  },
+  {
+    "id": "importante",
+    "spanish": "importante",
+    "english": "important",
+    "kind": "adjective",
+    "usage": "Use for something that materially matters."
+  },
+  {
+    "id": "diferente",
+    "spanish": "diferente",
+    "english": "different",
+    "kind": "adjective",
+    "usage": "Use for a contrast between two things."
+  },
+  {
+    "id": "igual",
+    "spanish": "igual",
+    "english": "the same / equal",
+    "kind": "adjective",
+    "usage": "Use for equivalence between two things."
+  },
+  {
+    "id": "primero",
+    "spanish": "primero",
+    "english": "first",
+    "kind": "adjective",
+    "usage": "Use for the first item in an order."
+  },
+  {
+    "id": "ultimo",
+    "spanish": "último",
+    "english": "last / latest",
+    "kind": "adjective",
+    "usage": "Use for the final or most recent item."
+  },
+  {
+    "id": "siguiente",
+    "spanish": "siguiente",
+    "english": "next",
+    "kind": "adjective",
+    "usage": "Use for the item that follows."
+  },
+  {
+    "id": "cosa",
+    "spanish": "cosa",
+    "english": "thing",
+    "kind": "noun",
+    "usage": "Use for an unspecified item when precision is not needed."
+  },
+  {
+    "id": "parte",
+    "spanish": "parte",
+    "english": "part",
+    "kind": "noun",
+    "usage": "Use for a component of a whole."
+  },
+  {
+    "id": "ejemplo",
+    "spanish": "ejemplo",
+    "english": "example",
+    "kind": "noun",
+    "usage": "Use when giving an illustration."
+  },
+  {
+    "id": "problema",
+    "spanish": "problema",
+    "english": "problem",
+    "kind": "noun",
+    "usage": "Use for a defect or an obstacle."
+  },
+  {
+    "id": "pregunta",
+    "spanish": "pregunta",
+    "english": "question",
+    "kind": "noun",
+    "usage": "Use for something being asked."
+  },
+  {
+    "id": "respuesta",
+    "spanish": "respuesta",
+    "english": "answer / response",
+    "kind": "noun",
+    "usage": "Use for a reply or an API response."
+  },
+  {
+    "id": "nombre",
+    "spanish": "nombre",
+    "english": "name",
+    "kind": "noun",
+    "usage": "Use for the identifier of something."
+  },
+  {
+    "id": "numero",
+    "spanish": "número",
+    "english": "number",
+    "kind": "noun",
+    "usage": "Use for a count or a numeric value."
+  },
+  {
+    "id": "palabra",
+    "spanish": "palabra",
+    "english": "word",
+    "kind": "noun",
+    "usage": "Use for a single lexical item."
+  },
+  {
+    "id": "razon",
+    "spanish": "razón",
+    "english": "reason",
+    "kind": "noun",
+    "usage": "Use for the cause or justification."
+  },
+  {
+    "id": "caso",
+    "spanish": "caso",
+    "english": "case",
+    "kind": "noun",
+    "usage": "Use for a specific scenario or branch."
+  },
+  {
+    "id": "gente",
+    "spanish": "gente",
+    "english": "people",
+    "kind": "noun",
+    "usage": "Use as a collective for persons; it is grammatically singular."
+  },
+  {
+    "id": "trabajo",
+    "spanish": "trabajo",
+    "english": "work / job",
+    "kind": "noun",
+    "usage": "Use for effort or for a scheduled job."
+  },
+  {
+    "id": "vida",
+    "spanish": "vida",
+    "english": "life",
+    "kind": "noun",
+    "usage": "Use for lifetime or lifespan, literal or figurative."
+  },
+  {
+    "id": "mundo",
+    "spanish": "mundo",
+    "english": "world",
+    "kind": "noun",
+    "usage": "Use for the broader real-world context."
+  },
+  {
+    "id": "final",
+    "spanish": "final",
+    "english": "end",
+    "kind": "noun",
+    "usage": "Use for the last point of a sequence or period."
+  },
+  {
+    "id": "usar",
+    "spanish": "usar",
+    "english": "to use",
+    "kind": "verb",
+    "usage": "Use for employing a tool or option. Conjugate to fit the sentence or skip."
+  },
+  {
+    "id": "necesitar",
+    "spanish": "necesitar",
+    "english": "to need",
+    "kind": "verb",
+    "usage": "Use for a requirement. Conjugate to fit the sentence or skip."
+  },
+  {
+    "id": "cambiar",
+    "spanish": "cambiar",
+    "english": "to change",
+    "kind": "verb",
+    "usage": "Use for modifying something. Conjugate to fit the sentence or skip."
+  },
+  {
+    "id": "empezar",
+    "spanish": "empezar",
+    "english": "to start / begin",
+    "kind": "verb",
+    "usage": "Use for the beginning of a process. Conjugate to fit or skip."
+  },
+  {
+    "id": "terminar",
+    "spanish": "terminar",
+    "english": "to finish / end",
+    "kind": "verb",
+    "usage": "Use for completion. Conjugate to fit or skip."
+  },
+  {
+    "id": "anadir",
+    "spanish": "añadir",
+    "english": "to add",
+    "kind": "verb",
+    "usage": "Use for adding an item. Conjugate to fit or skip."
+  },
+  {
+    "id": "quitar",
+    "spanish": "quitar",
+    "english": "to remove",
+    "kind": "verb",
+    "usage": "Use for removing an item. Conjugate to fit or skip."
+  },
+  {
+    "id": "probar",
+    "spanish": "probar",
+    "english": "to try / to test",
+    "kind": "verb",
+    "usage": "Use for testing or trying something. Conjugate to fit or skip."
+  },
+  {
+    "id": "buscar",
+    "spanish": "buscar",
+    "english": "to look for / search",
+    "kind": "verb",
+    "usage": "Use for searching. Conjugate to fit or skip."
+  },
+  {
+    "id": "encontrar",
+    "spanish": "encontrar",
+    "english": "to find",
+    "kind": "verb",
+    "usage": "Use for locating something. Conjugate to fit or skip."
+  },
+  {
+    "id": "entender",
+    "spanish": "entender",
+    "english": "to understand",
+    "kind": "verb",
+    "usage": "Use for comprehension. Conjugate to fit or skip."
+  },
+  {
+    "id": "funcionar",
+    "spanish": "funcionar",
+    "english": "to work / function",
+    "kind": "verb",
+    "usage": "Use when something operates correctly. Conjugate to fit or skip."
+  },
+  {
+    "id": "pasar",
+    "spanish": "pasar",
+    "english": "to happen / to pass",
+    "kind": "verb",
+    "usage": "Use for an event occurring. Conjugate to fit or skip."
+  },
+  {
+    "id": "esperar",
+    "spanish": "esperar",
+    "english": "to wait / to expect",
+    "kind": "verb",
+    "usage": "Use for waiting or expecting. Conjugate to fit or skip."
+  },
+  {
     "id": "sin-embargo",
     "spanish": "sin embargo",
     "english": "however",

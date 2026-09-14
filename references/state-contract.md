@@ -14,7 +14,9 @@ The default state file is `~/.codex/state/ambient-spanish/state.json`. `AMBIENT_
 - `config.start_date`: Local date on which batch 0 begins.
 - `config.cadence_days`: Calendar days per batch. Default: 3.
 - `config.batch_size`: New terms unlocked per batch. Default: 3.
-- `config.baseline_known_count`: Leading curriculum items treated as already known at `start_date`. Batch 0's learning window starts at this offset. Set by migration to the number of terms already introduced under the previous schema.
+- `config.baseline_known_count`: Leading curriculum items treated as already known at `start_date` and therefore never taught as a batch. Batch 0's learning window starts at this offset. Set by migration to the number of terms already introduced under the previous schema, and adjustable with `configure --baseline-known`.
+
+  This is how pre-existing knowledge enters the system: put the words the user already knows at the **front** of `references/curriculum.json` and set `baseline_known_count` to cover them. Because tiers are index-based, prepending `n` items to the curriculum without adding `n` to `baseline_known_count` silently shifts the learning window backwards over words the user already knows — always change the two together.
 - `config.timezone`: IANA timezone used for day boundaries. Default: `Europe/Madrid`.
 - `config.dialect`: Output dialect hint. Default: `es-ES`.
 - `config.paused`: Stops substitution without deleting progress.
