@@ -55,7 +55,12 @@ Run `context` once per reply.
 - `known` terms carry no gloss. Do not re-explain a term the user has already been taught — that is the point of promotion.
 - `learning` terms always carry the bracketed English on first use in a reply, for the whole batch period.
 - Unlock new vocabulary only from elapsed calendar days. Never accelerate because the user sends many messages, answers correctly, seems fluent, or asks many questions.
-- Use Spain Spanish (`es-ES`) by default. Respect the configured dialect. Match the term's own grammar — conjugate verbs and agree adjectives as the sentence requires; the curriculum lists dictionary forms.
+- Match the term's own grammar — conjugate verbs and agree adjectives as the sentence requires; the curriculum lists dictionary forms.
+- Write **Peninsular Spanish** (`es-ES`, the configured `dialect`). This is a lexical and grammatical commitment, not a label:
+  - Use the Peninsular word, never its Latin-American counterpart: `ordenador` not *computadora*, `móvil` not *celular*, `coche` not *carro*/*auto*, `patata` not *papa*, `zumo` not *jugo*, `nevera` not *refrigerador*, `piso` not *departamento*, `billete` not *boleto*, `gafas` not *lentes*, `ascensor` not *elevador*, `aparcamiento` not *estacionamiento*, `acera` not *banqueta*, `conducir` not *manejar*, `alquilar` not *rentar*, `enfadarse` not *enojarse*, `bonito` not *lindo*, `chaqueta` not *saco*.
+  - Second person plural is `vosotros` with its own verb forms, not `ustedes`, when addressing a group informally.
+  - `vale` and `guay` are the ordinary Peninsular fillers. Avoid regionalisms from any single Latin-American country.
+  - `tests/test_ambient_state.py` enforces this for the shipped curriculum via a blocklist. Any term added to `references/curriculum.json` must pass it.
 - Do not invent Spanish outside `known` + `learning`, except when Spanish is independently required by the user's request.
 - No quizzes, exercises, grammar drills, corrections, streak pressure, or lesson summaries unless explicitly requested.
 - Never alter code, commands, paths, JSON, logs, errors, quotations, citations, generated artifacts, table headers that name real fields, or any other exact text to insert Spanish. Substitute only in your own prose.
@@ -74,7 +79,7 @@ python3 <skill-root>/scripts/ambient_state.py configure --pause
 python3 <skill-root>/scripts/ambient_state.py configure --resume
 python3 <skill-root>/scripts/ambient_state.py configure --cadence-days 3
 python3 <skill-root>/scripts/ambient_state.py configure --batch-size 3
-python3 <skill-root>/scripts/ambient_state.py configure --baseline-known 109
+python3 <skill-root>/scripts/ambient_state.py configure --baseline-known 321
 python3 <skill-root>/scripts/ambient_state.py configure --dialect es-ES
 ```
 

@@ -742,6 +742,1490 @@
     "usage": "Use for waiting or expecting. Conjugate to fit or skip."
   },
   {
+    "id": "vale",
+    "spanish": "vale",
+    "english": "OK / fine",
+    "kind": "phrase",
+    "usage": "Use to acknowledge or accept. Distinctly Peninsular."
+  },
+  {
+    "id": "guay",
+    "spanish": "guay",
+    "english": "cool / great",
+    "kind": "adjective",
+    "usage": "Use colloquially for approval. Distinctly Peninsular."
+  },
+  {
+    "id": "hasta-luego",
+    "spanish": "hasta luego",
+    "english": "see you later",
+    "kind": "phrase",
+    "usage": "Use as a casual parting. Very common in Spain."
+  },
+  {
+    "id": "claro",
+    "spanish": "claro",
+    "english": "of course / clear",
+    "kind": "adverb",
+    "usage": "Use to agree or to mark something obvious."
+  },
+  {
+    "id": "quiza",
+    "spanish": "quizá",
+    "english": "maybe / perhaps",
+    "kind": "adverb",
+    "usage": "Use for uncertainty."
+  },
+  {
+    "id": "por-favor",
+    "spanish": "por favor",
+    "english": "please",
+    "kind": "phrase",
+    "usage": "Use to make a polite request."
+  },
+  {
+    "id": "gracias",
+    "spanish": "gracias",
+    "english": "thanks",
+    "kind": "phrase",
+    "usage": "Use to thank."
+  },
+  {
+    "id": "perdon",
+    "spanish": "perdón",
+    "english": "sorry",
+    "kind": "phrase",
+    "usage": "Use to apologise."
+  },
+  {
+    "id": "hola",
+    "spanish": "hola",
+    "english": "hello",
+    "kind": "phrase",
+    "usage": "Use as a greeting."
+  },
+  {
+    "id": "adios",
+    "spanish": "adiós",
+    "english": "goodbye",
+    "kind": "phrase",
+    "usage": "Use as a parting."
+  },
+  {
+    "id": "enseguida",
+    "spanish": "enseguida",
+    "english": "right away",
+    "kind": "adverb",
+    "usage": "Use for something happening immediately."
+  },
+  {
+    "id": "a-veces",
+    "spanish": "a veces",
+    "english": "sometimes",
+    "kind": "phrase",
+    "usage": "Use for occasional occurrence."
+  },
+  {
+    "id": "sobre-todo",
+    "spanish": "sobre todo",
+    "english": "above all / especially",
+    "kind": "phrase",
+    "usage": "Use to single out the most important item."
+  },
+  {
+    "id": "en-general",
+    "spanish": "en general",
+    "english": "in general",
+    "kind": "phrase",
+    "usage": "Use for the typical case."
+  },
+  {
+    "id": "por-supuesto",
+    "spanish": "por supuesto",
+    "english": "of course",
+    "kind": "phrase",
+    "usage": "Use to affirm strongly."
+  },
+  {
+    "id": "mas-o-menos",
+    "spanish": "más o menos",
+    "english": "more or less",
+    "kind": "phrase",
+    "usage": "Use for an approximation."
+  },
+  {
+    "id": "de-repente",
+    "spanish": "de repente",
+    "english": "suddenly",
+    "kind": "phrase",
+    "usage": "Use for an abrupt change."
+  },
+  {
+    "id": "por-ahora",
+    "spanish": "por ahora",
+    "english": "for now",
+    "kind": "phrase",
+    "usage": "Use for a temporary state."
+  },
+  {
+    "id": "mientras",
+    "spanish": "mientras",
+    "english": "while",
+    "kind": "connector",
+    "usage": "Use for two things happening at once."
+  },
+  {
+    "id": "cuando",
+    "spanish": "cuando",
+    "english": "when",
+    "kind": "connector",
+    "usage": "Use to place something in time."
+  },
+  {
+    "id": "donde",
+    "spanish": "donde",
+    "english": "where",
+    "kind": "connector",
+    "usage": "Use to place something in space."
+  },
+  {
+    "id": "como",
+    "spanish": "como",
+    "english": "as / like",
+    "kind": "connector",
+    "usage": "Use for comparison or manner."
+  },
+  {
+    "id": "segun",
+    "spanish": "según",
+    "english": "according to",
+    "kind": "connector",
+    "usage": "Use to attribute a claim to a source."
+  },
+  {
+    "id": "hacia",
+    "spanish": "hacia",
+    "english": "towards",
+    "kind": "connector",
+    "usage": "Use for direction or a trend."
+  },
+  {
+    "id": "hasta",
+    "spanish": "hasta",
+    "english": "until / up to",
+    "kind": "connector",
+    "usage": "Use for a limit in time or quantity."
+  },
+  {
+    "id": "desde",
+    "spanish": "desde",
+    "english": "since / from",
+    "kind": "connector",
+    "usage": "Use for a starting point."
+  },
+  {
+    "id": "durante",
+    "spanish": "durante",
+    "english": "during",
+    "kind": "connector",
+    "usage": "Use for a span of time."
+  },
+  {
+    "id": "sin-mas",
+    "spanish": "sin más",
+    "english": "without further ado",
+    "kind": "phrase",
+    "usage": "Use for doing something plainly and directly."
+  },
+  {
+    "id": "de-nada",
+    "spanish": "de nada",
+    "english": "you're welcome",
+    "kind": "phrase",
+    "usage": "Use to answer thanks."
+  },
+  {
+    "id": "buenos-dias",
+    "spanish": "buenos días",
+    "english": "good morning",
+    "kind": "phrase",
+    "usage": "Use as a morning greeting."
+  },
+  {
+    "id": "conducir",
+    "spanish": "conducir",
+    "english": "to drive",
+    "kind": "verb",
+    "usage": "Peninsular; manejar is Latin American. Conjugate to fit or skip."
+  },
+  {
+    "id": "alquilar",
+    "spanish": "alquilar",
+    "english": "to rent",
+    "kind": "verb",
+    "usage": "Peninsular; rentar is Latin American. Conjugate to fit or skip."
+  },
+  {
+    "id": "enfadarse",
+    "spanish": "enfadarse",
+    "english": "to get angry",
+    "kind": "verb",
+    "usage": "Peninsular; enojarse is Latin American. Conjugate to fit or skip."
+  },
+  {
+    "id": "beber",
+    "spanish": "beber",
+    "english": "to drink",
+    "kind": "verb",
+    "usage": "Peninsular preference over tomar. Conjugate to fit or skip."
+  },
+  {
+    "id": "ser",
+    "spanish": "ser",
+    "english": "to be (essential)",
+    "kind": "verb",
+    "usage": "Use for identity and permanent qualities. Conjugate to fit or skip."
+  },
+  {
+    "id": "estar",
+    "spanish": "estar",
+    "english": "to be (state)",
+    "kind": "verb",
+    "usage": "Use for states and locations. Conjugate to fit or skip."
+  },
+  {
+    "id": "tener",
+    "spanish": "tener",
+    "english": "to have",
+    "kind": "verb",
+    "usage": "Use for possession or obligation. Conjugate to fit or skip."
+  },
+  {
+    "id": "hacer",
+    "spanish": "hacer",
+    "english": "to do / make",
+    "kind": "verb",
+    "usage": "Use for doing or making. Conjugate to fit or skip."
+  },
+  {
+    "id": "poder",
+    "spanish": "poder",
+    "english": "to be able / can",
+    "kind": "verb",
+    "usage": "Use for ability or permission. Conjugate to fit or skip."
+  },
+  {
+    "id": "querer",
+    "spanish": "querer",
+    "english": "to want",
+    "kind": "verb",
+    "usage": "Use for wanting. Conjugate to fit or skip."
+  },
+  {
+    "id": "saber",
+    "spanish": "saber",
+    "english": "to know (facts)",
+    "kind": "verb",
+    "usage": "Use for knowing information. Conjugate to fit or skip."
+  },
+  {
+    "id": "conocer",
+    "spanish": "conocer",
+    "english": "to know (be familiar)",
+    "kind": "verb",
+    "usage": "Use for familiarity with people or places. Conjugate to fit or skip."
+  },
+  {
+    "id": "ir",
+    "spanish": "ir",
+    "english": "to go",
+    "kind": "verb",
+    "usage": "Use for movement or intention. Conjugate to fit or skip."
+  },
+  {
+    "id": "venir",
+    "spanish": "venir",
+    "english": "to come",
+    "kind": "verb",
+    "usage": "Use for arriving. Conjugate to fit or skip."
+  },
+  {
+    "id": "ver",
+    "spanish": "ver",
+    "english": "to see",
+    "kind": "verb",
+    "usage": "Use for seeing. Conjugate to fit or skip."
+  },
+  {
+    "id": "decir",
+    "spanish": "decir",
+    "english": "to say",
+    "kind": "verb",
+    "usage": "Use for saying. Conjugate to fit or skip."
+  },
+  {
+    "id": "dar",
+    "spanish": "dar",
+    "english": "to give",
+    "kind": "verb",
+    "usage": "Use for giving. Conjugate to fit or skip."
+  },
+  {
+    "id": "poner",
+    "spanish": "poner",
+    "english": "to put",
+    "kind": "verb",
+    "usage": "Use for placing or setting. Conjugate to fit or skip."
+  },
+  {
+    "id": "llevar",
+    "spanish": "llevar",
+    "english": "to carry / to take",
+    "kind": "verb",
+    "usage": "Use for carrying or elapsed duration. Conjugate to fit or skip."
+  },
+  {
+    "id": "dejar",
+    "spanish": "dejar",
+    "english": "to leave / to let",
+    "kind": "verb",
+    "usage": "Use for leaving something or allowing it. Conjugate to fit or skip."
+  },
+  {
+    "id": "leer",
+    "spanish": "leer",
+    "english": "to read",
+    "kind": "verb",
+    "usage": "Use for reading. Conjugate to fit or skip."
+  },
+  {
+    "id": "escribir",
+    "spanish": "escribir",
+    "english": "to write",
+    "kind": "verb",
+    "usage": "Use for writing. Conjugate to fit or skip."
+  },
+  {
+    "id": "hablar",
+    "spanish": "hablar",
+    "english": "to speak",
+    "kind": "verb",
+    "usage": "Use for speaking. Conjugate to fit or skip."
+  },
+  {
+    "id": "escuchar",
+    "spanish": "escuchar",
+    "english": "to listen",
+    "kind": "verb",
+    "usage": "Use for listening. Conjugate to fit or skip."
+  },
+  {
+    "id": "mirar",
+    "spanish": "mirar",
+    "english": "to look at",
+    "kind": "verb",
+    "usage": "Use for looking deliberately. Conjugate to fit or skip."
+  },
+  {
+    "id": "abrir",
+    "spanish": "abrir",
+    "english": "to open",
+    "kind": "verb",
+    "usage": "Use for opening. Conjugate to fit or skip."
+  },
+  {
+    "id": "cerrar",
+    "spanish": "cerrar",
+    "english": "to close",
+    "kind": "verb",
+    "usage": "Use for closing. Conjugate to fit or skip."
+  },
+  {
+    "id": "llamar",
+    "spanish": "llamar",
+    "english": "to call / to name",
+    "kind": "verb",
+    "usage": "Use for calling or naming. Conjugate to fit or skip."
+  },
+  {
+    "id": "preguntar",
+    "spanish": "preguntar",
+    "english": "to ask",
+    "kind": "verb",
+    "usage": "Use for asking a question. Conjugate to fit or skip."
+  },
+  {
+    "id": "contestar",
+    "spanish": "contestar",
+    "english": "to answer",
+    "kind": "verb",
+    "usage": "Use for answering. Conjugate to fit or skip."
+  },
+  {
+    "id": "ayudar",
+    "spanish": "ayudar",
+    "english": "to help",
+    "kind": "verb",
+    "usage": "Use for helping. Conjugate to fit or skip."
+  },
+  {
+    "id": "gustar",
+    "spanish": "gustar",
+    "english": "to be pleasing / to like",
+    "kind": "verb",
+    "usage": "The thing liked is the subject. Conjugate to fit or skip."
+  },
+  {
+    "id": "pensar",
+    "spanish": "pensar",
+    "english": "to think",
+    "kind": "verb",
+    "usage": "Use for thinking. Conjugate to fit or skip."
+  },
+  {
+    "id": "creer",
+    "spanish": "creer",
+    "english": "to believe",
+    "kind": "verb",
+    "usage": "Use for believing. Conjugate to fit or skip."
+  },
+  {
+    "id": "recordar",
+    "spanish": "recordar",
+    "english": "to remember",
+    "kind": "verb",
+    "usage": "Use for remembering. Conjugate to fit or skip."
+  },
+  {
+    "id": "olvidar",
+    "spanish": "olvidar",
+    "english": "to forget",
+    "kind": "verb",
+    "usage": "Use for forgetting. Conjugate to fit or skip."
+  },
+  {
+    "id": "aprender",
+    "spanish": "aprender",
+    "english": "to learn",
+    "kind": "verb",
+    "usage": "Use for learning. Conjugate to fit or skip."
+  },
+  {
+    "id": "ensenar",
+    "spanish": "enseñar",
+    "english": "to teach / to show",
+    "kind": "verb",
+    "usage": "Use for teaching or showing. Conjugate to fit or skip."
+  },
+  {
+    "id": "salir",
+    "spanish": "salir",
+    "english": "to leave / go out",
+    "kind": "verb",
+    "usage": "Use for exiting. Conjugate to fit or skip."
+  },
+  {
+    "id": "llegar",
+    "spanish": "llegar",
+    "english": "to arrive",
+    "kind": "verb",
+    "usage": "Use for arriving. Conjugate to fit or skip."
+  },
+  {
+    "id": "volver",
+    "spanish": "volver",
+    "english": "to return",
+    "kind": "verb",
+    "usage": "Use for going back. Conjugate to fit or skip."
+  },
+  {
+    "id": "quedar",
+    "spanish": "quedar",
+    "english": "to remain / be left",
+    "kind": "verb",
+    "usage": "Use for what is left over. Conjugate to fit or skip."
+  },
+  {
+    "id": "parecer",
+    "spanish": "parecer",
+    "english": "to seem",
+    "kind": "verb",
+    "usage": "Use for appearances. Conjugate to fit or skip."
+  },
+  {
+    "id": "romper",
+    "spanish": "romper",
+    "english": "to break",
+    "kind": "verb",
+    "usage": "Use for breaking something. Conjugate to fit or skip."
+  },
+  {
+    "id": "perder",
+    "spanish": "perder",
+    "english": "to lose",
+    "kind": "verb",
+    "usage": "Use for losing. Conjugate to fit or skip."
+  },
+  {
+    "id": "subir",
+    "spanish": "subir",
+    "english": "to go up / upload",
+    "kind": "verb",
+    "usage": "Use for increasing or uploading. Conjugate to fit or skip."
+  },
+  {
+    "id": "bajar",
+    "spanish": "bajar",
+    "english": "to go down / download",
+    "kind": "verb",
+    "usage": "Use for decreasing or downloading. Conjugate to fit or skip."
+  },
+  {
+    "id": "elegir",
+    "spanish": "elegir",
+    "english": "to choose",
+    "kind": "verb",
+    "usage": "Use for choosing. Conjugate to fit or skip."
+  },
+  {
+    "id": "guardar",
+    "spanish": "guardar",
+    "english": "to keep / to save",
+    "kind": "verb",
+    "usage": "Use for saving or storing. Conjugate to fit or skip."
+  },
+  {
+    "id": "seguir",
+    "spanish": "seguir",
+    "english": "to follow / continue",
+    "kind": "verb",
+    "usage": "Use for following or carrying on. Conjugate to fit or skip."
+  },
+  {
+    "id": "bonito",
+    "spanish": "bonito",
+    "english": "nice / pretty",
+    "kind": "adjective",
+    "usage": "Peninsular preference over lindo."
+  },
+  {
+    "id": "alto",
+    "spanish": "alto",
+    "english": "tall / high",
+    "kind": "adjective",
+    "usage": "Use for height or a high value."
+  },
+  {
+    "id": "bajo",
+    "spanish": "bajo",
+    "english": "short / low",
+    "kind": "adjective",
+    "usage": "Use for a low value or short height."
+  },
+  {
+    "id": "ancho",
+    "spanish": "ancho",
+    "english": "wide",
+    "kind": "adjective",
+    "usage": "Use for width."
+  },
+  {
+    "id": "estrecho",
+    "spanish": "estrecho",
+    "english": "narrow",
+    "kind": "adjective",
+    "usage": "Use for narrowness or a tight constraint."
+  },
+  {
+    "id": "caro",
+    "spanish": "caro",
+    "english": "expensive",
+    "kind": "adjective",
+    "usage": "Use for high cost."
+  },
+  {
+    "id": "barato",
+    "spanish": "barato",
+    "english": "cheap",
+    "kind": "adjective",
+    "usage": "Use for low cost."
+  },
+  {
+    "id": "limpio",
+    "spanish": "limpio",
+    "english": "clean",
+    "kind": "adjective",
+    "usage": "Use for cleanliness or a clean state."
+  },
+  {
+    "id": "sucio",
+    "spanish": "sucio",
+    "english": "dirty",
+    "kind": "adjective",
+    "usage": "Use for dirtiness or messy data."
+  },
+  {
+    "id": "lleno",
+    "spanish": "lleno",
+    "english": "full",
+    "kind": "adjective",
+    "usage": "Use for a full container or capacity."
+  },
+  {
+    "id": "vacio",
+    "spanish": "vacío",
+    "english": "empty",
+    "kind": "adjective",
+    "usage": "Use for an empty container or value."
+  },
+  {
+    "id": "fuerte",
+    "spanish": "fuerte",
+    "english": "strong / loud",
+    "kind": "adjective",
+    "usage": "Use for strength or volume."
+  },
+  {
+    "id": "debil",
+    "spanish": "débil",
+    "english": "weak",
+    "kind": "adjective",
+    "usage": "Use for weakness."
+  },
+  {
+    "id": "libre",
+    "spanish": "libre",
+    "english": "free / available",
+    "kind": "adjective",
+    "usage": "Use for availability, not price."
+  },
+  {
+    "id": "ocupado",
+    "spanish": "ocupado",
+    "english": "busy",
+    "kind": "adjective",
+    "usage": "Use for being busy or a resource in use."
+  },
+  {
+    "id": "abierto",
+    "spanish": "abierto",
+    "english": "open",
+    "kind": "adjective",
+    "usage": "Use for an open state."
+  },
+  {
+    "id": "cerrado",
+    "spanish": "cerrado",
+    "english": "closed",
+    "kind": "adjective",
+    "usage": "Use for a closed state."
+  },
+  {
+    "id": "posible",
+    "spanish": "posible",
+    "english": "possible",
+    "kind": "adjective",
+    "usage": "Use for feasibility."
+  },
+  {
+    "id": "imposible",
+    "spanish": "imposible",
+    "english": "impossible",
+    "kind": "adjective",
+    "usage": "Use for infeasibility."
+  },
+  {
+    "id": "suficiente",
+    "spanish": "suficiente",
+    "english": "enough",
+    "kind": "adjective",
+    "usage": "Use for adequacy."
+  },
+  {
+    "id": "raro",
+    "spanish": "raro",
+    "english": "strange / rare",
+    "kind": "adjective",
+    "usage": "Use for oddity or rarity."
+  },
+  {
+    "id": "normal",
+    "spanish": "normal",
+    "english": "normal",
+    "kind": "adjective",
+    "usage": "Use for the usual case."
+  },
+  {
+    "id": "cansado",
+    "spanish": "cansado",
+    "english": "tired",
+    "kind": "adjective",
+    "usage": "Use for tiredness."
+  },
+  {
+    "id": "cero",
+    "spanish": "cero",
+    "english": "zero",
+    "kind": "noun",
+    "usage": "Use for a zero count or an empty result."
+  },
+  {
+    "id": "uno",
+    "spanish": "uno",
+    "english": "one",
+    "kind": "noun",
+    "usage": "Use for a count of one."
+  },
+  {
+    "id": "dos",
+    "spanish": "dos",
+    "english": "two",
+    "kind": "noun",
+    "usage": "Use for a count of two."
+  },
+  {
+    "id": "tres",
+    "spanish": "tres",
+    "english": "three",
+    "kind": "noun",
+    "usage": "Use for a count of three."
+  },
+  {
+    "id": "cuatro",
+    "spanish": "cuatro",
+    "english": "four",
+    "kind": "noun",
+    "usage": "Use for a count of four."
+  },
+  {
+    "id": "cinco",
+    "spanish": "cinco",
+    "english": "five",
+    "kind": "noun",
+    "usage": "Use for a count of five."
+  },
+  {
+    "id": "diez",
+    "spanish": "diez",
+    "english": "ten",
+    "kind": "noun",
+    "usage": "Use for a count of ten."
+  },
+  {
+    "id": "veinte",
+    "spanish": "veinte",
+    "english": "twenty",
+    "kind": "noun",
+    "usage": "Use for a count of twenty."
+  },
+  {
+    "id": "cien",
+    "spanish": "cien",
+    "english": "a hundred",
+    "kind": "noun",
+    "usage": "Use for a round hundred."
+  },
+  {
+    "id": "mil",
+    "spanish": "mil",
+    "english": "a thousand",
+    "kind": "noun",
+    "usage": "Use for a round thousand."
+  },
+  {
+    "id": "medio",
+    "spanish": "medio",
+    "english": "half",
+    "kind": "adjective",
+    "usage": "Use for half of a quantity or duration."
+  },
+  {
+    "id": "mitad",
+    "spanish": "mitad",
+    "english": "half (the half)",
+    "kind": "noun",
+    "usage": "Use for one of two equal parts."
+  },
+  {
+    "id": "doble",
+    "spanish": "doble",
+    "english": "double",
+    "kind": "adjective",
+    "usage": "Use for twice a quantity."
+  },
+  {
+    "id": "ordenador",
+    "spanish": "ordenador",
+    "english": "computer",
+    "kind": "noun",
+    "usage": "Peninsular; computadora is Latin American."
+  },
+  {
+    "id": "movil",
+    "spanish": "móvil",
+    "english": "mobile phone",
+    "kind": "noun",
+    "usage": "Peninsular; celular is Latin American."
+  },
+  {
+    "id": "raton",
+    "spanish": "ratón",
+    "english": "mouse",
+    "kind": "noun",
+    "usage": "Use for a computer mouse or the animal. Peninsular."
+  },
+  {
+    "id": "fichero",
+    "spanish": "fichero",
+    "english": "file",
+    "kind": "noun",
+    "usage": "Use for a file. Peninsular alongside archivo."
+  },
+  {
+    "id": "pantalla",
+    "spanish": "pantalla",
+    "english": "screen",
+    "kind": "noun",
+    "usage": "Use for a display."
+  },
+  {
+    "id": "teclado",
+    "spanish": "teclado",
+    "english": "keyboard",
+    "kind": "noun",
+    "usage": "Use for a keyboard."
+  },
+  {
+    "id": "correo",
+    "spanish": "correo",
+    "english": "email / post",
+    "kind": "noun",
+    "usage": "Use for email or postal mail."
+  },
+  {
+    "id": "carpeta",
+    "spanish": "carpeta",
+    "english": "folder",
+    "kind": "noun",
+    "usage": "Use for a directory."
+  },
+  {
+    "id": "enlace",
+    "spanish": "enlace",
+    "english": "link",
+    "kind": "noun",
+    "usage": "Use for a hyperlink or a connection."
+  },
+  {
+    "id": "red",
+    "spanish": "red",
+    "english": "network",
+    "kind": "noun",
+    "usage": "Use for a network."
+  },
+  {
+    "id": "dato",
+    "spanish": "dato",
+    "english": "piece of data",
+    "kind": "noun",
+    "usage": "Use for a datum; datos is data."
+  },
+  {
+    "id": "copia",
+    "spanish": "copia",
+    "english": "copy",
+    "kind": "noun",
+    "usage": "Use for a copy or a backup."
+  },
+  {
+    "id": "prueba",
+    "spanish": "prueba",
+    "english": "test",
+    "kind": "noun",
+    "usage": "Use for a test or a piece of evidence."
+  },
+  {
+    "id": "cambio",
+    "spanish": "cambio",
+    "english": "change",
+    "kind": "noun",
+    "usage": "Use for a change or a diff."
+  },
+  {
+    "id": "paso",
+    "spanish": "paso",
+    "english": "step",
+    "kind": "noun",
+    "usage": "Use for a step in a process."
+  },
+  {
+    "id": "tio",
+    "spanish": "tío",
+    "english": "guy / uncle",
+    "kind": "noun",
+    "usage": "Colloquial for a bloke; literally an uncle. Very common in Spain."
+  },
+  {
+    "id": "persona",
+    "spanish": "persona",
+    "english": "person",
+    "kind": "noun",
+    "usage": "Use for a single individual."
+  },
+  {
+    "id": "hombre",
+    "spanish": "hombre",
+    "english": "man",
+    "kind": "noun",
+    "usage": "Use for an adult male."
+  },
+  {
+    "id": "mujer",
+    "spanish": "mujer",
+    "english": "woman",
+    "kind": "noun",
+    "usage": "Use for an adult female."
+  },
+  {
+    "id": "nino",
+    "spanish": "niño",
+    "english": "child / boy",
+    "kind": "noun",
+    "usage": "Use for a child; niña is a girl."
+  },
+  {
+    "id": "amigo",
+    "spanish": "amigo",
+    "english": "friend",
+    "kind": "noun",
+    "usage": "Use for a friend."
+  },
+  {
+    "id": "familia",
+    "spanish": "familia",
+    "english": "family",
+    "kind": "noun",
+    "usage": "Use for a family or a family of related items."
+  },
+  {
+    "id": "padre",
+    "spanish": "padre",
+    "english": "father",
+    "kind": "noun",
+    "usage": "Use for a father; padres also means parents."
+  },
+  {
+    "id": "madre",
+    "spanish": "madre",
+    "english": "mother",
+    "kind": "noun",
+    "usage": "Use for a mother."
+  },
+  {
+    "id": "hijo",
+    "spanish": "hijo",
+    "english": "son / child",
+    "kind": "noun",
+    "usage": "Use for offspring."
+  },
+  {
+    "id": "hermano",
+    "spanish": "hermano",
+    "english": "brother",
+    "kind": "noun",
+    "usage": "Use for a brother; hermana is a sister."
+  },
+  {
+    "id": "equipo",
+    "spanish": "equipo",
+    "english": "team",
+    "kind": "noun",
+    "usage": "Use for a team or a set of equipment."
+  },
+  {
+    "id": "grupo",
+    "spanish": "grupo",
+    "english": "group",
+    "kind": "noun",
+    "usage": "Use for a set of people or items."
+  },
+  {
+    "id": "jefe",
+    "spanish": "jefe",
+    "english": "boss",
+    "kind": "noun",
+    "usage": "Use for a manager or owner of a decision."
+  },
+  {
+    "id": "rojo",
+    "spanish": "rojo",
+    "english": "red",
+    "kind": "adjective",
+    "usage": "Use for the colour red, including failing states."
+  },
+  {
+    "id": "verde",
+    "spanish": "verde",
+    "english": "green",
+    "kind": "adjective",
+    "usage": "Use for the colour green, including passing states."
+  },
+  {
+    "id": "azul",
+    "spanish": "azul",
+    "english": "blue",
+    "kind": "adjective",
+    "usage": "Use for the colour blue."
+  },
+  {
+    "id": "amarillo",
+    "spanish": "amarillo",
+    "english": "yellow",
+    "kind": "adjective",
+    "usage": "Use for the colour yellow, including warnings."
+  },
+  {
+    "id": "negro",
+    "spanish": "negro",
+    "english": "black",
+    "kind": "adjective",
+    "usage": "Use for the colour black."
+  },
+  {
+    "id": "blanco",
+    "spanish": "blanco",
+    "english": "white",
+    "kind": "adjective",
+    "usage": "Use for the colour white or a blank value."
+  },
+  {
+    "id": "gris",
+    "spanish": "gris",
+    "english": "grey",
+    "kind": "adjective",
+    "usage": "Use for the colour grey or something greyed out."
+  },
+  {
+    "id": "naranja",
+    "spanish": "naranja",
+    "english": "orange",
+    "kind": "adjective",
+    "usage": "Use for the colour orange."
+  },
+  {
+    "id": "rosa",
+    "spanish": "rosa",
+    "english": "pink",
+    "kind": "adjective",
+    "usage": "Use for the colour pink."
+  },
+  {
+    "id": "color",
+    "spanish": "color",
+    "english": "colour",
+    "kind": "noun",
+    "usage": "Use for colour as a property."
+  },
+  {
+    "id": "piso",
+    "spanish": "piso",
+    "english": "flat / floor",
+    "kind": "noun",
+    "usage": "Peninsular; departamento is Latin American."
+  },
+  {
+    "id": "nevera",
+    "spanish": "nevera",
+    "english": "fridge",
+    "kind": "noun",
+    "usage": "Peninsular; refrigerador is Latin American."
+  },
+  {
+    "id": "salon",
+    "spanish": "salón",
+    "english": "living room",
+    "kind": "noun",
+    "usage": "Use for a sitting room. Peninsular."
+  },
+  {
+    "id": "armario",
+    "spanish": "armario",
+    "english": "wardrobe / cupboard",
+    "kind": "noun",
+    "usage": "Use for a wardrobe or cupboard."
+  },
+  {
+    "id": "casa",
+    "spanish": "casa",
+    "english": "house / home",
+    "kind": "noun",
+    "usage": "Use for a house or home."
+  },
+  {
+    "id": "puerta",
+    "spanish": "puerta",
+    "english": "door",
+    "kind": "noun",
+    "usage": "Use for a door or an entry point."
+  },
+  {
+    "id": "ventana",
+    "spanish": "ventana",
+    "english": "window",
+    "kind": "noun",
+    "usage": "Use for a window."
+  },
+  {
+    "id": "mesa",
+    "spanish": "mesa",
+    "english": "table",
+    "kind": "noun",
+    "usage": "Use for a table."
+  },
+  {
+    "id": "llave",
+    "spanish": "llave",
+    "english": "key",
+    "kind": "noun",
+    "usage": "Use for a physical key or an access key."
+  },
+  {
+    "id": "caja",
+    "spanish": "caja",
+    "english": "box",
+    "kind": "noun",
+    "usage": "Use for a box or a container."
+  },
+  {
+    "id": "luz",
+    "spanish": "luz",
+    "english": "light",
+    "kind": "noun",
+    "usage": "Use for light or electric power."
+  },
+  {
+    "id": "libro",
+    "spanish": "libro",
+    "english": "book",
+    "kind": "noun",
+    "usage": "Use for a book."
+  },
+  {
+    "id": "zumo",
+    "spanish": "zumo",
+    "english": "juice",
+    "kind": "noun",
+    "usage": "Peninsular; jugo is Latin American."
+  },
+  {
+    "id": "patata",
+    "spanish": "patata",
+    "english": "potato",
+    "kind": "noun",
+    "usage": "Peninsular; papa is Latin American."
+  },
+  {
+    "id": "bocadillo",
+    "spanish": "bocadillo",
+    "english": "sandwich",
+    "kind": "noun",
+    "usage": "Use for a filled roll. Peninsular."
+  },
+  {
+    "id": "tapa",
+    "spanish": "tapa",
+    "english": "small dish / lid",
+    "kind": "noun",
+    "usage": "Use for a bar snack or a lid."
+  },
+  {
+    "id": "comida",
+    "spanish": "comida",
+    "english": "food / meal",
+    "kind": "noun",
+    "usage": "Use for food or a meal."
+  },
+  {
+    "id": "agua",
+    "spanish": "agua",
+    "english": "water",
+    "kind": "noun",
+    "usage": "Use for water; it takes el but is feminine."
+  },
+  {
+    "id": "pan",
+    "spanish": "pan",
+    "english": "bread",
+    "kind": "noun",
+    "usage": "Use for bread."
+  },
+  {
+    "id": "cafe",
+    "spanish": "café",
+    "english": "coffee",
+    "kind": "noun",
+    "usage": "Use for coffee."
+  },
+  {
+    "id": "cerveza",
+    "spanish": "cerveza",
+    "english": "beer",
+    "kind": "noun",
+    "usage": "Use for beer."
+  },
+  {
+    "id": "cena",
+    "spanish": "cena",
+    "english": "dinner",
+    "kind": "noun",
+    "usage": "Use for the evening meal."
+  },
+  {
+    "id": "coche",
+    "spanish": "coche",
+    "english": "car",
+    "kind": "noun",
+    "usage": "Peninsular; carro and auto are Latin American."
+  },
+  {
+    "id": "autobus",
+    "spanish": "autobús",
+    "english": "bus",
+    "kind": "noun",
+    "usage": "Use for a bus. Peninsular."
+  },
+  {
+    "id": "billete",
+    "spanish": "billete",
+    "english": "ticket",
+    "kind": "noun",
+    "usage": "Peninsular; boleto is Latin American."
+  },
+  {
+    "id": "ascensor",
+    "spanish": "ascensor",
+    "english": "lift",
+    "kind": "noun",
+    "usage": "Use for an elevator. Peninsular."
+  },
+  {
+    "id": "aparcamiento",
+    "spanish": "aparcamiento",
+    "english": "car park",
+    "kind": "noun",
+    "usage": "Peninsular; estacionamiento is Latin American."
+  },
+  {
+    "id": "acera",
+    "spanish": "acera",
+    "english": "pavement",
+    "kind": "noun",
+    "usage": "Peninsular; banqueta is Latin American."
+  },
+  {
+    "id": "ciudad",
+    "spanish": "ciudad",
+    "english": "city",
+    "kind": "noun",
+    "usage": "Use for a city."
+  },
+  {
+    "id": "calle",
+    "spanish": "calle",
+    "english": "street",
+    "kind": "noun",
+    "usage": "Use for a street."
+  },
+  {
+    "id": "tienda",
+    "spanish": "tienda",
+    "english": "shop",
+    "kind": "noun",
+    "usage": "Use for a shop."
+  },
+  {
+    "id": "plaza",
+    "spanish": "plaza",
+    "english": "square / slot",
+    "kind": "noun",
+    "usage": "Use for a town square or an available slot."
+  },
+  {
+    "id": "deberes",
+    "spanish": "deberes",
+    "english": "homework",
+    "kind": "noun",
+    "usage": "Use for homework. Peninsular."
+  },
+  {
+    "id": "dinero",
+    "spanish": "dinero",
+    "english": "money",
+    "kind": "noun",
+    "usage": "Use for money."
+  },
+  {
+    "id": "precio",
+    "spanish": "precio",
+    "english": "price",
+    "kind": "noun",
+    "usage": "Use for a price."
+  },
+  {
+    "id": "cuenta",
+    "spanish": "cuenta",
+    "english": "account / bill",
+    "kind": "noun",
+    "usage": "Use for an account or a bill."
+  },
+  {
+    "id": "tarjeta",
+    "spanish": "tarjeta",
+    "english": "card",
+    "kind": "noun",
+    "usage": "Use for a payment card or a card in a UI."
+  },
+  {
+    "id": "oficina",
+    "spanish": "oficina",
+    "english": "office",
+    "kind": "noun",
+    "usage": "Use for an office."
+  },
+  {
+    "id": "empresa",
+    "spanish": "empresa",
+    "english": "company",
+    "kind": "noun",
+    "usage": "Use for a company."
+  },
+  {
+    "id": "reunion",
+    "spanish": "reunión",
+    "english": "meeting",
+    "kind": "noun",
+    "usage": "Use for a meeting."
+  },
+  {
+    "id": "tiempo",
+    "spanish": "tiempo",
+    "english": "weather / time",
+    "kind": "noun",
+    "usage": "Use for the weather or for elapsed time."
+  },
+  {
+    "id": "sol",
+    "spanish": "sol",
+    "english": "sun",
+    "kind": "noun",
+    "usage": "Use for the sun or sunshine."
+  },
+  {
+    "id": "lluvia",
+    "spanish": "lluvia",
+    "english": "rain",
+    "kind": "noun",
+    "usage": "Use for rain."
+  },
+  {
+    "id": "frio",
+    "spanish": "frío",
+    "english": "cold",
+    "kind": "adjective",
+    "usage": "Use for low temperature."
+  },
+  {
+    "id": "nube",
+    "spanish": "nube",
+    "english": "cloud",
+    "kind": "noun",
+    "usage": "Use for a cloud, including cloud infrastructure."
+  },
+  {
+    "id": "arbol",
+    "spanish": "árbol",
+    "english": "tree",
+    "kind": "noun",
+    "usage": "Use for a tree, including a tree structure."
+  },
+  {
+    "id": "campo",
+    "spanish": "campo",
+    "english": "field / countryside",
+    "kind": "noun",
+    "usage": "Use for a field, including a data field."
+  },
+  {
+    "id": "mano",
+    "spanish": "mano",
+    "english": "hand",
+    "kind": "noun",
+    "usage": "Use for a hand; it is feminine despite ending in -o."
+  },
+  {
+    "id": "ojo",
+    "spanish": "ojo",
+    "english": "eye",
+    "kind": "noun",
+    "usage": "Use for an eye, or as a warning to look out."
+  },
+  {
+    "id": "cabeza",
+    "spanish": "cabeza",
+    "english": "head",
+    "kind": "noun",
+    "usage": "Use for a head or the top of something."
+  },
+  {
+    "id": "pie",
+    "spanish": "pie",
+    "english": "foot",
+    "kind": "noun",
+    "usage": "Use for a foot or the bottom of something."
+  },
+  {
+    "id": "cara",
+    "spanish": "cara",
+    "english": "face",
+    "kind": "noun",
+    "usage": "Use for a face or the visible side of something."
+  },
+  {
+    "id": "dolor",
+    "spanish": "dolor",
+    "english": "pain",
+    "kind": "noun",
+    "usage": "Use for pain or a painful problem."
+  },
+  {
+    "id": "camiseta",
+    "spanish": "camiseta",
+    "english": "t-shirt",
+    "kind": "noun",
+    "usage": "Peninsular; remera is Latin American."
+  },
+  {
+    "id": "chaqueta",
+    "spanish": "chaqueta",
+    "english": "jacket",
+    "kind": "noun",
+    "usage": "Peninsular; saco is Latin American."
+  },
+  {
+    "id": "jersey",
+    "spanish": "jersey",
+    "english": "jumper / sweater",
+    "kind": "noun",
+    "usage": "Use for a pullover. Peninsular."
+  },
+  {
+    "id": "gafas",
+    "spanish": "gafas",
+    "english": "glasses",
+    "kind": "noun",
+    "usage": "Peninsular; lentes is Latin American."
+  },
+  {
     "id": "sin-embargo",
     "spanish": "sin embargo",
     "english": "however",
@@ -805,249 +2289,11 @@
     "usage": "Use to move on regardless of the detail just mentioned."
   },
   {
-    "id": "a-partir-de",
-    "spanish": "a partir de",
-    "english": "from (a point) onward",
-    "kind": "connector",
-    "usage": "Use for a starting point in time or in a sequence."
-  },
-  {
-    "id": "a-pesar-de",
-    "spanish": "a pesar de",
-    "english": "despite",
-    "kind": "connector",
-    "usage": "Use to note something held true against an obstacle."
-  },
-  {
-    "id": "en-realidad",
-    "spanish": "en realidad",
-    "english": "actually",
-    "kind": "adverb",
-    "usage": "Use to correct a likely assumption."
-  },
-  {
-    "id": "mientras-tanto",
-    "spanish": "mientras tanto",
-    "english": "meanwhile",
-    "kind": "connector",
-    "usage": "Use for something happening in parallel."
-  },
-  {
-    "id": "por-cierto",
-    "spanish": "por cierto",
-    "english": "by the way",
-    "kind": "connector",
-    "usage": "Use to add a side remark."
-  },
-  {
-    "id": "o-sea",
-    "spanish": "o sea",
-    "english": "in other words",
-    "kind": "connector",
-    "usage": "Very common in spoken Spain Spanish for rephrasing."
-  },
-  {
-    "id": "de-momento",
-    "spanish": "de momento",
-    "english": "for now",
-    "kind": "phrase",
-    "usage": "Use for a provisional state that may change."
-  },
-  {
-    "id": "a-largo-plazo",
-    "spanish": "a largo plazo",
-    "english": "in the long run",
-    "kind": "phrase",
-    "usage": "Use when weighing durable consequences."
-  },
-  {
-    "id": "a-corto-plazo",
-    "spanish": "a corto plazo",
-    "english": "in the short term",
-    "kind": "phrase",
-    "usage": "Use for the immediate horizon."
-  },
-  {
-    "id": "en-resumen",
-    "spanish": "en resumen",
-    "english": "in short",
-    "kind": "connector",
-    "usage": "Use before a one-line summary."
-  },
-  {
-    "id": "por-si-acaso",
-    "spanish": "por si acaso",
-    "english": "just in case",
-    "kind": "phrase",
-    "usage": "Use for a precaution against an unlikely outcome."
-  },
-  {
     "id": "lograr",
     "spanish": "lograr",
     "english": "to manage to / achieve",
     "kind": "verb",
     "usage": "Use for succeeding at something that took effort."
-  },
-  {
-    "id": "plantear",
-    "spanish": "plantear",
-    "english": "to raise / propose",
-    "kind": "verb",
-    "usage": "Use for putting forward a question, problem, or approach."
-  },
-  {
-    "id": "suponer",
-    "spanish": "suponer",
-    "english": "to suppose / to entail",
-    "kind": "verb",
-    "usage": "Two senses: assuming something, or something implying a cost."
-  },
-  {
-    "id": "comprobar",
-    "spanish": "comprobar",
-    "english": "to check / verify",
-    "kind": "verb",
-    "usage": "Use for confirming something empirically."
-  },
-  {
-    "id": "senalar",
-    "spanish": "señalar",
-    "english": "to point out",
-    "kind": "verb",
-    "usage": "Use for drawing attention to a detail."
-  },
-  {
-    "id": "evitar",
-    "spanish": "evitar",
-    "english": "to avoid / prevent",
-    "kind": "verb",
-    "usage": "Use for steering clear of a problem."
-  },
-  {
-    "id": "aprovechar",
-    "spanish": "aprovechar",
-    "english": "to make the most of",
-    "kind": "verb",
-    "usage": "Use for exploiting an opportunity or existing resource."
-  },
-  {
-    "id": "destacar",
-    "spanish": "destacar",
-    "english": "to highlight / stand out",
-    "kind": "verb",
-    "usage": "Use for emphasizing the notable item."
-  },
-  {
-    "id": "surgir",
-    "spanish": "surgir",
-    "english": "to arise / come up",
-    "kind": "verb",
-    "usage": "Use for problems or questions that emerge unprompted."
-  },
-  {
-    "id": "tardar",
-    "spanish": "tardar",
-    "english": "to take (time)",
-    "kind": "verb",
-    "usage": "Use for how long something takes; no direct English equivalent."
-  },
-  {
-    "id": "asegurarse",
-    "spanish": "asegurarse",
-    "english": "to make sure",
-    "kind": "verb",
-    "usage": "Reflexive; use for confirming before proceeding."
-  },
-  {
-    "id": "descartar",
-    "spanish": "descartar",
-    "english": "to rule out",
-    "kind": "verb",
-    "usage": "Use for eliminating a hypothesis or option."
-  },
-  {
-    "id": "ajustar",
-    "spanish": "ajustar",
-    "english": "to adjust / tune",
-    "kind": "verb",
-    "usage": "Use for calibrating a parameter or plan."
-  },
-  {
-    "id": "depender-de",
-    "spanish": "depender de",
-    "english": "to depend on",
-    "kind": "verb",
-    "usage": "Use for conditional outcomes."
-  },
-  {
-    "id": "impedir",
-    "spanish": "impedir",
-    "english": "to prevent / block",
-    "kind": "verb",
-    "usage": "Stronger than evitar: actively stops something."
-  },
-  {
-    "id": "reducir",
-    "spanish": "reducir",
-    "english": "to reduce",
-    "kind": "verb",
-    "usage": "Use for lowering a quantity or scope."
-  },
-  {
-    "id": "aumentar",
-    "spanish": "aumentar",
-    "english": "to increase",
-    "kind": "verb",
-    "usage": "Use for raising a quantity."
-  },
-  {
-    "id": "desplegar",
-    "spanish": "desplegar",
-    "english": "to deploy / roll out",
-    "kind": "verb",
-    "usage": "Standard term for deploying software in Spain."
-  },
-  {
-    "id": "almacenar",
-    "spanish": "almacenar",
-    "english": "to store",
-    "kind": "verb",
-    "usage": "Use for persisting data or goods."
-  },
-  {
-    "id": "actualizar",
-    "spanish": "actualizar",
-    "english": "to update",
-    "kind": "verb",
-    "usage": "Use for bringing something to its current version."
-  },
-  {
-    "id": "resolver",
-    "spanish": "resolver",
-    "english": "to resolve / solve",
-    "kind": "verb",
-    "usage": "Use for settling a problem or ambiguity."
-  },
-  {
-    "id": "mantener",
-    "spanish": "mantener",
-    "english": "to maintain / keep",
-    "kind": "verb",
-    "usage": "Use for preserving a state over time."
-  },
-  {
-    "id": "fallar",
-    "spanish": "fallar",
-    "english": "to fail / go wrong",
-    "kind": "verb",
-    "usage": "Use for a component or plan breaking down."
-  },
-  {
-    "id": "medir",
-    "spanish": "medir",
-    "english": "to measure",
-    "kind": "verb",
-    "usage": "Use for quantifying something."
   },
   {
     "id": "plazo",
@@ -1057,11 +2303,39 @@
     "usage": "Use for a time window or due date."
   },
   {
+    "id": "asequible",
+    "spanish": "asequible",
+    "english": "affordable / attainable",
+    "kind": "adjective",
+    "usage": "Use for something within reach in price or difficulty."
+  },
+  {
+    "id": "plantear",
+    "spanish": "plantear",
+    "english": "to raise / propose",
+    "kind": "verb",
+    "usage": "Use for putting forward a question, problem, or approach."
+  },
+  {
     "id": "entorno",
     "spanish": "entorno",
     "english": "environment",
     "kind": "noun",
     "usage": "Used for both surroundings and a technical environment."
+  },
+  {
+    "id": "de-momento",
+    "spanish": "de momento",
+    "english": "for now",
+    "kind": "phrase",
+    "usage": "Use for a provisional state that may change."
+  },
+  {
+    "id": "suponer",
+    "spanish": "suponer",
+    "english": "to suppose / to entail",
+    "kind": "verb",
+    "usage": "Two senses: assuming something, or something implying a cost."
   },
   {
     "id": "rendimiento",
@@ -1071,11 +2345,39 @@
     "usage": "Use for throughput, speed, or return."
   },
   {
+    "id": "en-realidad",
+    "spanish": "en realidad",
+    "english": "actually",
+    "kind": "adverb",
+    "usage": "Use to correct a likely assumption."
+  },
+  {
+    "id": "comprobar",
+    "spanish": "comprobar",
+    "english": "to check / verify",
+    "kind": "verb",
+    "usage": "Use for confirming something empirically."
+  },
+  {
     "id": "alcance",
     "spanish": "alcance",
     "english": "scope / reach",
     "kind": "noun",
     "usage": "Use for the boundaries of a task or effort."
+  },
+  {
+    "id": "a-partir-de",
+    "spanish": "a partir de",
+    "english": "from (a point) onward",
+    "kind": "connector",
+    "usage": "Use for a starting point in time or in a sequence."
+  },
+  {
+    "id": "senalar",
+    "spanish": "señalar",
+    "english": "to point out",
+    "kind": "verb",
+    "usage": "Use for drawing attention to a detail."
   },
   {
     "id": "enfoque",
@@ -1085,11 +2387,39 @@
     "usage": "Use for the chosen way of tackling something."
   },
   {
+    "id": "fiable",
+    "spanish": "fiable",
+    "english": "reliable",
+    "kind": "adjective",
+    "usage": "Use for something that can be trusted to work."
+  },
+  {
+    "id": "evitar",
+    "spanish": "evitar",
+    "english": "to avoid / prevent",
+    "kind": "verb",
+    "usage": "Use for steering clear of a problem."
+  },
+  {
     "id": "riesgo",
     "spanish": "riesgo",
     "english": "risk",
     "kind": "noun",
     "usage": "Use for exposure to a bad outcome."
+  },
+  {
+    "id": "a-largo-plazo",
+    "spanish": "a largo plazo",
+    "english": "in the long run",
+    "kind": "phrase",
+    "usage": "Use when weighing durable consequences."
+  },
+  {
+    "id": "aprovechar",
+    "spanish": "aprovechar",
+    "english": "to make the most of",
+    "kind": "verb",
+    "usage": "Use for exploiting an opportunity or existing resource."
   },
   {
     "id": "ventaja",
@@ -1099,137 +2429,25 @@
     "usage": "Use for the upside of an option."
   },
   {
+    "id": "a-pesar-de",
+    "spanish": "a pesar de",
+    "english": "despite",
+    "kind": "connector",
+    "usage": "Use to note something held true against an obstacle."
+  },
+  {
+    "id": "destacar",
+    "spanish": "destacar",
+    "english": "to highlight / stand out",
+    "kind": "verb",
+    "usage": "Use for emphasizing the notable item."
+  },
+  {
     "id": "inconveniente",
     "spanish": "inconveniente",
     "english": "drawback",
     "kind": "noun",
     "usage": "Use for the downside of an option."
-  },
-  {
-    "id": "hallazgo",
-    "spanish": "hallazgo",
-    "english": "finding",
-    "kind": "noun",
-    "usage": "Use for something discovered in analysis or review."
-  },
-  {
-    "id": "muestra",
-    "spanish": "muestra",
-    "english": "sample",
-    "kind": "noun",
-    "usage": "Use for a statistical or physical sample."
-  },
-  {
-    "id": "cifra",
-    "spanish": "cifra",
-    "english": "figure / number",
-    "kind": "noun",
-    "usage": "Use for a reported quantity."
-  },
-  {
-    "id": "fuente",
-    "spanish": "fuente",
-    "english": "source",
-    "kind": "noun",
-    "usage": "Use for the origin of data or a claim."
-  },
-  {
-    "id": "herramienta",
-    "spanish": "herramienta",
-    "english": "tool",
-    "kind": "noun",
-    "usage": "Use for an instrument, physical or software."
-  },
-  {
-    "id": "informe",
-    "spanish": "informe",
-    "english": "report",
-    "kind": "noun",
-    "usage": "Use for a written summary of findings."
-  },
-  {
-    "id": "seguimiento",
-    "spanish": "seguimiento",
-    "english": "follow-up / tracking",
-    "kind": "noun",
-    "usage": "Use for monitoring something over time."
-  },
-  {
-    "id": "presupuesto",
-    "spanish": "presupuesto",
-    "english": "budget",
-    "kind": "noun",
-    "usage": "Use for allocated money or an estimate."
-  },
-  {
-    "id": "comportamiento",
-    "spanish": "comportamiento",
-    "english": "behavior",
-    "kind": "noun",
-    "usage": "Use for how a person or system acts."
-  },
-  {
-    "id": "prevision",
-    "spanish": "previsión",
-    "english": "forecast",
-    "kind": "noun",
-    "usage": "Use for a projected future value."
-  },
-  {
-    "id": "desglose",
-    "spanish": "desglose",
-    "english": "breakdown",
-    "kind": "noun",
-    "usage": "Use for a decomposition into parts."
-  },
-  {
-    "id": "umbral",
-    "spanish": "umbral",
-    "english": "threshold",
-    "kind": "noun",
-    "usage": "Use for a cutoff value that triggers something."
-  },
-  {
-    "id": "carga",
-    "spanish": "carga",
-    "english": "load / burden",
-    "kind": "noun",
-    "usage": "Use for workload or a data load."
-  },
-  {
-    "id": "respaldo",
-    "spanish": "respaldo",
-    "english": "backup / support",
-    "kind": "noun",
-    "usage": "Use for a safety copy or institutional backing."
-  },
-  {
-    "id": "imprevisto",
-    "spanish": "imprevisto",
-    "english": "unforeseen issue",
-    "kind": "noun",
-    "usage": "Use for something that derails a plan unexpectedly."
-  },
-  {
-    "id": "matiz",
-    "spanish": "matiz",
-    "english": "nuance",
-    "kind": "noun",
-    "usage": "Use for a fine distinction that changes meaning."
-  },
-  {
-    "id": "asequible",
-    "spanish": "asequible",
-    "english": "affordable / attainable",
-    "kind": "adjective",
-    "usage": "Use for something within reach in price or difficulty."
-  },
-  {
-    "id": "fiable",
-    "spanish": "fiable",
-    "english": "reliable",
-    "kind": "adjective",
-    "usage": "Use for something that can be trusted to work."
   },
   {
     "id": "imprescindible",
@@ -1239,11 +2457,123 @@
     "usage": "Use for something that cannot be omitted."
   },
   {
+    "id": "surgir",
+    "spanish": "surgir",
+    "english": "to arise / come up",
+    "kind": "verb",
+    "usage": "Use for problems or questions that emerge unprompted."
+  },
+  {
+    "id": "hallazgo",
+    "spanish": "hallazgo",
+    "english": "finding",
+    "kind": "noun",
+    "usage": "Use for something discovered in analysis or review."
+  },
+  {
+    "id": "a-corto-plazo",
+    "spanish": "a corto plazo",
+    "english": "in the short term",
+    "kind": "phrase",
+    "usage": "Use for the immediate horizon."
+  },
+  {
+    "id": "tardar",
+    "spanish": "tardar",
+    "english": "to take (time)",
+    "kind": "verb",
+    "usage": "Use for how long something takes; no direct English equivalent."
+  },
+  {
+    "id": "muestra",
+    "spanish": "muestra",
+    "english": "sample",
+    "kind": "noun",
+    "usage": "Use for a statistical or physical sample."
+  },
+  {
+    "id": "mientras-tanto",
+    "spanish": "mientras tanto",
+    "english": "meanwhile",
+    "kind": "connector",
+    "usage": "Use for something happening in parallel."
+  },
+  {
+    "id": "asegurarse",
+    "spanish": "asegurarse",
+    "english": "to make sure",
+    "kind": "verb",
+    "usage": "Reflexive; use for confirming before proceeding."
+  },
+  {
+    "id": "cifra",
+    "spanish": "cifra",
+    "english": "figure / number",
+    "kind": "noun",
+    "usage": "Use for a reported quantity."
+  },
+  {
     "id": "escaso",
     "spanish": "escaso",
     "english": "scarce / sparse",
     "kind": "adjective",
     "usage": "Use for insufficient quantity, including sparse data."
+  },
+  {
+    "id": "descartar",
+    "spanish": "descartar",
+    "english": "to rule out",
+    "kind": "verb",
+    "usage": "Use for eliminating a hypothesis or option."
+  },
+  {
+    "id": "fuente",
+    "spanish": "fuente",
+    "english": "source",
+    "kind": "noun",
+    "usage": "Use for the origin of data or a claim."
+  },
+  {
+    "id": "por-si-acaso",
+    "spanish": "por si acaso",
+    "english": "just in case",
+    "kind": "phrase",
+    "usage": "Use for a precaution against an unlikely outcome."
+  },
+  {
+    "id": "ajustar",
+    "spanish": "ajustar",
+    "english": "to adjust / tune",
+    "kind": "verb",
+    "usage": "Use for calibrating a parameter or plan."
+  },
+  {
+    "id": "herramienta",
+    "spanish": "herramienta",
+    "english": "tool",
+    "kind": "noun",
+    "usage": "Use for an instrument, physical or software."
+  },
+  {
+    "id": "por-cierto",
+    "spanish": "por cierto",
+    "english": "by the way",
+    "kind": "connector",
+    "usage": "Use to add a side remark."
+  },
+  {
+    "id": "depender-de",
+    "spanish": "depender de",
+    "english": "to depend on",
+    "kind": "verb",
+    "usage": "Use for conditional outcomes."
+  },
+  {
+    "id": "informe",
+    "spanish": "informe",
+    "english": "report",
+    "kind": "noun",
+    "usage": "Use for a written summary of findings."
   },
   {
     "id": "previsto",
@@ -1253,74 +2583,18 @@
     "usage": "Use for what was scheduled or anticipated."
   },
   {
-    "id": "adecuado",
-    "spanish": "adecuado",
-    "english": "suitable / appropriate",
-    "kind": "adjective",
-    "usage": "Use for a good fit to the purpose."
+    "id": "impedir",
+    "spanish": "impedir",
+    "english": "to prevent / block",
+    "kind": "verb",
+    "usage": "Stronger than evitar: actively stops something."
   },
   {
-    "id": "solido",
-    "spanish": "sólido",
-    "english": "solid / robust",
-    "kind": "adjective",
-    "usage": "Use for an argument or system that holds up."
-  },
-  {
-    "id": "enganoso",
-    "spanish": "engañoso",
-    "english": "misleading",
-    "kind": "adjective",
-    "usage": "Use for something technically true but deceptive."
-  },
-  {
-    "id": "puntual",
-    "spanish": "puntual",
-    "english": "punctual / one-off",
-    "kind": "adjective",
-    "usage": "Two senses: on time, or isolated and non-recurring."
-  },
-  {
-    "id": "sesgado",
-    "spanish": "sesgado",
-    "english": "biased / skewed",
-    "kind": "adjective",
-    "usage": "Use for data or judgment tilted in one direction."
-  },
-  {
-    "id": "exhaustivo",
-    "spanish": "exhaustivo",
-    "english": "thorough / exhaustive",
-    "kind": "adjective",
-    "usage": "Use for complete coverage of a space."
-  },
-  {
-    "id": "rentable",
-    "spanish": "rentable",
-    "english": "profitable / worthwhile",
-    "kind": "adjective",
-    "usage": "Use when the return justifies the cost."
-  },
-  {
-    "id": "propenso-a",
-    "spanish": "propenso a",
-    "english": "prone to",
-    "kind": "adjective",
-    "usage": "Use for a tendency toward a failure mode."
-  },
-  {
-    "id": "arriesgado",
-    "spanish": "arriesgado",
-    "english": "risky",
-    "kind": "adjective",
-    "usage": "Use for an option with meaningful downside."
-  },
-  {
-    "id": "ambiguo",
-    "spanish": "ambiguo",
-    "english": "ambiguous",
-    "kind": "adjective",
-    "usage": "Use for something open to more than one reading."
+    "id": "seguimiento",
+    "spanish": "seguimiento",
+    "english": "follow-up / tracking",
+    "kind": "noun",
+    "usage": "Use for monitoring something over time."
   },
   {
     "id": "merece-la-pena",
@@ -1330,11 +2604,123 @@
     "usage": "Use to judge that the effort pays off."
   },
   {
+    "id": "reducir",
+    "spanish": "reducir",
+    "english": "to reduce",
+    "kind": "verb",
+    "usage": "Use for lowering a quantity or scope."
+  },
+  {
+    "id": "presupuesto",
+    "spanish": "presupuesto",
+    "english": "budget",
+    "kind": "noun",
+    "usage": "Use for allocated money or an estimate."
+  },
+  {
+    "id": "o-sea",
+    "spanish": "o sea",
+    "english": "in other words",
+    "kind": "connector",
+    "usage": "Very common in spoken Spain Spanish for rephrasing."
+  },
+  {
+    "id": "aumentar",
+    "spanish": "aumentar",
+    "english": "to increase",
+    "kind": "verb",
+    "usage": "Use for raising a quantity."
+  },
+  {
+    "id": "comportamiento",
+    "spanish": "comportamiento",
+    "english": "behavior",
+    "kind": "noun",
+    "usage": "Use for how a person or system acts."
+  },
+  {
+    "id": "adecuado",
+    "spanish": "adecuado",
+    "english": "suitable / appropriate",
+    "kind": "adjective",
+    "usage": "Use for a good fit to the purpose."
+  },
+  {
+    "id": "desplegar",
+    "spanish": "desplegar",
+    "english": "to deploy / roll out",
+    "kind": "verb",
+    "usage": "Standard term for deploying software in Spain."
+  },
+  {
+    "id": "prevision",
+    "spanish": "previsión",
+    "english": "forecast",
+    "kind": "noun",
+    "usage": "Use for a projected future value."
+  },
+  {
     "id": "tener-en-cuenta",
     "spanish": "tener en cuenta",
     "english": "to bear in mind",
     "kind": "phrase",
     "usage": "Use to flag a factor that should influence a decision."
+  },
+  {
+    "id": "almacenar",
+    "spanish": "almacenar",
+    "english": "to store",
+    "kind": "verb",
+    "usage": "Use for persisting data or goods."
+  },
+  {
+    "id": "desglose",
+    "spanish": "desglose",
+    "english": "breakdown",
+    "kind": "noun",
+    "usage": "Use for a decomposition into parts."
+  },
+  {
+    "id": "en-resumen",
+    "spanish": "en resumen",
+    "english": "in short",
+    "kind": "connector",
+    "usage": "Use before a one-line summary."
+  },
+  {
+    "id": "actualizar",
+    "spanish": "actualizar",
+    "english": "to update",
+    "kind": "verb",
+    "usage": "Use for bringing something to its current version."
+  },
+  {
+    "id": "umbral",
+    "spanish": "umbral",
+    "english": "threshold",
+    "kind": "noun",
+    "usage": "Use for a cutoff value that triggers something."
+  },
+  {
+    "id": "solido",
+    "spanish": "sólido",
+    "english": "solid / robust",
+    "kind": "adjective",
+    "usage": "Use for an argument or system that holds up."
+  },
+  {
+    "id": "resolver",
+    "spanish": "resolver",
+    "english": "to resolve / solve",
+    "kind": "verb",
+    "usage": "Use for settling a problem or ambiguity."
+  },
+  {
+    "id": "carga",
+    "spanish": "carga",
+    "english": "load / burden",
+    "kind": "noun",
+    "usage": "Use for workload or a data load."
   },
   {
     "id": "a-grandes-rasgos",
@@ -1344,11 +2730,81 @@
     "usage": "Use before a simplified overview."
   },
   {
+    "id": "mantener",
+    "spanish": "mantener",
+    "english": "to maintain / keep",
+    "kind": "verb",
+    "usage": "Use for preserving a state over time."
+  },
+  {
+    "id": "respaldo",
+    "spanish": "respaldo",
+    "english": "backup / support",
+    "kind": "noun",
+    "usage": "Use for a safety copy or institutional backing."
+  },
+  {
+    "id": "no-obstante",
+    "spanish": "no obstante",
+    "english": "nevertheless",
+    "kind": "connector",
+    "usage": "More formal register than sin embargo."
+  },
+  {
+    "id": "fallar",
+    "spanish": "fallar",
+    "english": "to fail / go wrong",
+    "kind": "verb",
+    "usage": "Use for a component or plan breaking down."
+  },
+  {
+    "id": "imprevisto",
+    "spanish": "imprevisto",
+    "english": "unforeseen issue",
+    "kind": "noun",
+    "usage": "Use for something that derails a plan unexpectedly."
+  },
+  {
+    "id": "enganoso",
+    "spanish": "engañoso",
+    "english": "misleading",
+    "kind": "adjective",
+    "usage": "Use for something technically true but deceptive."
+  },
+  {
+    "id": "medir",
+    "spanish": "medir",
+    "english": "to measure",
+    "kind": "verb",
+    "usage": "Use for quantifying something."
+  },
+  {
+    "id": "matiz",
+    "spanish": "matiz",
+    "english": "nuance",
+    "kind": "noun",
+    "usage": "Use for a fine distinction that changes meaning."
+  },
+  {
     "id": "de-entrada",
     "spanish": "de entrada",
     "english": "from the outset",
     "kind": "phrase",
     "usage": "Use for something true right from the start."
+  },
+  {
+    "id": "dicho-esto",
+    "spanish": "dicho esto",
+    "english": "that said",
+    "kind": "connector",
+    "usage": "Use to qualify what was just conceded."
+  },
+  {
+    "id": "puntual",
+    "spanish": "puntual",
+    "english": "punctual / one-off",
+    "kind": "adjective",
+    "usage": "Two senses: on time, or isolated and non-recurring."
   },
   {
     "id": "sobre-la-marcha",
@@ -1358,11 +2814,39 @@
     "usage": "Use for deciding or adjusting while in progress."
   },
   {
+    "id": "a-su-vez",
+    "spanish": "a su vez",
+    "english": "in turn",
+    "kind": "connector",
+    "usage": "Use for a chained consequence."
+  },
+  {
+    "id": "sesgado",
+    "spanish": "sesgado",
+    "english": "biased / skewed",
+    "kind": "adjective",
+    "usage": "Use for data or judgment tilted in one direction."
+  },
+  {
     "id": "dar-por-sentado",
     "spanish": "dar por sentado",
     "english": "to take for granted",
     "kind": "phrase",
     "usage": "Use for an unexamined assumption."
+  },
+  {
+    "id": "salvo-que",
+    "spanish": "salvo que",
+    "english": "unless",
+    "kind": "connector",
+    "usage": "Takes the subjunctive; use for an exception condition."
+  },
+  {
+    "id": "exhaustivo",
+    "spanish": "exhaustivo",
+    "english": "thorough / exhaustive",
+    "kind": "adjective",
+    "usage": "Use for complete coverage of a space."
   },
   {
     "id": "echar-un-vistazo",
@@ -1372,11 +2856,39 @@
     "usage": "Use for a light inspection rather than a full review."
   },
   {
+    "id": "a-menos-que",
+    "spanish": "a menos que",
+    "english": "unless",
+    "kind": "connector",
+    "usage": "Takes the subjunctive; slightly more common in speech."
+  },
+  {
+    "id": "rentable",
+    "spanish": "rentable",
+    "english": "profitable / worthwhile",
+    "kind": "adjective",
+    "usage": "Use when the return justifies the cost."
+  },
+  {
     "id": "ponerse-al-dia",
     "spanish": "ponerse al día",
     "english": "to catch up",
     "kind": "phrase",
     "usage": "Use for closing a gap in progress or knowledge."
+  },
+  {
+    "id": "de-ahi-que",
+    "spanish": "de ahí que",
+    "english": "hence / which is why",
+    "kind": "connector",
+    "usage": "Takes the subjunctive; introduces a consequence."
+  },
+  {
+    "id": "propenso-a",
+    "spanish": "propenso a",
+    "english": "prone to",
+    "kind": "adjective",
+    "usage": "Use for a tendency toward a failure mode."
   },
   {
     "id": "irse-de-las-manos",
@@ -1386,11 +2898,25 @@
     "usage": "Use for scope or a problem growing uncontrollably."
   },
   {
+    "id": "arriesgado",
+    "spanish": "arriesgado",
+    "english": "risky",
+    "kind": "adjective",
+    "usage": "Use for an option with meaningful downside."
+  },
+  {
     "id": "estar-al-tanto",
     "spanish": "estar al tanto",
     "english": "to be up to date / aware",
     "kind": "phrase",
     "usage": "Use for keeping informed about something."
+  },
+  {
+    "id": "ambiguo",
+    "spanish": "ambiguo",
+    "english": "ambiguous",
+    "kind": "adjective",
+    "usage": "Use for something open to more than one reading."
   },
   {
     "id": "a-fin-de-cuentas",
@@ -1405,27 +2931,6 @@
     "english": "failing that",
     "kind": "phrase",
     "usage": "Use to introduce a fallback option."
-  },
-  {
-    "id": "no-obstante",
-    "spanish": "no obstante",
-    "english": "nevertheless",
-    "kind": "connector",
-    "usage": "More formal register than sin embargo."
-  },
-  {
-    "id": "dicho-esto",
-    "spanish": "dicho esto",
-    "english": "that said",
-    "kind": "connector",
-    "usage": "Use to qualify what was just conceded."
-  },
-  {
-    "id": "a-su-vez",
-    "spanish": "a su vez",
-    "english": "in turn",
-    "kind": "connector",
-    "usage": "Use for a chained consequence."
   },
   {
     "id": "por-defecto",
@@ -1449,20 +2954,6 @@
     "usage": "Use for a rule that applies going forward."
   },
   {
-    "id": "salvo-que",
-    "spanish": "salvo que",
-    "english": "unless",
-    "kind": "connector",
-    "usage": "Takes the subjunctive; use for an exception condition."
-  },
-  {
-    "id": "a-menos-que",
-    "spanish": "a menos que",
-    "english": "unless",
-    "kind": "connector",
-    "usage": "Takes the subjunctive; slightly more common in speech."
-  },
-  {
     "id": "con-el-tiempo",
     "spanish": "con el tiempo",
     "english": "over time / eventually",
@@ -1475,12 +2966,5 @@
     "english": "up to a point",
     "kind": "phrase",
     "usage": "Use for partial agreement with a limit."
-  },
-  {
-    "id": "de-ahi-que",
-    "spanish": "de ahí que",
-    "english": "hence / which is why",
-    "kind": "connector",
-    "usage": "Takes the subjunctive; introduces a consequence."
   }
 ]

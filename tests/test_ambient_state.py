@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -624,11 +625,76 @@ class DecisionHousekeepingTests(CliTestCase):
         self.assertEqual(1, len(pending))
 
 
+# Latin-American forms that must not appear in an es-ES curriculum, mapped to
+# the Peninsular equivalent the entry should use instead.
+NON_PENINSULAR = {
+    "computadora": "ordenador",
+    "computador": "ordenador",
+    "celular": "móvil",
+    "carro": "coche",
+    "auto": "coche",
+    "papa": "patata",
+    "jugo": "zumo",
+    "frijoles": "judías",
+    "palta": "aguacate",
+    "durazno": "melocotón",
+    "refrigerador": "nevera",
+    "refrigeradora": "nevera",
+    "departamento": "piso",
+    "boleto": "billete",
+    "platicar": "charlar",
+    "manejar": "conducir",
+    "rentar": "alquilar",
+    "elevador": "ascensor",
+    "estacionamiento": "aparcamiento",
+    "remera": "camiseta",
+    "lentes": "gafas",
+    "arete": "pendiente",
+    "chamarra": "cazadora",
+    "cuadra": "manzana",
+    "banqueta": "acera",
+    "ahorita": "ahora",
+    "enojarse": "enfadarse",
+    "lindo": "bonito",
+    "chévere": "guay",
+    "chido": "guay",
+    "jalar": "tirar",
+    "botar": "tirar",
+    "saco": "chaqueta",
+    "apurarse": "darse prisa",
+}
+
+
 class ShippedCurriculumTests(unittest.TestCase):
     def test_shipped_curriculum_loads(self) -> None:
         curriculum = AMBIENT_STATE._load_curriculum(REAL_CURRICULUM)
         self.assertGreaterEqual(len(curriculum), 12)
         self.assertEqual(len({term["id"] for term in curriculum}), len(curriculum))
+
+    def test_shipped_curriculum_is_peninsular(self) -> None:
+        curriculum = AMBIENT_STATE._load_curriculum(REAL_CURRICULUM)
+        offenders = [
+            f"{term['spanish']} (use {NON_PENINSULAR[term['spanish']]} instead)"
+            for term in curriculum
+            if term["spanish"] in NON_PENINSULAR
+        ]
+        self.assertEqual([], offenders, f"non-Peninsular entries: {offenders}")
+
+    def test_prose_fields_only_name_latin_american_forms_to_contrast_them(self) -> None:
+        """A LatAm form may appear in `english`/`usage` only as an explicit
+        contrast on the entry that teaches its Peninsular equivalent — never as
+        the form the entry recommends."""
+        curriculum = AMBIENT_STATE._load_curriculum(REAL_CURRICULUM)
+        offenders = []
+        for term in curriculum:
+            for field in ("english", "usage"):
+                for bad, good in NON_PENINSULAR.items():
+                    if not re.search(rf"\b{re.escape(bad)}\b", term[field]):
+                        continue
+                    contrasting = term["spanish"] == good or good in term[field]
+                    if not contrasting:
+                        offenders.append(f"{term['id']}.{field}: {bad}")
+        self.assertEqual([], sorted(set(offenders)))
 
     def test_missing_state_bootstraps_with_batch_defaults(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
