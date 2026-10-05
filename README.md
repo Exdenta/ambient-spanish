@@ -1,8 +1,9 @@
 # ambient-spanish
 
-Learn Spanish by reading your normal AI-assistant replies: the assistant swaps a few English words for Spanish ones you've already met, and introduces three new words every three days. Works as a skill for Claude Code and Codex.
+[![test](https://github.com/Exdenta/ambient-spanish/actions/workflows/test.yml/badge.svg)](https://github.com/Exdenta/ambient-spanish/actions/workflows/test.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## What a reply looks like
+Learn Spanish by reading your normal AI-assistant replies. The assistant swaps a few English words for Spanish ones you've already met, and introduces three new words every three days. Works as a skill for Claude Code and Codex.
 
 ```
 The build is listo. Let me buscar the failing test and evitar (to avoid) the old cache.
@@ -15,6 +16,20 @@ The build is listo. Let me buscar the failing test and evitar (to avoid) the old
 
 Only words are swapped. The sentence stays English: articles, prepositions and verb structure are never translated, and code, commands, paths and quotations are never touched.
 
+## Install
+
+Requires Python 3.11 or newer. Clone into the skills folder of the tool you use, then initialise your state:
+
+```bash
+git clone https://github.com/Exdenta/ambient-spanish ~/.claude/skills/ambient-spanish   # Claude Code
+git clone https://github.com/Exdenta/ambient-spanish ~/.codex/skills/ambient-spanish    # Codex
+python3 ~/.claude/skills/ambient-spanish/scripts/ambient_state.py init
+```
+
+The skill triggers implicitly. To apply it to every reply without relying on the description match, add a short "run `ambient_state.py context` before each reply" block to your global `CLAUDE.md` or `AGENTS.md`.
+
+To update, `git pull` in the clone. Your progress lives outside it and is not affected.
+
 ## How it works
 
 Pacing is a pure function of the calendar, so chatting more never unlocks words faster.
@@ -25,6 +40,8 @@ known          = curriculum[:learning_start]
 learning       = curriculum[learning_start : learning_start + batch_size]
 ```
 
+Each reply, the assistant runs `context` once, writes the reply with the words it was given, then runs `record` with the ones it used. `status` reports words that were offered but never fit (`cold_terms`).
+
 | Piece | Job |
 | --- | --- |
 | `SKILL.md` | the instructions the assistant follows on every reply |
@@ -34,23 +51,7 @@ learning       = curriculum[learning_start : learning_start + batch_size]
 | `~/.codex/state/ambient-spanish/state.json` | your progress; kept outside the skill so updating the skill never resets it |
 | `~/.codex/state/ambient-spanish/vocabulary.txt` | all known words as `id \| spanish \| english`, rewritten when a batch is promoted |
 
-Each reply, the assistant runs `context` once, writes the reply with the words it was given, then runs `record` with the ones it used. `status` reports words that were offered but never fit (`cold_terms`).
-
-## Install
-
-Clone into the skills folder of the tool you use:
-
-```bash
-git clone https://github.com/Exdenta/ambient-spanish ~/.claude/skills/ambient-spanish   # Claude Code
-git clone https://github.com/Exdenta/ambient-spanish ~/.codex/skills/ambient-spanish    # Codex
-python3 ~/.claude/skills/ambient-spanish/scripts/ambient_state.py init
-```
-
-The skill triggers implicitly. To apply it to every reply without relying on the description match, add a short "run `ambient_state.py context` before each reply" block to your global `CLAUDE.md` or `AGENTS.md`.
-
-Requires Python 3.11 or newer (CI runs 3.11 and 3.13).
-
-## Controls
+## Configuration
 
 ```bash
 python3 scripts/ambient_state.py status
@@ -66,14 +67,10 @@ Don't reset or edit `state.json` by hand; `ambient_state.py` is the authority.
 
 `mods/ambient-spanish-hover` underlines known Spanish words in Claude Code replies and shows their English in a row above the prompt when you hover one. See its [README](mods/ambient-spanish-hover/README.md) for install and limits.
 
-## Development
+## Contributing
 
-```bash
-python3 -m unittest discover -s tests -v
-```
-
-Any word added to `references/curriculum.json` must pass the Peninsular-Spanish blocklist in `tests/test_ambient_state.py`. When you add pre-known words, put them at the front of the curriculum and raise `baseline_known_count` by the same amount, or the learning window shifts over words you already know.
+Bug reports and word-list fixes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the rules for changing the curriculum, and [CHANGELOG.md](CHANGELOG.md) for what's changed.
 
 ## License
 
-MIT
+[MIT](LICENSE)
