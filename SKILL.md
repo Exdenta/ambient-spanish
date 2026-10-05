@@ -107,3 +107,5 @@ python3 <skill-root>/scripts/ambient_state.py configure --dialect es-ES
 ```
 
 Do not reset or overwrite state unless the user explicitly requests it. For state semantics and migration rules, read [references/state-contract.md](references/state-contract.md).
+
+In Claude Code, the optional `mods/ambient-spanish-hover` mod adds hover translations; see its [README](mods/ambient-spanish-hover/README.md).
