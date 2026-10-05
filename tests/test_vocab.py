@@ -52,6 +52,9 @@ class VocabTestCase(unittest.TestCase):
         self.state = self.root / "state.json"
         self.lexicon = self.root / "lexicon.tsv"
         self.lexicon.write_text(lexicon_text(FIXTURE_LEXICON_ROWS), encoding="utf-8")
+        self.lookup_bin = self.root / "ambient-lookup"
+        self.lookup_bin.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        self.lookup_bin.chmod(0o755)
 
     def run_raw(self, *args: str, lexicon: bool = True) -> subprocess.CompletedProcess:
         command = [sys.executable, str(SCRIPT), *args]
@@ -63,6 +66,7 @@ class VocabTestCase(unittest.TestCase):
             command += ["--now", self.now]
         environment = os.environ.copy()
         environment["AMBIENT_SPANISH_ALLOW_TIME_OVERRIDE"] = "1"
+        environment["AMBIENT_LOOKUP_BIN"] = str(self.lookup_bin)
         environment.pop("AMBIENT_SPANISH_CURRICULUM", None)
         environment.pop("AMBIENT_SPANISH_LEXICON", None)
         return subprocess.run(
@@ -183,28 +187,43 @@ class LevelsCommandTests(VocabTestCase):
 
 class VocabCompositionTests(VocabTestCase):
     def test_level_makes_everything_up_to_it_known(self) -> None:
-        result = self.run_cli("vocab", "--level", "a1")
+        result = self.run_cli("vocab", "--level", "a1", "--words-per-week", "3")
         curriculum = self.personal_curriculum()
         self.assertEqual(5, result["known_count"])
         self.assertEqual(
             ["hola", "agua", "casa", "comer", "grande"], self.spanish(curriculum[:5])
         )
-        self.assertEqual(["coche", "beber", "rápido"], self.spanish(result["learning"]))
+        self.assertEqual(3, result["words_per_week"])
+        self.assertNotIn("learning", result)
+        self.assertEqual(["coche", "beber", "rápido"], self.spanish(result["new_this_week"]))
         state = self.read_state()
         self.assertEqual(5, state["config"]["baseline_known_count"])
+        self.assertEqual(3, state["config"]["batch_size"])
+        self.assertEqual(7, state["config"]["cadence_days"])
         self.assertEqual("2026-10-05", state["config"]["start_date"])
 
     def test_context_and_status_follow_the_personal_curriculum(self) -> None:
-        self.run_cli("vocab", "--level", "A2")
+        self.run_cli("vocab", "--level", "A2", "--words-per-week", "3")
         context = self.run_cli("context")
-        self.assertEqual(8, context["known_count"])
-        self.assertEqual(["plazo", "lograr", "fiable"], self.spanish(context["learning"]))
+        # Eight baseline words plus the first weekly batch, available immediately.
+        self.assertEqual(11, context["vocabulary_count"])
+        self.assertNotIn("learning", context)
         self.run_cli("record", "--decision", context["decision_id"], "--used", "plazo,casa")
         status = self.run_cli("status")
         self.assertEqual("user", status["curriculum"]["source"])
         self.assertEqual("A2", status["curriculum"]["build"]["level"])
         manifest = (self.root / "vocabulary.txt").read_text(encoding="utf-8")
-        self.assertIn("8 terms", manifest)
+        self.assertIn("11 terms", manifest)
+        self.assertIn("plazo", manifest)
+
+    def test_words_per_week_defaults_and_can_be_changed_later(self) -> None:
+        first = self.run_cli("vocab", "--level", "A0")
+        self.assertEqual(AMBIENT_STATE.DEFAULT_BATCH_SIZE, first["words_per_week"])
+        self.assertEqual(AMBIENT_STATE.DEFAULT_BATCH_SIZE, len(first["new_this_week"]))
+        again = self.run_cli("vocab", "--level", "A0", "--words-per-week", "2")
+        self.assertEqual(2, again["words_per_week"])
+        self.assertEqual(2, len(again["new_this_week"]))
+        self.assertEqual(2, self.read_state()["config"]["batch_size"])
 
     def test_dry_run_writes_nothing(self) -> None:
         result = self.run_cli("vocab", "--level", "B1", "--dry-run")
@@ -218,14 +237,14 @@ class VocabCompositionTests(VocabTestCase):
             "add.txt",
             "# words I know\nel coche\nrapido\nmolar | to be cool | verb\n",
         )
-        result = self.run_cli("vocab", "--level", "A1", "--add-known", added)
+        result = self.run_cli("vocab", "--level", "A1", "--add-known", added, "--words-per-week", "3")
         known = self.spanish(self.personal_curriculum()[: result["known_count"]])
         self.assertEqual(
             ["hola", "agua", "casa", "comer", "grande", "coche", "rápido", "molar"], known
         )
         custom = self.personal_curriculum()[7]
         self.assertEqual(("molar", "verb", "to be cool"), (custom["id"], custom["kind"], custom["english"]))
-        self.assertEqual(["beber", "plazo", "lograr"], self.spanish(result["learning"]))
+        self.assertEqual(["beber", "plazo", "lograr"], self.spanish(result["new_this_week"]))
 
     def test_json_word_lists_are_accepted(self) -> None:
         added = self.word_list(
@@ -250,10 +269,11 @@ class VocabCompositionTests(VocabTestCase):
         learn = self.word_list("learn.txt", "umbral\ncomer\n")
         removed = self.word_list("removed.txt", "casa\nnoexiste\n")
         result = self.run_cli(
-            "vocab", "--level", "A1", "--learn-first", learn, "--remove-known", removed
+            "vocab", "--level", "A1", "--learn-first", learn, "--remove-known", removed,
+            "--words-per-week", "3",
         )
         self.assertEqual(3, result["known_count"])
-        self.assertEqual(["umbral", "comer", "casa"], self.spanish(result["learning"]))
+        self.assertEqual(["umbral", "comer", "casa"], self.spanish(result["new_this_week"]))
         self.assertEqual(["noexiste"], result["not_found"])
 
     def test_a_word_both_known_and_unknown_is_rejected(self) -> None:
@@ -282,17 +302,17 @@ class VocabHistoryTests(VocabTestCase):
             "--now", now,
         )
 
-    def test_keep_known_preserves_known_words_and_learning_order(self) -> None:
-        self.run_cli("vocab", "--level", "A1")
+    def test_keep_known_preserves_the_vocabulary_and_queue_order(self) -> None:
+        self.run_cli("vocab", "--level", "A1", "--words-per-week", "3")
         added = self.word_list("add.txt", "matiz\n")
         result = self.run_cli(
             "vocab", "--keep-known", "--add-known", added, "--now", "2026-10-12T09:00:00+02:00"
         )
         # A week in, the first two batches (coche/beber/rápido, plazo/lograr/fiable)
-        # were promoted; keep-known carries them into the known set.
+        # have joined the vocabulary; keep-known carries them into the known set.
         self.assertEqual(12, result["known_count"])
         self.assertEqual("matiz", self.personal_curriculum()[11]["spanish"])
-        self.assertEqual(["a medida que", "asequible", "umbral"], self.spanish(result["learning"]))
+        self.assertEqual(["a medida que", "asequible", "umbral"], self.spanish(result["new_this_week"]))
 
     def test_a_used_word_the_new_vocabulary_drops_stays_known(self) -> None:
         added = self.word_list("add.txt", "molar | to be cool | verb\n")
@@ -318,15 +338,14 @@ class VocabHistoryTests(VocabTestCase):
         self.assertNotIn("casa", terms)
         self.assertEqual(1, terms["casa-hogar"]["use_count"])
 
-    def test_rebuild_drops_stale_offers_and_pending_decisions(self) -> None:
+    def test_rebuild_drops_pending_decisions(self) -> None:
         self.run_cli("vocab", "--level", "A1")
         self.run_cli("context", "--now", "2026-10-05T10:00:00+02:00")
         self.assertTrue(self.read_state()["progress"]["pending_decisions"])
         self.run_cli("vocab", "--level", "A0", "--now", "2026-10-05T11:00:00+02:00")
         state = self.read_state()
         self.assertEqual({}, state["progress"]["pending_decisions"])
-        curriculum_ids = {term["id"] for term in self.personal_curriculum()}
-        self.assertTrue(set(state["progress"]["offers"]) <= curriculum_ids)
+        self.assertNotIn("offers", state["progress"])
         self.assertTrue((self.root / "state.json.previous").exists())
         self.assertTrue((self.root / "curriculum.json.previous").exists())
 

@@ -156,6 +156,10 @@ function splitBlocks(index: Index, text: string): Block[] {
 const wordsOf = (chunks: Piece[][]): Word[] => chunks.flat().flatMap(p => (p.word ? [p.word] : []))
 
 let indexLoad: Promise<Index | null> | undefined
+let indexRaw = ''
+let indexAt = 0
+// New words land weekly while a session may stay open, so re-read the file now and then.
+const INDEX_REFRESH_MS = 30_000
 let hasWarned = false
 let isDirty = false
 // Insertion order is recency; the band draws one hidden reveal per entry.
@@ -164,10 +168,28 @@ const seen = new Map<string, Word>()
 const pinned = new Map<string, Word>()
 
 function loadIndex($: any): Promise<Index | null> {
+  const stale = indexLoad && Date.now() - indexAt > INDEX_REFRESH_MS
+  if (stale) {
+    const previous = indexLoad
+    indexAt = Date.now()
+    indexLoad = (async () => {
+      try {
+        const home = await $.env.get('HOME')
+        const raw: string = await $.fs.read(`${home}/${VOCAB_FILE}`)
+        if (raw === indexRaw) return await previous
+        indexRaw = raw
+        return buildIndex(raw)
+      } catch {
+        return await previous
+      }
+    })()
+  }
   indexLoad ??= (async () => {
     try {
       const home = await $.env.get('HOME')
-      return buildIndex(await $.fs.read(`${home}/${VOCAB_FILE}`))
+      indexRaw = await $.fs.read(`${home}/${VOCAB_FILE}`)
+      indexAt = Date.now()
+      return buildIndex(indexRaw)
     } catch {
       indexLoad = undefined
       if (!hasWarned) {

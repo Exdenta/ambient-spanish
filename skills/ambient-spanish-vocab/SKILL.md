@@ -24,7 +24,7 @@ Each list flag can be repeated. Give at least one of `--level`, `--keep-known` o
 
 The queue is built in this order: `learn-first`, then the removed words, then the kept queue, then every remaining lexicon word from the easiest level up.
 
-A build restarts the calendar today, so the first `batch_size` words of the queue are being learned from now. Usage history survives:
+A build restarts the calendar today, so the first `words_per_week` words of the queue join the vocabulary right away and the next batch lands a week later. `--words-per-week N` changes the regime (5, 10, 20 or any number) in the same run. Usage history survives:
 - a used word that moved to a new id takes its history along;
 - a used word the new build left out stays, as known.
 
@@ -52,7 +52,7 @@ Then run it again.
 
 ## Workflow
 
-1. **Read where they are.** Run `python3 <root>/scripts/ambient_state.py status`. Note `curriculum.source` (`shipped` or `user`), `curriculum.build.level`, `known_count` and `learning`.
+1. **Read where they are.** Run `python3 <root>/scripts/ambient_state.py status`. Note `curriculum.source` (`shipped` or `user`), `curriculum.build.level`, `known_count` and `words_per_week`.
 2. **Find out what they want.** Ask only if it isn't already clear. The usual requests:
    - set or change the level;
    - a placement check;
@@ -69,10 +69,10 @@ Then run it again.
 4. **Collect lists.**
    - Save pasted words to a scratch file.
    - For topic targets (for example "words for my job" or "travel"), write 20–60 Peninsular Spanish lemmas with glosses. Prefer ones already in the lexicon (`grep` `lexicon.tsv`).
-5. **Preview.** Run the build with `--dry-run`. Show `known_count`, the first `learning` batch and `next_up`, and confirm.
+5. **Preview.** Run the build with `--dry-run`. Show `known_count`, the `new_this_week` words and `next_up`, and confirm.
 6. **Build.** Run the same command without `--dry-run`.
 7. **Density.** With more than about 1,500 known words, the known list the assistant reads once per session gets long (roughly 12 tokens per word). Offer a rotating per-reply sample instead with `configure --known-per-reply 60`, and `configure --known-per-reply all` to undo it. Say which is in force.
-8. **Report.** Give the level, known count, the words being learned now (`spanish (english)`), and the next batch date from `status`.
+8. **Report.** Give the level, known count, the words added this week (`spanish (english)`), the weekly regime, and the next batch date from `status`.
 
 To undo the last build, ask first. Then move `curriculum.json.previous` and `state.json.previous` back over the live files, beside `state.json`.
 

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 INSTALL = ROOT / "scripts" / "install.py"
@@ -18,6 +20,8 @@ class InstallTests(unittest.TestCase):
         self.home = Path(self.temp_dir.name)
         self.skills = self.home / ".claude" / "skills"
         self.claude_md = self.home / ".claude" / "CLAUDE.md"
+        # No `claude` CLI on PATH, so the hover step is skipped instead of touching real plugins.
+        self.env = {"PATH": str(self.home / "no-bin"), "AMBIENT_SPANISH_SKIP_BUILD": "1"}
 
     def run_install(self, *args: str, ok: bool = True) -> dict:
         result = subprocess.run(
@@ -25,6 +29,7 @@ class InstallTests(unittest.TestCase):
             text=True,
             capture_output=True,
             check=False,
+            env=self.env,
         )
         self.assertEqual(0 if ok else 1, result.returncode, result.stdout + result.stderr)
         return json.loads(result.stdout)
@@ -33,13 +38,17 @@ class InstallTests(unittest.TestCase):
         return [step["result"] for step in report["steps"]]
 
     def test_links_both_skills_and_is_idempotent(self) -> None:
-        self.assertEqual(["linked", "linked"], self.results(self.run_install("--claude")))
+        self.assertEqual(
+            ["linked", "linked", "added", "skipped", "skipped"], self.results(self.run_install("--claude"))
+        )
         self.assertEqual(ROOT, (self.skills / "ambient-spanish").resolve())
         self.assertEqual(
             ROOT / "skills" / "ambient-spanish-vocab",
             (self.skills / "ambient-spanish-vocab").resolve(),
         )
-        self.assertEqual(["unchanged", "unchanged"], self.results(self.run_install("--claude")))
+        self.assertEqual(
+            ["unchanged", "unchanged", "unchanged", "skipped", "skipped"], self.results(self.run_install("--claude"))
+        )
 
     def test_an_existing_install_is_a_conflict_until_replaced(self) -> None:
         (self.skills / "ambient-spanish").mkdir(parents=True)
@@ -62,6 +71,7 @@ class InstallTests(unittest.TestCase):
             text=True,
             capture_output=True,
             check=False,
+            env=self.env,
         )
         self.assertEqual(0, result.returncode, result.stdout)
         self.assertEqual("unchanged", json.loads(result.stdout)["steps"][0]["result"])
@@ -70,11 +80,11 @@ class InstallTests(unittest.TestCase):
     def test_rule_is_added_once_and_removed_without_touching_other_text(self) -> None:
         self.claude_md.parent.mkdir(parents=True)
         self.claude_md.write_text("# Mine\n\nKeep this.\n", encoding="utf-8")
-        self.assertEqual("added", self.run_install("--claude", "--rule")["steps"][-1]["result"])
+        self.assertEqual("added", self.run_install("--claude")["steps"][2]["result"])
         text = self.claude_md.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("# Mine\n\nKeep this.\n\n<!-- ambient-spanish:begin -->"))
         self.assertIn(str(self.skills / "ambient-spanish" / "scripts" / "ambient_state.py"), text)
-        self.assertEqual("unchanged", self.run_install("--claude", "--rule")["steps"][-1]["result"])
+        self.assertEqual("unchanged", self.run_install("--claude")["steps"][2]["result"])
         self.assertEqual(1, self.claude_md.read_text(encoding="utf-8").count("ambient-spanish:begin"))
         self.assertEqual(
             "removed", self.run_install("--claude", "--remove-rule")["steps"][-1]["result"]
@@ -82,7 +92,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual("# Mine\n\nKeep this.\n", self.claude_md.read_text(encoding="utf-8"))
 
     def test_codex_uses_its_own_skills_dir_and_agents_file(self) -> None:
-        self.run_install("--codex", "--rule")
+        self.run_install("--codex")
         self.assertTrue((self.home / ".codex" / "skills" / "ambient-spanish").is_symlink())
         self.assertIn(
             "ambient-spanish:begin",
@@ -90,11 +100,116 @@ class InstallTests(unittest.TestCase):
         )
         self.assertFalse(self.claude_md.exists())
 
+    def test_local_scope_writes_the_rule_into_the_project_only(self) -> None:
+        project = self.home / "project"
+        project.mkdir()
+        report = self.run_install("--claude", "--codex", "--scope", "local", "--project-dir", str(project))
+        self.assertIn("ambient-spanish:begin", (project / "CLAUDE.local.md").read_text(encoding="utf-8"))
+        self.assertIn("ambient-spanish:begin", (project / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertFalse(self.claude_md.exists())
+        self.assertNotIn("conflict", self.results(report))
+
     def test_dry_run_changes_nothing(self) -> None:
-        report = self.run_install("--claude", "--rule", "--dry-run")
-        self.assertEqual(["linked", "linked", "added"], self.results(report))
+        report = self.run_install("--claude", "--dry-run")
+        self.assertEqual(["linked", "linked", "added", "skipped", "skipped"], self.results(report))
         self.assertFalse(self.skills.exists())
         self.assertFalse(self.claude_md.exists())
+
+
+class BuildLookupTests(unittest.TestCase):
+    """The step that builds the Rust `ambient-lookup` binary, with cargo faked out."""
+
+    def setUp(self) -> None:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        self.addCleanup(sys.path.remove, str(ROOT / "scripts"))
+        import install
+
+        self.install = install
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        crate = Path(temp.name) / "crate"
+        (crate / "src").mkdir(parents=True)
+        (crate / "Cargo.toml").write_text("[package]\n", encoding="utf-8")
+        (crate / "src" / "main.rs").write_text("fn main() {}\n", encoding="utf-8")
+        self.crate = crate
+        patches = [
+            mock.patch.object(install, "LOOKUP_CRATE", crate),
+            mock.patch.object(install, "LOOKUP_BIN", crate / "target" / "release" / "ambient-lookup"),
+            mock.patch.dict("os.environ", {}, clear=False),
+        ]
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        os.environ.pop("AMBIENT_SPANISH_SKIP_BUILD", None)
+
+    def make_binary(self, *, newer: bool) -> Path:
+        binary = self.install.LOOKUP_BIN
+        binary.parent.mkdir(parents=True)
+        binary.write_text("", encoding="utf-8")
+        sources = [self.crate / "Cargo.toml", self.crate / "src" / "main.rs"]
+        base = max(path.stat().st_mtime for path in sources)
+        stamp = base + 10 if newer else base - 10
+        os.utime(binary, (stamp, stamp))
+        return binary
+
+    def test_skip_env_skips(self) -> None:
+        os.environ["AMBIENT_SPANISH_SKIP_BUILD"] = "1"
+        self.assertEqual("skipped", self.install.build_lookup(dry_run=False)["result"])
+
+    def test_missing_cargo_fails_with_the_rustup_hint(self) -> None:
+        with mock.patch("shutil.which", return_value=None):
+            step = self.install.build_lookup(dry_run=False)
+        self.assertEqual("failed", step["result"])
+        self.assertIn("https://rustup.rs", step["output"])
+
+    def test_dry_run_reports_would_build_and_runs_nothing(self) -> None:
+        with mock.patch("shutil.which", return_value="/usr/bin/cargo"), mock.patch(
+            "subprocess.run"
+        ) as run:
+            step = self.install.build_lookup(dry_run=True)
+        self.assertEqual("would build", step["result"])
+        run.assert_not_called()
+
+    def test_build_runs_cargo_release_on_the_crate_manifest(self) -> None:
+        completed = subprocess.CompletedProcess([], 0, "", "")
+        with mock.patch("shutil.which", return_value="/usr/bin/cargo"), mock.patch(
+            "subprocess.run", return_value=completed
+        ) as run:
+            step = self.install.build_lookup(dry_run=False)
+        self.assertEqual("built", step["result"])
+        self.assertEqual(
+            ["/usr/bin/cargo", "build", "--release", "--manifest-path", str(self.crate / "Cargo.toml")],
+            run.call_args.args[0],
+        )
+
+    def test_a_failed_cargo_build_is_reported(self) -> None:
+        completed = subprocess.CompletedProcess([], 101, "", "error: boom")
+        with mock.patch("shutil.which", return_value="/usr/bin/cargo"), mock.patch(
+            "subprocess.run", return_value=completed
+        ):
+            step = self.install.build_lookup(dry_run=False)
+        self.assertEqual("failed", step["result"])
+        self.assertIn("boom", step["output"])
+
+    def test_a_binary_newer_than_every_source_is_unchanged(self) -> None:
+        self.make_binary(newer=True)
+        with mock.patch("shutil.which", return_value=None):
+            self.assertEqual("unchanged", self.install.build_lookup(dry_run=False)["result"])
+
+    def test_a_binary_older_than_a_source_is_rebuilt(self) -> None:
+        self.make_binary(newer=False)
+        with mock.patch("shutil.which", return_value="/usr/bin/cargo"):
+            self.assertEqual("would build", self.install.build_lookup(dry_run=True)["result"])
+
+    def test_remove_rule_does_not_build(self) -> None:
+        env = {"PATH": "/nonexistent"}
+        result = subprocess.run(
+            [sys.executable, str(INSTALL), "--home", self.crate.parent.as_posix(), "--claude", "--remove-rule"],
+            text=True, capture_output=True, check=False, env=env,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        steps = json.loads(result.stdout)["steps"]
+        self.assertNotIn("build ambient-lookup", [step["step"] for step in steps])
 
 
 class SkillFileTests(unittest.TestCase):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Calendar-governed batch curriculum and per-reply substitution set for ambient Spanish."""
+"""Calendar-governed batch curriculum and vocabulary state for ambient Spanish."""
 
 from __future__ import annotations
 
@@ -26,30 +26,19 @@ except ImportError:  # pragma: no cover - Unix is the supported Codex runtime.
     fcntl = None
 
 
-SCHEMA_VERSION = 5
-LEGACY_SCHEMA_VERSIONS = (1, 2, 3, 4)
+SCHEMA_VERSION = 6
+LEGACY_SCHEMA_VERSIONS = (1, 2, 3, 4, 5)
 DEFAULT_TIMEZONE = "Europe/Madrid"
 DEFAULT_DIALECT = "es-ES"
-DEFAULT_CADENCE_DAYS = 3
-DEFAULT_BATCH_SIZE = 3
-# None means no per-reply cap: the whole known set is in scope for every reply.
-DEFAULT_KNOWN_PER_REPLY = None
+DEFAULT_CADENCE_DAYS = 7  # one week between additions to the vocabulary
+DEFAULT_BATCH_SIZE = 10  # new words per week
 LEGACY_V4_KNOWN_PER_REPLY = 18  # v4 required a cap; only the migration path needs it.
 MANIFEST_FILENAME = "vocabulary.txt"
+LOOKUP_BIN_ENV = "AMBIENT_LOOKUP_BIN"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_LOOKUP_BIN = REPO_ROOT / "rust" / "ambient-lookup" / "target" / "release" / "ambient-lookup"
 MANIFEST_KIND_ORDER = ("verb", "noun", "adjective", "adverb", "phrase", "connector")
 DEFAULT_EXPOSURE_PERCENT = 50  # Legacy v2 field, retained only for migration.
-# Content words carry the language; connectors are the ones a reply can always
-# find a slot for, so an unweighted sample degenerates into filler.
-KIND_WEIGHTS = {
-    "verb": 4,
-    "noun": 4,
-    "adjective": 2,
-    "phrase": 1,
-    "adverb": 1,
-    "connector": 1,
-}
-DEFAULT_KIND_WEIGHT = 1
-EXPLORE_SHARE = 2 / 3  # Share of each kind's slots reserved for never-used terms.
 MAX_PENDING_DECISIONS = 128
 MAX_DECISION_AGE_SECONDS = 24 * 60 * 60
 DEFAULT_STATE_PATH = Path.home() / ".codex" / "state" / "ambient-spanish" / "state.json"
@@ -99,28 +88,10 @@ class StateError(RuntimeError):
     """Raised when state or a requested transition is invalid."""
 
 
-class _Unset:
-    """Distinguishes `--known-per-reply all` (a null cap) from the flag being absent."""
-
-    def __repr__(self) -> str:  # pragma: no cover - debugging aid only
-        return "<unset>"
-
-
-_UNSET = _Unset()
-
-
-def _known_per_reply_arg(value: str) -> int | None:
-    if value.strip().lower() in {"all", "none", "null", "unlimited"}:
-        return None
-    try:
-        parsed = int(value)
-    except ValueError:
-        raise argparse.ArgumentTypeError(
-            "known-per-reply must be a positive integer or 'all'"
-        ) from None
-    if parsed < 1:
-        raise argparse.ArgumentTypeError("known-per-reply must be at least 1 or 'all'")
-    return parsed
+def _words_per_week(value: int) -> int:
+    if value < 1:
+        raise StateError("words per week must be at least 1")
+    return value
 
 
 def _json_dump(value: Any) -> str:
@@ -432,7 +403,7 @@ def _compose_vocabulary(
     remove_known: list[dict[str, str]],
     learn_first: list[dict[str, str]],
 ) -> dict[str, Any]:
-    """Order a personal curriculum: everything known first, then the learning queue.
+    """Order a personal curriculum: everything known first, then the queue of words to add.
 
     Known: the kept known tier, the level packs up to `level`, and `add_known`,
     minus anything removed or queued to learn. Queue: `learn_first` in the
@@ -541,7 +512,6 @@ def _new_state(
     dialect: str,
     cadence_days: int,
     batch_size: int,
-    known_per_reply: int | None = DEFAULT_KNOWN_PER_REPLY,
     baseline_known_count: int = 0,
     start_date: date | None = None,
 ) -> dict[str, Any]:
@@ -549,8 +519,6 @@ def _new_state(
         raise StateError("cadence_days must be at least 1")
     if batch_size < 1:
         raise StateError("batch_size must be at least 1")
-    if known_per_reply is not None and known_per_reply < 1:
-        raise StateError("known_per_reply must be at least 1 or null for no cap")
     if baseline_known_count < 0:
         raise StateError("baseline_known_count must not be negative")
     return {
@@ -560,7 +528,6 @@ def _new_state(
             "dialect": dialect,
             "cadence_days": cadence_days,
             "batch_size": batch_size,
-            "known_per_reply": known_per_reply,
             "baseline_known_count": baseline_known_count,
             "paused": False,
             "start_date": (start_date or now.date()).isoformat(),
@@ -569,7 +536,6 @@ def _new_state(
             "last_exposure_at": None,
             "pending_decisions": {},
             "terms": {},
-            "offers": {},
         },
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
@@ -741,14 +707,16 @@ def _validate_legacy_state(
 def _validate_state(
     state: Any, curriculum: list[dict[str, str]], *, version: int = SCHEMA_VERSION
 ) -> dict[str, Any]:
-    """Validate a schema v3, v4, or v5 document.
+    """Validate a schema v3 to v6 document.
 
     v4 adds the required `config.known_per_reply` budget; v5 lets that budget be
     null (no cap), adds `progress.offers`, and allows a decision to reserve the
-    whole known set by scope instead of listing every id. v3 and v4 are accepted
-    only on the migration path. Unknown versions fail closed.
+    whole vocabulary by scope instead of listing every id; v6 drops the budget
+    and the offers, since the agent now looks words up instead of sampling.
+    v3 to v5 are accepted only on the migration path. Unknown versions fail
+    closed.
     """
-    if version not in (3, 4, SCHEMA_VERSION):
+    if version not in (3, 4, 5, SCHEMA_VERSION):
         raise StateError(f"No validator exists for state schema_version {version}")
     if not isinstance(state, dict):
         raise StateError("State root must be an object")
@@ -769,7 +737,7 @@ def _validate_state(
         "paused",
         "start_date",
     ]
-    if version >= 4:
+    if 4 <= version <= 5:
         config_keys.append("known_per_reply")
     for key in config_keys:
         if key not in config:
@@ -786,9 +754,9 @@ def _validate_state(
         raise StateError("config.cadence_days must be an integer of at least 1")
     if type(config["batch_size"]) is not int or config["batch_size"] < 1:
         raise StateError("config.batch_size must be an integer of at least 1")
-    if version >= 4:
+    if 4 <= version <= 5:
         budget = config["known_per_reply"]
-        nullable = version >= 5
+        nullable = version == 5
         if budget is None and not nullable:
             raise StateError("config.known_per_reply must be an integer of at least 1")
         if budget is not None and (type(budget) is not int or budget < 1):
@@ -809,7 +777,7 @@ def _validate_state(
         _parse_timestamp(state[field], config["timezone"], field=field)
 
     progress_keys = ["last_exposure_at", "pending_decisions", "terms"]
-    if version >= 5:
+    if version == 5:
         progress_keys.append("offers")
     for key in progress_keys:
         if key not in progress:
@@ -850,7 +818,7 @@ def _validate_state(
             raise StateError(f"State term {term_id} use_count must be at least 1")
         last_used_times.append(last_used_at)
 
-    if version >= 5:
+    if version == 5:
         offers = progress["offers"]
         if not isinstance(offers, dict):
             raise StateError("progress.offers must be an object")
@@ -983,7 +951,7 @@ def _migrate_v4_state(
     """
     _validate_state(state, curriculum, version=4)
     migrated = json.loads(json.dumps(state))
-    migrated["schema_version"] = SCHEMA_VERSION
+    migrated["schema_version"] = 5
     migrated["progress"]["offers"] = {
         term_id: {
             "count": int(term_state["use_count"]),
@@ -991,6 +959,25 @@ def _migrate_v4_state(
         }
         for term_id, term_state in migrated["progress"]["terms"].items()
     }
+    return _validate_state(migrated, curriculum, version=5)
+
+
+def _migrate_v5_state(
+    state: dict[str, Any], curriculum: list[dict[str, str]]
+) -> dict[str, Any]:
+    """Drop the per-reply density cap and offer history.
+
+    The agent now looks words up in the whole vocabulary with `ambient-lookup`
+    instead of receiving a sample, so `known_per_reply` and `offers` have no
+    reader. Pending decisions are cleared: each was issued under the old scope
+    rules and a reply in flight simply records nothing.
+    """
+    _validate_state(state, curriculum, version=5)
+    migrated = json.loads(json.dumps(state))
+    migrated["schema_version"] = SCHEMA_VERSION
+    migrated["config"].pop("known_per_reply", None)
+    migrated["progress"].pop("offers", None)
+    migrated["progress"]["pending_decisions"] = {}
     return _validate_state(migrated, curriculum)
 
 
@@ -1036,7 +1023,9 @@ def _load_or_create_state(
                 staged = _migrate_v2_state(staged, curriculum, now)
             if source_version <= 3:
                 staged = _migrate_v3_state(staged, curriculum)
-            migrated = _migrate_v4_state(staged, curriculum)
+            if source_version <= 4:
+                staged = _migrate_v4_state(staged, curriculum)
+            migrated = _migrate_v5_state(staged, curriculum)
             migrated["updated_at"] = now.isoformat()
             _validate_state(migrated, curriculum)
             backup_durable = _preserve_migration_source(
@@ -1067,128 +1056,32 @@ def _batch_index(state: dict[str, Any], today: date) -> int:
     return (today - start).days // config["cadence_days"]
 
 
+def _vocabulary_size(state: dict[str, Any], size: int, batch_index: int) -> int:
+    """How many leading curriculum items are in the vocabulary at `batch_index`."""
+    config = state["config"]
+    if batch_index < 0:
+        return 0
+    return min(size, config["baseline_known_count"] + (batch_index + 1) * config["batch_size"])
+
+
 def _tiers(
     state: dict[str, Any], curriculum: list[dict[str, str]], today: date
-) -> tuple[list[dict[str, str]], list[dict[str, str]], int]:
-    """Split the curriculum into (known, learning, batch_index) for a local date.
+) -> tuple[list[dict[str, str]], int]:
+    """Return (vocabulary, batch_index) for a local date.
 
-    `known` is used bare and unglossed. `learning` is the current batch and is
-    the only tier that carries a bracketed English gloss. Both are derived
-    purely from elapsed calendar time, so a batch is promoted on its date
-    whether or not its words were ever actually used.
+    The vocabulary is one list: the words the learner already knows plus every
+    weekly addition so far. It is derived purely from elapsed calendar time, so
+    a batch joins on its date whether or not anything else happened.
     """
-    config = state["config"]
     batch_index = _batch_index(state, today)
-    if batch_index < 0:
-        return [], [], batch_index
-    size = len(curriculum)
-    learning_start = min(
-        size, config["baseline_known_count"] + batch_index * config["batch_size"]
-    )
-    learning_end = min(size, learning_start + config["batch_size"])
-    return curriculum[:learning_start], curriculum[learning_start:learning_end], batch_index
-
-
-def _kind_quotas(counts: dict[str, int], budget: int) -> dict[str, int]:
-    """Split `budget` across the kinds present, by `KIND_WEIGHTS`, largest remainder first.
-
-    A kind smaller than its share gives the leftover slots back to the others,
-    so a curriculum missing a kind still fills the whole budget.
-    """
-    weights = {
-        kind: KIND_WEIGHTS.get(kind, DEFAULT_KIND_WEIGHT) for kind in counts
-    }
-    total_weight = sum(weights.values()) or 1
-    exact = {kind: budget * weight / total_weight for kind, weight in weights.items()}
-    quota = {kind: min(counts[kind], int(exact[kind])) for kind in counts}
-    order = sorted(
-        counts,
-        key=lambda kind: (-(exact[kind] % 1), -weights[kind], kind),
-    )
-    remaining = budget - sum(quota.values())
-    while remaining > 0:
-        progressed = False
-        for kind in order:
-            if remaining == 0:
-                break
-            if quota[kind] < counts[kind]:
-                quota[kind] += 1
-                remaining -= 1
-                progressed = True
-        if not progressed:
-            break
-    return quota
-
-
-def _sample_seed(state: dict[str, Any]) -> str:
-    """Value that changes on every `context` call, so consecutive replies differ."""
-    progress = state["progress"]
-    pending = ",".join(sorted(progress["pending_decisions"]))
-    uses = sum(int(term["use_count"]) for term in progress["terms"].values())
-    return f"{state.get('updated_at', '')}|{pending}|{uses}"
-
-
-def _jitter(seed: str, term_id: str) -> str:
-    return hashlib.blake2b(f"{seed}|{term_id}".encode(), digest_size=8).hexdigest()
-
-
-def _known_sample(
-    state: dict[str, Any], known: list[dict[str, str]]
-) -> list[dict[str, str]]:
-    """Bounded slice of `known` offered to one reply: kind-balanced, least-used first.
-
-    Offering the whole known set turns substitution into translation once that
-    set covers ordinary vocabulary, so a reply may draw on at most
-    `known_per_reply` terms. Slots are shared out by kind so verbs and nouns
-    cannot be crowded out by connectors, and within a kind the least-used terms
-    come first, with ties broken per reply so nothing sticks. `EXPLORE_SHARE` of
-    each kind's slots go to never-used terms and the rest to proven ones.
-    """
-    budget = state["config"]["known_per_reply"]
-    if budget is None or budget >= len(known):
-        return list(known)
-    terms = state["progress"]["terms"]
-    offers = state["progress"].get("offers", {})
-    seed = _sample_seed(state)
-    buckets: dict[str, list[dict[str, str]]] = {}
-    for term in known:
-        buckets.setdefault(term["kind"], []).append(term)
-    quotas = _kind_quotas({kind: len(bucket) for kind, bucket in buckets.items()}, budget)
-
-    def rank(term: dict[str, str]) -> tuple[int, int, str]:
-        term_state = terms.get(term["id"])
-        offer_state = offers.get(term["id"])
-        use_count = int(term_state["use_count"]) if term_state else 0
-        # Offer count demotes a word the replies keep failing to place, so an
-        # unusable term cannot hold a slot forever on a zero use count.
-        offer_count = int(offer_state["count"]) if offer_state else 0
-        return (use_count, offer_count, _jitter(seed, term["id"]))
-
-    picked: list[dict[str, str]] = []
-    for kind, bucket in buckets.items():
-        quota = quotas[kind]
-        ordered = sorted(bucket, key=rank)
-        fresh = [term for term in ordered if rank(term)[0] == 0]
-        proven = [term for term in ordered if rank(term)[0] > 0]
-        # A term that never fits a reply keeps its count at zero forever, so a
-        # pure least-used rule fills the slots with words nothing can host.
-        # Some of each quota stays with terms that have actually landed before.
-        explore = min(len(fresh), max(1, round(quota * EXPLORE_SHARE)))
-        chosen = fresh[:explore] + proven[: quota - explore]
-        if len(chosen) < quota:
-            remainder = [term for term in ordered if term not in chosen]
-            chosen += remainder[: quota - len(chosen)]
-        picked.extend(chosen)
-    position = {term["id"]: index for index, term in enumerate(known)}
-    picked.sort(key=lambda term: position[term["id"]])
-    return picked[:budget]
+    return curriculum[: _vocabulary_size(state, len(curriculum), batch_index)], batch_index
 
 
 def _manifest_text(known: list[dict[str, str]]) -> str:
-    """Grouped `id | spanish | english` listing of the whole known set."""
+    """Grouped `id | spanish | english` listing of the whole vocabulary."""
     lines = [
         f"# ambient-spanish known vocabulary — {len(known)} terms",
-        "# Substitute these bare, no gloss, wherever your own prose expresses the",
+        "# Substitute these wherever your own prose expresses the",
         "# meaning. Verbs and nouns first. The sentence's grammar stays English.",
     ]
     by_kind: dict[str, list[dict[str, str]]] = {}
@@ -1239,17 +1132,6 @@ def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, 
     }
 
 
-def _count_offers(state: dict[str, Any], term_ids: list[str], now: datetime) -> None:
-    offers = state["progress"].setdefault("offers", {})
-    for term_id in term_ids:
-        offer_state = offers.get(term_id)
-        if offer_state is None:
-            offers[term_id] = {"count": 1, "last_offered_at": now.isoformat()}
-        else:
-            offer_state["count"] = int(offer_state["count"]) + 1
-            offer_state["last_offered_at"] = now.isoformat()
-
-
 def _next_batch_date(
     state: dict[str, Any], curriculum: list[dict[str, str]], today: date
 ) -> date | None:
@@ -1259,18 +1141,13 @@ def _next_batch_date(
     if batch_index < 0:
         return start
     next_index = batch_index + 1
-    next_learning_start = (
-        config["baseline_known_count"] + next_index * config["batch_size"]
-    )
-    if next_learning_start >= len(curriculum):
+    if _vocabulary_size(state, len(curriculum), batch_index) >= len(curriculum):
         return None
     return start + timedelta(days=next_index * config["cadence_days"])
 
 
-def _reserve_decision(
-    state: dict[str, Any], term_ids: list[str] | None, now: datetime
-) -> str:
-    """Reserve one reply's active set. `term_ids=None` reserves the whole known set."""
+def _reserve_decision(state: dict[str, Any], now: datetime) -> str:
+    """Reserve one reply's exposure: any term of the vocabulary of the day issued."""
     pending = state["progress"]["pending_decisions"]
     timezone_name = state["config"]["timezone"]
     ages: list[tuple[float, str]] = []
@@ -1308,18 +1185,18 @@ def _reserve_decision(
     decision_id = f"d_{secrets.token_urlsafe(18)}"
     while decision_id in pending:
         decision_id = f"d_{secrets.token_urlsafe(18)}"
-    pending[decision_id] = (
-        {"scope": "known_all", "created_at": now.isoformat()}
-        if term_ids is None
-        else {"term_ids": list(term_ids), "created_at": now.isoformat()}
-    )
+    pending[decision_id] = {"scope": "known_all", "created_at": now.isoformat()}
     return decision_id
 
 
 def _permitted_terms(
     state: dict[str, Any], curriculum: list[dict[str, str]], decision: dict[str, Any]
 ) -> set[str]:
-    """Ids a decision permits: its own list, or the tiers of the day it was issued."""
+    """Ids a decision permits: the vocabulary of the day it was issued.
+
+    A decision issued before schema v6 may still carry its own `term_ids` list;
+    that list is honoured as written.
+    """
     if "term_ids" in decision:
         return set(decision["term_ids"])
     timezone_name = state["config"]["timezone"]
@@ -1327,8 +1204,8 @@ def _permitted_terms(
         decision["created_at"], timezone_name, field="created_at"
     )
     issued_on = created_at.astimezone(_timezone(timezone_name)).date()
-    known, learning, _ = _tiers(state, curriculum, issued_on)
-    return {term["id"] for term in known + learning}
+    vocabulary, _ = _tiers(state, curriculum, issued_on)
+    return {term["id"] for term in vocabulary}
 
 
 def _combined_durability(initial: str, written: bool) -> str:
@@ -1337,15 +1214,8 @@ def _combined_durability(initial: str, written: bool) -> str:
     return "confirmed"
 
 
-def _term_view(
-    term: dict[str, str], tier: str, term_state: dict[str, Any] | None
-) -> dict[str, Any]:
-    return {
-        **term,
-        "tier": tier,
-        "gloss": "bracketed" if tier == "learning" else "omit",
-        "use_count": int(term_state["use_count"]) if term_state else 0,
-    }
+def _term_view(term: dict[str, str], term_state: dict[str, Any] | None) -> dict[str, Any]:
+    return {**term, "use_count": int(term_state["use_count"]) if term_state else 0}
 
 
 def _context(
@@ -1358,8 +1228,7 @@ def _context(
     progress = state["progress"]
     timezone_name = config["timezone"]
     today = now.date()
-    terms = progress["terms"]
-    known, learning, batch_index = _tiers(state, curriculum, today)
+    known, batch_index = _tiers(state, curriculum, today)
     last_exposure_timestamp = progress.get("last_exposure_at")
 
     active = True
@@ -1380,26 +1249,12 @@ def _context(
         last_exposure_timestamp, timezone_name, field="last_exposure_at"
     ).timestamp():
         active, reason = False, "clock_before_last_exposure"
-    elif not known and not learning:
+    elif not known:
         active, reason = False, "curriculum_exhausted"
-    elif not learning:
-        # Every term is known. Substitution continues unglossed; only new
-        # vocabulary has run out.
+    elif len(known) >= len(curriculum):
+        # Substitution continues; only new words have run out.
         reason = "curriculum_complete"
 
-    offered = _known_sample(state, known) if active else []
-    # Uncapped, the whole known set is in scope. Inlining several hundred terms
-    # in every reply's tool result costs more context than the reply itself, so
-    # the terms travel in a session-stable manifest file instead.
-    uncapped = config["known_per_reply"] is None
-    known_view = (
-        []
-        if uncapped
-        else [_term_view(term, "known", terms.get(term["id"])) for term in offered]
-    )
-    learning_view = [
-        _term_view(term, "learning", terms.get(term["id"])) for term in learning
-    ]
     next_batch = _next_batch_date(state, curriculum, today)
 
     return {
@@ -1408,32 +1263,31 @@ def _context(
         "local_date": today.isoformat(),
         "timezone": timezone_name,
         "dialect": config["dialect"],
+        "words_per_week": config["batch_size"],
         "cadence_days": config["cadence_days"],
-        "batch_size": config["batch_size"],
-        "known_per_reply": config["known_per_reply"],
         "paused": config["paused"],
         "state_path": str(state_path),
         "batch_index": batch_index,
-        "known_count": len(known),
-        "known_scope": "all" if uncapped else "sample",
-        "known_offered_count": (len(known) if uncapped else len(known_view)) if active else 0,
-        "learning_count": len(learning_view),
-        "known": known_view if active else [],
-        "learning": learning_view if active else [],
+        "vocabulary_count": len(known),
         "next_batch_date": next_batch.isoformat() if next_batch is not None else None,
         "active": active,
         "reason": reason,
     }
 
 
+def _lookup_binary() -> Path | None:
+    """The `ambient-lookup` binary: AMBIENT_LOOKUP_BIN, then the repo's release build."""
+    raw = os.environ.get(LOOKUP_BIN_ENV)
+    path = Path(raw).expanduser().resolve() if raw else DEFAULT_LOOKUP_BIN
+    return path if path.is_file() else None
+
+
 def _split_ids(raw: str) -> list[str]:
     ids = [chunk.strip() for chunk in raw.split(",")]
     ids = [chunk for chunk in ids if chunk]
     if not ids:
-        raise StateError("--used requires at least one curriculum id")
-    if len(set(ids)) != len(ids):
-        raise StateError("--used contains duplicate curriculum ids")
-    return ids
+        raise StateError("--used requires at least one curriculum id or Spanish word")
+    return list(dict.fromkeys(ids))
 
 
 def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
@@ -1450,9 +1304,8 @@ def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
             now,
             timezone_name=args.timezone,
             dialect=args.dialect,
-            cadence_days=args.cadence_days,
-            batch_size=args.batch_size,
-            known_per_reply=args.known_per_reply,
+            cadence_days=DEFAULT_CADENCE_DAYS,
+            batch_size=_words_per_week(args.words_per_week),
             baseline_known_count=args.baseline_known,
             start_date=start,
         )
@@ -1475,20 +1328,20 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
         )
         result = _context(state, curriculum, now, state_path)
         result["decision_id"] = None
+        result["lookup"] = None
         if result["active"]:
-            known, learning, _ = _tiers(state, curriculum, now.date())
-            learning_ids = [term["id"] for term in learning]
-            if result["known_scope"] == "all":
-                offered_ids = [term["id"] for term in known] + learning_ids
-                result["known_manifest"] = _write_manifest(state_path, known)
-                decision_id = _reserve_decision(state, None, now)
-            else:
-                offered_ids = [
-                    term["id"] for term in result["known"]
-                ] + learning_ids
-                decision_id = _reserve_decision(state, offered_ids, now)
-            _count_offers(state, offered_ids, now)
-            result["decision_id"] = decision_id
+            binary = _lookup_binary()
+            if binary is None:
+                raise StateError(
+                    "ambient-lookup binary not found: run python3 scripts/install.py"
+                )
+            known, _ = _tiers(state, curriculum, now.date())
+            # The agent matches its draft against this file through the lookup
+            # binary, and the hover mod reads it too, so it holds the whole
+            # vocabulary and is rewritten only when that changes.
+            manifest = _write_manifest(state_path, known)
+            result["lookup"] = {"command": str(binary), "vocabulary": manifest["path"]}
+            result["decision_id"] = _reserve_decision(state, now)
             state["updated_at"] = now.isoformat()
             _validate_state(state, curriculum)
             durable = _atomic_write(state_path, state)
@@ -1501,10 +1354,22 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
     by_id = {term["id"]: term for term in curriculum}
-    used = _split_ids(args.used)
-    unknown = sorted(term_id for term_id in used if term_id not in by_id)
+    # `--used` takes ids or the Spanish words themselves, as `ambient-lookup` prints them.
+    by_spanish: dict[str, list[str]] = {}
+    for term in curriculum:
+        by_spanish.setdefault(_accentless(term["spanish"]).lower(), []).append(term["id"])
+    used: list[str] = []
+    unknown: list[str] = []
+    for word in _split_ids(args.used):
+        if word in by_id:
+            matched = [word]
+        else:
+            matched = by_spanish.get(_accentless(word).lower(), [])
+        if not matched:
+            unknown.append(word)
+        used.extend(term_id for term_id in matched if term_id not in used)
     if unknown:
-        raise StateError(f"Unknown curriculum terms: {', '.join(unknown)}")
+        raise StateError(f"Unknown curriculum terms: {', '.join(sorted(unknown))}")
 
     with _locked(state_path):
         state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
@@ -1586,7 +1451,6 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
         "build": build,
     }
     terms = state["progress"]["terms"]
-    offers = state["progress"].get("offers", {})
     used_terms = []
     for term_id, term_state in terms.items():
         used_terms.append(
@@ -1595,20 +1459,11 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
                 "introduced_at": term_state["introduced_at"],
                 "last_used_at": term_state["last_used_at"],
                 "use_count": term_state["use_count"],
-                "offer_count": int(offers.get(term_id, {}).get("count", 0)),
             }
         )
     context["used_terms"] = sorted(used_terms, key=lambda term: -term["use_count"])
-    # Offered repeatedly and never used: either the replies have no room for the
-    # word or its gloss does not fit the register. Worth seeing.
-    context["cold_terms"] = sorted(
-        (
-            {**by_id[term_id], "offer_count": int(offer_state["count"])}
-            for term_id, offer_state in offers.items()
-            if term_id not in terms
-        ),
-        key=lambda term: -term["offer_count"],
-    )[:25]
+    binary = _lookup_binary()
+    context["lookup_binary"] = str(binary) if binary is not None else None
     return context
 
 
@@ -1619,22 +1474,10 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
         state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         config = state["config"]
         changes: dict[str, Any] = {}
-        if args.cadence_days is not None:
-            if args.cadence_days < 1:
-                raise StateError("cadence_days must be at least 1")
-            config["cadence_days"] = args.cadence_days
-            changes["cadence_days"] = args.cadence_days
-        if args.batch_size is not None:
-            if args.batch_size < 1:
-                raise StateError("batch_size must be at least 1")
-            config["batch_size"] = args.batch_size
-            changes["batch_size"] = args.batch_size
-        if args.known_per_reply is not _UNSET:
-            budget = args.known_per_reply
-            if budget is not None and budget < 1:
-                raise StateError("known_per_reply must be at least 1 or 'all' for no cap")
-            config["known_per_reply"] = budget
-            changes["known_per_reply"] = budget
+        if args.words_per_week is not None:
+            config["batch_size"] = _words_per_week(args.words_per_week)
+            config["cadence_days"] = DEFAULT_CADENCE_DAYS
+            changes["words_per_week"] = args.words_per_week
         if args.baseline_known is not None:
             if args.baseline_known < 0:
                 raise StateError("baseline_known_count must not be negative")
@@ -1734,13 +1577,10 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             state, now, _ = _load_or_create_state(state_path, current, now_value=args.now)
             config = state["config"]
             batch_index = max(_batch_index(state, now.date()), 0)
-            learning_start = min(
-                len(current),
-                config["baseline_known_count"] + batch_index * config["batch_size"],
-            )
+            unlocked = _vocabulary_size(state, len(current), batch_index)
             if args.keep_known:
-                keep_known = current[:learning_start]
-                keep_queue = current[learning_start:]
+                keep_known = current[:unlocked]
+                keep_queue = current[unlocked:]
         else:
             now = _parse_now(args.now, DEFAULT_TIMEZONE)
             state = _new_state(
@@ -1802,13 +1642,12 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             while term["id"] in seen_ids:
                 term["id"], suffix = f"{base}-{suffix}", suffix + 1
             seen_ids.add(term["id"])
-        offers = state["progress"]["offers"]
-        for term_id in list(offers):
-            if term_id not in seen_ids:
-                del offers[term_id]
         # Decisions were issued against the old curriculum; a reply in flight
         # simply records nothing.
         state["progress"]["pending_decisions"] = {}
+        if args.words_per_week is not None:
+            config["batch_size"] = _words_per_week(args.words_per_week)
+            config["cadence_days"] = DEFAULT_CADENCE_DAYS
         config["baseline_known_count"] = len(known)
         config["start_date"] = now.date().isoformat()
         state["updated_at"] = now.isoformat()
@@ -1822,7 +1661,8 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             "keep_known": args.keep_known,
             "known_count": len(known),
             "queue_count": len(queue),
-            "learning": [
+            "words_per_week": batch,
+            "new_this_week": [
                 {"spanish": term["spanish"], "english": term["english"]}
                 for term in curriculum[len(known) : len(known) + batch]
             ],
@@ -1832,7 +1672,6 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             "learn_first": len(composed["learn_first"]),
             "not_found": composed["not_found"],
             "history": {"moved": merged, "kept_as_known": kept},
-            "known_per_reply": config["known_per_reply"],
             "start_date": config["start_date"],
             "curriculum_path": str(personal_path),
             "state_path": str(state_path),
@@ -1879,13 +1718,8 @@ def _parser() -> argparse.ArgumentParser:
     _add_common(init)
     init.add_argument("--timezone", default=DEFAULT_TIMEZONE)
     init.add_argument("--dialect", default=DEFAULT_DIALECT)
-    init.add_argument("--cadence-days", type=int, default=DEFAULT_CADENCE_DAYS)
-    init.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
     init.add_argument(
-        "--known-per-reply",
-        type=_known_per_reply_arg,
-        default=DEFAULT_KNOWN_PER_REPLY,
-        help="Maximum known terms offered to one reply, or 'all' for no cap",
+        "--words-per-week", type=int, default=DEFAULT_BATCH_SIZE, help="New words added each week"
     )
     init.add_argument(
         "--baseline-known",
@@ -1898,7 +1732,7 @@ def _parser() -> argparse.ArgumentParser:
     init.set_defaults(handler=_cmd_init)
 
     context = subparsers.add_parser(
-        "context", help="Get this reply's known and learning term sets"
+        "context", help="Get this reply's vocabulary"
     )
     _add_common(context)
     context.set_defaults(handler=_cmd_context)
@@ -1917,14 +1751,7 @@ def _parser() -> argparse.ArgumentParser:
 
     configure = subparsers.add_parser("configure", help="Change non-destructive settings")
     _add_common(configure)
-    configure.add_argument("--cadence-days", type=int)
-    configure.add_argument("--batch-size", type=int)
-    configure.add_argument(
-        "--known-per-reply",
-        type=_known_per_reply_arg,
-        default=_UNSET,
-        help="Maximum known terms offered to one reply, or 'all' to remove the cap",
-    )
+    configure.add_argument("--words-per-week", type=int, help="New words added each week")
     configure.add_argument(
         "--baseline-known",
         type=int,
@@ -1962,7 +1789,7 @@ def _parser() -> argparse.ArgumentParser:
     vocab.add_argument(
         "--keep-known",
         action="store_true",
-        help="Start from the words known today and keep the current learning order",
+        help="Start from the words known today and keep the current queue order",
     )
     for flag, text in (
         ("--add-known", "Word list to mark as known"),
@@ -1970,6 +1797,7 @@ def _parser() -> argparse.ArgumentParser:
         ("--learn-first", "Word list to learn before anything else, in order"),
     ):
         vocab.add_argument(flag, action="append", default=[], metavar="FILE", help=text)
+    vocab.add_argument("--words-per-week", type=int, help="New words added each week")
     vocab.add_argument(
         "--dry-run", action="store_true", help="Report the result without writing"
     )

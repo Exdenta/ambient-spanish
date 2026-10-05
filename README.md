@@ -4,22 +4,22 @@
 [![code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
 [![data: CC BY-NC-SA 4.0](https://img.shields.io/badge/data-CC%20BY--NC--SA%204.0-lightgrey.svg)](references/levels/LICENSE)
 
-Learn Spanish while you work. ambient-spanish is a skill for Claude Code and Codex. Your assistant's normal English replies come back with Spanish words you already know mixed in, and three new words arrive every three days.
+Learn Spanish while you work. ambient-spanish is a skill for Claude Code and Codex. Your assistant's normal English replies come back with Spanish words from your vocabulary mixed in, and a few new words join it every week.
 
 ![A Claude Code reply with known Spanish words underlined; hovering "cerrar" shows "cerrar = to close" above the prompt](docs/hover-demo.gif)
 
-<sub>Underlined words are ones you already know; hover one to see its English (with the optional [hover mod](#hover-translations-claude-code)). New words carry their meaning in brackets, like *riesgo (risk)*.</sub>
+<sub>Every Spanish word is underlined; hover one to see its English (the [hover mod](#hover-translations-claude-code) is part of the install).</sub>
 
-- **Known words** appear in Spanish, with no translation.
-- **New words** arrive three at a time, every three days. Each shows its English in brackets the first time it appears in a reply.
+- **One vocabulary.** Its words appear in Spanish, always underlined, with the English on hover. Nothing is glossed in the text.
+- **New words join weekly.** You pick the pace at setup: 5, 10 or 20 words a week, or your own number. They are added to the vocabulary automatically.
 - **Only words change.** The grammar stays English. Code, commands, file paths and quotes are never touched.
-- **The calendar sets the pace.** Chatting more doesn't unlock words faster.
+- **The calendar sets the pace.** Chatting more doesn't add words faster.
 - **Start at your level.** Ready-made word lists cover A0 to C1, or you can build your own.
 - **Peninsular Spanish** (es-ES): *ordenador*, *móvil*, *coche*.
 
 ## Install
 
-You need Python 3.11 or newer, and Claude Code or Codex.
+You need Python 3.11 or newer, [Rust](https://rustup.rs) (the installer builds the small `ambient-lookup` tool with `cargo`), and Claude Code or Codex.
 
 ### Guided setup (Claude Code)
 
@@ -32,24 +32,24 @@ Then type `/ambient-spanish-setup`. It asks:
 - where to install (Claude Code, Codex or both);
 - your level, or runs a quick placement check;
 - whether to start from that level's word list or build your own;
-- whether to add hover translations and the every-reply rule.
+- whether the every-reply rule applies to every project or just this one.
 
-Then it installs everything and shows the first words you'll learn.
+Then it installs everything (skills, rule and hover mod) in one step and shows the first words you'll learn.
 
 ### Manual setup (Claude Code or Codex)
 
 ```bash
 git clone https://github.com/Exdenta/ambient-spanish ~/ambient-spanish
 cd ~/ambient-spanish
-python3 scripts/install.py --claude --hover --rule    # Codex: --codex --rule
+python3 scripts/install.py --claude                    # Codex: --codex
 python3 scripts/ambient_state.py vocab --level A2     # your level, A0 to C1
 ```
 
 | `install.py` flag | What it does |
 | --- | --- |
-| `--claude`, `--codex` | link the skills into `~/.claude/skills` or `~/.codex/skills` |
-| `--hover` | install the [hover mod](#hover-translations-claude-code) (Claude Code only) |
-| `--rule` | add a short block to your global `CLAUDE.md` or `AGENTS.md` so the skill runs on every reply, not only when the assistant decides it applies; `--remove-rule` takes it out |
+| `--claude`, `--codex` | install for Claude Code or Codex: link the skills into `~/.claude/skills` or `~/.codex/skills`, add the every-reply rule, and (Claude Code) install the [hover mod](#hover-translations-claude-code) |
+| `--scope local` | put the rule in this project's `CLAUDE.local.md` / `AGENTS.md` instead of your global file |
+| `--remove-rule` | take the rule out again |
 | `--replace` | move an existing install aside to `<name>.old` instead of stopping |
 | `--dry-run` | show what would change, without changing it |
 
@@ -96,7 +96,7 @@ python3 scripts/ambient_state.py vocab --keep-known --add-known anki-export.txt 
 
 Word lists have one word per line. Words outside the level lists also need `| english | kind`. Tabs work in place of `|`, so Anki exports can be used as they are.
 
-Rebuilding keeps your usage history and restarts the three-day cycle from today. It also saves the previous files as `*.previous`.
+Rebuilding keeps your usage history and restarts the weekly cycle from today. It also saves the previous files as `*.previous`.
 
 ## Settings
 
@@ -115,36 +115,38 @@ Don't edit `state.json` or `curriculum.json` by hand. `ambient_state.py` is the 
 
 ## Hover translations (Claude Code)
 
-The optional `ambient-spanish-hover` mod underlines known words in replies. When you hover one, its English appears above the prompt, as in the demo above. Install it with `install.py --hover` or through the guided setup.
+The `ambient-spanish-hover` mod underlines every vocabulary word in replies. When you hover one, its English appears above the prompt, as in the demo above. `install.py --claude` and the guided setup install it.
 
 Hover needs a terminal that reports the mouse pointer. See the [mod's README](mods/ambient-spanish-hover/README.md) for details and limits.
 
 ## How it works
 
 For each reply, the assistant:
-1. runs `ambient_state.py context` once to get the words in scope;
-2. writes the reply;
-3. runs `record` with the words it actually used.
+1. runs `ambient_state.py context` once;
+2. drafts the reply in English and pipes the draft to `ambient-lookup`, a Rust tool that returns the words and phrases that have a Spanish equivalent in your vocabulary, so the assistant never loads the word list;
+3. writes the final reply with those words;
+4. runs `record` with the words it actually used.
 
-Which words are known and which are being learned depends only on the date:
+Which words are in your vocabulary depends only on the date:
 
 ```
-batch_index    = (today - start_date) // cadence_days
-learning_start = baseline_known_count + batch_index * batch_size
-known          = curriculum[:learning_start]
-learning       = curriculum[learning_start : learning_start + batch_size]
+batch_index = (today - start_date) // 7
+vocabulary  = curriculum[: baseline_known_count + (batch_index + 1) * words_per_week]
 ```
+
+Change the pace later with `ambient_state.py configure --words-per-week N`.
 
 | File | Role |
 | --- | --- |
 | `SKILL.md` | the instructions the assistant follows on every reply |
+| `rust/ambient-lookup/` | the lookup tool: reads `vocabulary.txt` and finds the vocabulary words in a draft, in under a millisecond |
 | `scripts/ambient_state.py` | the only writer of state: `context`, `record`, `status`, `configure`, `levels`, `vocab` |
 | `references/curriculum.json` | the default word list, used until you run `vocab` |
 | `references/levels/lexicon.tsv` | about 4,500 words graded A0–C1, which `vocab` builds your list from |
 | `references/state-contract.md` | state schema and migration rules, for maintainers |
 | `skills/ambient-spanish-vocab/` | the skill for levels, placement checks and word lists |
 | `.claude/skills/ambient-spanish-setup/` | the guided setup, available when Claude Code is opened in the clone |
-| `~/.codex/state/ambient-spanish/` | your progress (`state.json`), your word list (`curriculum.json`) and the known-word file (`vocabulary.txt`) that the assistant and the hover mod read |
+| `~/.codex/state/ambient-spanish/` | your progress (`state.json`), your word list (`curriculum.json`) and the vocabulary file (`vocabulary.txt`) that the assistant and the hover mod read |
 
 ## Contributing
 

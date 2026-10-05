@@ -1,0 +1,16 @@
+[package]
+name = "ambient-lookup"
+version = "0.1.0"
+edition = "2021"
+description = "Find the vocabulary words in an English draft and return their Spanish candidates"
+license = "MIT"
+
+[dependencies]
+rust-stemmers = "1"
+serde_json = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

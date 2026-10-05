@@ -4,7 +4,7 @@ Thanks for taking a look. Small, focused changes are easiest to review.
 
 ## Setup
 
-No dependencies beyond Python 3.11+.
+Python 3.11+ (standard library only) and Rust (`cargo test --manifest-path rust/ambient-lookup/Cargo.toml` for the lookup tool).
 
 ```bash
 git clone https://github.com/Exdenta/ambient-spanish
