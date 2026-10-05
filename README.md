@@ -1,28 +1,25 @@
 # ambient-spanish
 
 [![test](https://github.com/Exdenta/ambient-spanish/actions/workflows/test.yml/badge.svg)](https://github.com/Exdenta/ambient-spanish/actions/workflows/test.yml)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
+[![data: CC BY-NC-SA 4.0](https://img.shields.io/badge/data-CC%20BY--NC--SA%204.0-lightgrey.svg)](references/levels/LICENSE)
 
-Learn Spanish by reading your normal AI-assistant replies. The assistant swaps a few English words for Spanish ones you've already met, and introduces three new words every three days. Works as a skill for Claude Code and Codex.
-
-```
-The build is listo. Let me buscar the failing test and evitar (to avoid) the old cache.
-```
+Learn Spanish while you work. ambient-spanish is a skill for Claude Code and Codex. Your assistant's normal English replies come back with Spanish words you already know mixed in, and three new words arrive every three days.
 
 ![A Claude Code reply with known Spanish words underlined; hovering "cerrar" shows "cerrar = to close" above the prompt](docs/hover-demo.gif)
 
-<sub>Known words are underlined by the optional [hover mod](#hover-translations-claude-code); hover one to see its English. [MP4](docs/hover-demo.mp4)</sub>
+<sub>Underlined words are ones you already know; hover one to see its English (with the optional [hover mod](#hover-translations-claude-code)). New words carry their meaning in brackets, like *riesgo (risk)*.</sub>
 
-| Tier | What it is | How it appears |
-| --- | --- | --- |
-| `known` | words unlocked so far (your level's words at the start, growing over time) | bare Spanish, no gloss |
-| `learning` | the current batch of 3 words | Spanish followed by `(english)` on first use in a reply |
-
-Only words are swapped. The sentence stays English: articles, prepositions and verb structure are never translated, and code, commands, paths and quotations are never touched.
+- **Known words** appear in Spanish, with no translation.
+- **New words** arrive three at a time, every three days. Each shows its English in brackets the first time it appears in a reply.
+- **Only words change.** The grammar stays English. Code, commands, file paths and quotes are never touched.
+- **The calendar sets the pace.** Chatting more doesn't unlock words faster.
+- **Start at your level.** Ready-made word lists cover A0 to C1, or you can build your own.
+- **Peninsular Spanish** (es-ES): *ordenador*, *móvil*, *coche*.
 
 ## Install
 
-Requires Python 3.11 or newer.
+You need Python 3.11 or newer, and Claude Code or Codex.
 
 ### Guided setup (Claude Code)
 
@@ -31,59 +28,52 @@ git clone https://github.com/Exdenta/ambient-spanish ~/ambient-spanish
 cd ~/ambient-spanish && claude
 ```
 
-Then run `/ambient-spanish-setup`. It asks:
-- where to install it (Claude Code, Codex or both);
-- your level, A0 to C1 (or gives you a quick placement check);
-- whether to import that level's words as a quick start or build your own vocabulary;
-- whether to add hover translations and the run-every-reply rule.
+Then type `/ambient-spanish-setup`. It asks:
+- where to install (Claude Code, Codex or both);
+- your level, or runs a quick placement check;
+- whether to start from that level's word list or build your own;
+- whether to add hover translations and the every-reply rule.
 
-It then installs everything and shows the first words you'll learn.
+Then it installs everything and shows the first words you'll learn.
 
-### Manual setup
+### Manual setup (Claude Code or Codex)
 
 ```bash
-python3 scripts/install.py --claude            # or --codex; add --hover and/or --rule
-python3 scripts/ambient_state.py levels        # level packs and their sizes
-python3 scripts/ambient_state.py vocab --level A2
+git clone https://github.com/Exdenta/ambient-spanish ~/ambient-spanish
+cd ~/ambient-spanish
+python3 scripts/install.py --claude --hover --rule    # Codex: --codex --rule
+python3 scripts/ambient_state.py vocab --level A2     # your level, A0 to C1
 ```
 
-`install.py` links the skills into `~/.claude/skills` or `~/.codex/skills` rather than copying them, so `git pull` in the clone updates every install. Keep the clone where it is. The script is safe to re-run, and it leaves an existing install alone unless you pass `--replace`, which moves the old one to `<name>.old`.
-
-- `--rule` adds a marked block to your global `CLAUDE.md` or `AGENTS.md` so the skill runs on every reply instead of relying on the description match. `--remove-rule` takes it out.
-- `--hover` installs the [hover mod](#hover-translations-claude-code).
-
-Your progress lives outside the clone and is not affected by updates.
-
-## How it works
-
-Pacing is a pure function of the calendar, so chatting more never unlocks words faster.
-
-```
-learning_start = baseline_known_count + batch_index * batch_size
-known          = curriculum[:learning_start]
-learning       = curriculum[learning_start : learning_start + batch_size]
-```
-
-Each reply, the assistant runs `context` once, writes the reply with the words it was given, then runs `record` with the ones it used. `status` reports words that were offered but never fit (`cold_terms`).
-
-| Piece | Job |
+| `install.py` flag | What it does |
 | --- | --- |
-| `SKILL.md` | the instructions the assistant follows on every reply |
-| `scripts/ambient_state.py` | the only writer of state: `context` says which words are in scope, `record` logs which were used |
-| `references/curriculum.json` | the default ordered word list, Peninsular Spanish (`es-ES`) |
-| `references/levels/lexicon.tsv` | about 4,500 words graded A0–C1, which `vocab` builds personal word lists from |
-| `references/state-contract.md` | state schema and migration rules, for maintainers |
-| `skills/ambient-spanish-vocab/` | skill for choosing a level, importing word lists and picking what to learn |
-| `.claude/skills/ambient-spanish-setup/` | the guided setup, available when Claude Code is opened in the clone |
-| `~/.codex/state/ambient-spanish/state.json` | your progress; kept outside the skill so updating the skill never resets it |
-| `~/.codex/state/ambient-spanish/curriculum.json` | your personal word list, written by `vocab`; replaces the default when present |
-| `~/.codex/state/ambient-spanish/vocabulary.txt` | all known words as `id \| spanish \| english`, rewritten when a batch is promoted |
+| `--claude`, `--codex` | link the skills into `~/.claude/skills` or `~/.codex/skills` |
+| `--hover` | install the [hover mod](#hover-translations-claude-code) (Claude Code only) |
+| `--rule` | add a short block to your global `CLAUDE.md` or `AGENTS.md` so the skill runs on every reply, not only when the assistant decides it applies; `--remove-rule` takes it out |
+| `--replace` | move an existing install aside to `<name>.old` instead of stopping |
+| `--dry-run` | show what would change, without changing it |
 
-## Vocabulary levels
+The skills are linked, not copied, so keep the clone where it is. Re-running the script is safe.
 
-New users can start from what they already know. `vocab --level B1` marks every word up to B1 as known and teaches from there:
+### Update and uninstall
 
-| Level | Known words | Roughly |
+To update, run `git pull` in the clone. Your progress lives in `~/.codex/state/ambient-spanish/`, outside the clone, so updates never reset it.
+
+To uninstall:
+
+```bash
+python3 scripts/install.py --claude --remove-rule
+rm ~/.claude/skills/ambient-spanish ~/.claude/skills/ambient-spanish-vocab   # removes the links, not the clone
+claude plugin uninstall ambient-spanish-hover@ambient-spanish
+```
+
+Delete `~/.codex/state/ambient-spanish/` as well if you also want to drop your progress.
+
+## Your vocabulary
+
+Pick your level, and every word up to it counts as known from day one:
+
+| Level | Known words | Covers |
 | --- | --- | --- |
 | A0 | 143 | greetings and a survival core |
 | A1 | 816 | everyday basics: family, food, time, simple actions |
@@ -92,46 +82,76 @@ New users can start from what they already know. `vocab --level B1` marks every 
 | B2 | 3,952 | abstract topics, work and debate |
 | C1 | 4,463 | nuanced, formal and specialised vocabulary |
 
-A1 to C1 come from [ELELex](https://cental.uclouvain.be/cefrlex/elelex/), a lexicon of Spanish learner textbooks graded by CEFR level. A0 is hand-picked. [references/levels/README.md](references/levels/README.md) explains how levels were assigned.
+Not sure where you are? `python3 scripts/ambient_state.py levels --sample 10` shows ten random words from each level.
 
-To fine-tune the list, use the `ambient-spanish-vocab` skill (or `vocab` directly). It can:
-- run a placement check;
-- mark words from an Anki export or a pasted list as known;
-- take out words you don't know yet;
-- queue words you want to learn first.
+A1 to C1 come from [ELELex](https://cental.uclouvain.be/cefrlex/elelex/), a lexicon of Spanish learner textbooks graded by CEFR level. A0 is hand-picked. [references/levels/README.md](references/levels/README.md) explains how words were assigned to levels.
+
+To fine-tune the list, ask your assistant (the `ambient-spanish-vocab` skill handles it), or run `vocab` yourself:
 
 ```bash
+python3 scripts/ambient_state.py vocab --level B1 --dry-run                     # preview only
 python3 scripts/ambient_state.py vocab --level A2 --remove-known missed.txt --learn-first work.txt
-python3 scripts/ambient_state.py vocab --keep-known --add-known anki-export.txt
+python3 scripts/ambient_state.py vocab --keep-known --add-known anki-export.txt   # keep what you have, add more
 ```
 
-Word lists take one `spanish | english | kind` per line, with english and kind needed only for words outside the lexicon. Tabs work in place of `|`. Every rebuild keeps your usage history and saves the previous files as `*.previous`.
+Word lists have one word per line. Words outside the level lists also need `| english | kind`. Tabs work in place of `|`, so Anki exports can be used as they are.
 
-## Configuration
+Rebuilding keeps your usage history and restarts the three-day cycle from today. It also saves the previous files as `*.previous`.
+
+## Settings
 
 ```bash
-python3 scripts/ambient_state.py status
-python3 scripts/ambient_state.py configure --pause        # or --resume
-python3 scripts/ambient_state.py configure --known-per-reply 18    # density cap; `all` removes it
+python3 scripts/ambient_state.py status                           # known words, current batch, next batch date
+python3 scripts/ambient_state.py configure --pause                # or --resume
 python3 scripts/ambient_state.py configure --cadence-days 3 --batch-size 3
-python3 scripts/ambient_state.py configure --dialect es-ES
-python3 scripts/ambient_state.py vocab --level B1 --dry-run   # preview a vocabulary rebuild
+python3 scripts/ambient_state.py configure --known-per-reply 60   # or `all`, the default
 ```
 
-With a large known list (B1 and up), `--known-per-reply 60` offers a rotating sample per reply instead of the whole list.
+By default, every known word can appear in every reply. Above about 1,500 known words (B1 and up), `--known-per-reply 60` keeps replies readable by offering a rotating sample instead.
 
-Don't reset or edit `state.json` by hand; `ambient_state.py` is the authority.
+`status` also lists `cold_terms`: words that were offered many times but never fit a reply.
+
+Don't edit `state.json` or `curriculum.json` by hand. `ambient_state.py` is the only thing that writes them.
 
 ## Hover translations (Claude Code)
 
-`mods/ambient-spanish-hover` underlines known Spanish words in Claude Code replies and shows their English in a row above the prompt when you hover one. See its [README](mods/ambient-spanish-hover/README.md) for install and limits.
+The optional `ambient-spanish-hover` mod underlines known words in replies. When you hover one, its English appears above the prompt, as in the demo above. Install it with `install.py --hover` or through the guided setup.
+
+Hover needs a terminal that reports the mouse pointer. See the [mod's README](mods/ambient-spanish-hover/README.md) for details and limits.
+
+## How it works
+
+For each reply, the assistant:
+1. runs `ambient_state.py context` once to get the words in scope;
+2. writes the reply;
+3. runs `record` with the words it actually used.
+
+Which words are known and which are being learned depends only on the date:
+
+```
+batch_index    = (today - start_date) // cadence_days
+learning_start = baseline_known_count + batch_index * batch_size
+known          = curriculum[:learning_start]
+learning       = curriculum[learning_start : learning_start + batch_size]
+```
+
+| File | Role |
+| --- | --- |
+| `SKILL.md` | the instructions the assistant follows on every reply |
+| `scripts/ambient_state.py` | the only writer of state: `context`, `record`, `status`, `configure`, `levels`, `vocab` |
+| `references/curriculum.json` | the default word list, used until you run `vocab` |
+| `references/levels/lexicon.tsv` | about 4,500 words graded A0–C1, which `vocab` builds your list from |
+| `references/state-contract.md` | state schema and migration rules, for maintainers |
+| `skills/ambient-spanish-vocab/` | the skill for levels, placement checks and word lists |
+| `.claude/skills/ambient-spanish-setup/` | the guided setup, available when Claude Code is opened in the clone |
+| `~/.codex/state/ambient-spanish/` | your progress (`state.json`), your word list (`curriculum.json`) and the known-word file (`vocabulary.txt`) that the assistant and the hover mod read |
 
 ## Contributing
 
-Bug reports and word-list fixes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the rules for changing the curriculum, and [CHANGELOG.md](CHANGELOG.md) for what's changed.
+Bug reports and word-list fixes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and for the rules on changing the curriculum and level data. [CHANGELOG.md](CHANGELOG.md) lists what has changed.
 
 ## License
 
-Code: [MIT](LICENSE).
+The code is under the [MIT licence](LICENSE).
 
 The level data in `references/levels/` (`lexicon.tsv`, `excluded.tsv`) is derived from ELELex and is under [CC BY-NC-SA 4.0](references/levels/LICENSE). You may share and adapt it for non-commercial use, with credit and under the same licence.
