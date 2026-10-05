@@ -47,7 +47,7 @@ The first `baseline_known_count` curriculum entries are treated as already known
 
 2. Read the JSON result:
    - If `active` is `false`, write the reply normally and add no ambient Spanish.
-   - Otherwise write the reply first as you normally would, then substitute:
+   - Otherwise draft the reply as you normally would, then substitute:
      - For each known term — from the manifest under `known_scope: "all"`, from the inline `known` array under `"sample"` — wherever the reply naturally expresses that meaning, write the Spanish instead of the English. No gloss.
      - For each term in `learning`: use it at least once if the reply has a natural place for it, as `spanish (english)` at its first appearance. Bare thereafter in the same reply.
      - Nothing outside those two sets. A curriculum term not yet unlocked stays English — `record` will reject it.
@@ -56,7 +56,7 @@ The first `baseline_known_count` curriculum entries are treated as already known
 
    Opportunistic is not the same as lazy. With the whole vocabulary in scope, the expectation is that **every** noun, verb, and adjective in your prose that the vocabulary covers is written in Spanish — a reply that leaves ten usable words in English has under-delivered. Where the draft's own wording has an equally natural synonym a listed verb or noun covers, use that wording; that is word choice, not restructuring. A reply whose only Spanish is `además`/`por lo tanto`-class connective tissue has followed every rule and still taught nothing: content words first, connectors last.
 
-4. Record the terms actually used, before sending the reply:
+4. Record the terms actually used, as the last tool call before the reply:
 
    ```bash
    python3 <skill-root>/scripts/ambient_state.py record \
@@ -65,7 +65,9 @@ The first `baseline_known_count` curriculum entries are treated as already known
 
    `--used` is the subset of `known` + `learning` that actually appears in the reply. Omit the call entirely if nothing fit. Recording matters more than it looks: it is the only signal separating a word that lands from a word that never fits, and `status` reports the second group as `cold_terms`.
 
-5. Treat `ok: true` as recorded. Each `decision_id` is single-use and binds one reply to the active set it was issued for. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
+5. Send the full reply as the final text message, after `record`. A message that only describes the reply ("I wrote the story above", "Recorded.") leaves the user with nothing. Never add a sign-off after `record`.
+
+6. Treat `ok: true` as recorded. Each `decision_id` is single-use and binds one reply to the active set it was issued for. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
 
 Run `context` once per reply.
 
