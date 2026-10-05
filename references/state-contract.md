@@ -8,6 +8,28 @@ Read this only when maintaining, migrating, or troubleshooting persistent state.
 
 The default state file is `~/.codex/state/ambient-spanish/state.json`. `AMBIENT_SPANISH_STATE` and `--state` override it. State lives outside the installed skill so reinstalling or updating the skill does not erase progress.
 
+## Curriculum source
+
+Every command resolves the curriculum in this order:
+1. `--curriculum`
+2. `AMBIENT_SPANISH_CURRICULUM`
+3. the personal `curriculum.json` beside the state file
+4. the shipped `references/curriculum.json`
+
+`status` reports the one in use under `curriculum` as `{path, source, size, build}`. `source` is one of `flag`, `env`, `user` or `shipped`.
+
+`vocab` is the only writer of the personal curriculum. It builds it from the graded lexicon `references/levels/lexicon.tsv` (CEFR A0–C1) and the user's word lists: known terms first, then the learning queue. A rebuild is one locked transition:
+
+- `baseline_known_count` becomes the known count and `start_date` becomes today, so batch 0 is the head of the queue.
+- Usage history stays attached to curriculum ids:
+  - A used term whose Spanish form moved to a new id has its history moved, or merged if the new id already has some.
+  - A used term the new build left out is appended to the known set, so every `progress.terms` id still exists.
+- `progress.offers` loses ids that are no longer in the curriculum. `pending_decisions` is cleared, because those decisions were issued against the old curriculum.
+- The previous personal curriculum and state are copied to `*.previous`. Then `vocab` writes the curriculum, then `curriculum.meta.json` (a build summary), then the state, then the manifest, each atomically.
+  - A crash between the curriculum and state writes can leave a state that fails validation against the new curriculum. Re-running `vocab`, or restoring the `.previous` pair, repairs it.
+
+Do not delete the personal curriculum by hand. Its baseline would then index the shipped curriculum and shift the learning window. Rebuild instead.
+
 ## Semantics
 
 - `schema_version`: Exact persisted contract version. Unknown versions fail closed.
@@ -17,7 +39,7 @@ The default state file is `~/.codex/state/ambient-spanish/state.json`. `AMBIENT_
 - `config.known_per_reply`: Maximum `known` terms `context` offers to one reply, or `null` for no cap. Default: `null`. This is a density cap, not a pacing knob — it does not affect which terms are unlocked, only how many are usable at once.
 - `config.baseline_known_count`: Leading curriculum items treated as already known at `start_date` and therefore never taught as a batch. Batch 0's learning window starts at this offset. Set by migration to the number of terms already introduced under the previous schema, and adjustable with `configure --baseline-known`.
 
-  This is how pre-existing knowledge enters the system: put the words the user already knows at the **front** of `references/curriculum.json` and set `baseline_known_count` to cover them. Because tiers are index-based, prepending `n` items to the curriculum without adding `n` to `baseline_known_count` silently shifts the learning window backwards over words the user already knows — always change the two together.
+  This is how pre-existing knowledge enters the system. For one user, `vocab` builds a personal curriculum with the known words at the front and sets the count itself. For the shipped curriculum, put the words every user already knows at the **front** of `references/curriculum.json` and set `baseline_known_count` to cover them. Because tiers are index-based, prepending `n` items to the curriculum without adding `n` to `baseline_known_count` silently shifts the learning window backwards over words the user already knows — always change the two together.
 - `config.timezone`: IANA timezone used for day boundaries. Default: `Europe/Madrid`.
 - `config.dialect`: Output dialect hint. Default: `es-ES`.
 - `config.paused`: Stops substitution without deleting progress.

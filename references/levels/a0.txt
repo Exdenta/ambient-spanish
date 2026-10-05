@@ -1,0 +1,156 @@
+# A0 survival set: the words a complete beginner meets first. Hand-picked for
+# this project (not derived from ELELex). One Spanish entry per line, in
+# teaching order; glosses and kinds live in lexicon.tsv.
+
+# courtesy
+hola
+adiós
+gracias
+por favor
+de nada
+perdón
+lo siento
+vale
+sí
+hasta luego
+buenos días
+buenas noches
+
+# adverbs
+bien
+mal
+muy
+más
+menos
+mucho
+poco
+también
+ya
+ahora
+hoy
+mañana
+ayer
+siempre
+nunca
+aquí
+allí
+antes
+después
+luego
+tarde
+pronto
+otra vez
+
+# nouns
+día
+noche
+semana
+mes
+año
+hora
+tiempo
+momento
+casa
+agua
+comida
+café
+pan
+dinero
+trabajo
+nombre
+número
+amigo
+familia
+padre
+madre
+hijo
+hombre
+mujer
+niño
+persona
+gente
+ciudad
+país
+calle
+coche
+tienda
+mesa
+puerta
+libro
+teléfono
+móvil
+ordenador
+cosa
+problema
+pregunta
+respuesta
+idea
+parte
+vida
+mundo
+
+# verbs
+ser
+estar
+tener
+hacer
+ir
+venir
+querer
+poder
+decir
+ver
+dar
+saber
+comer
+beber
+hablar
+vivir
+trabajar
+necesitar
+gustar
+entender
+buscar
+abrir
+cerrar
+empezar
+terminar
+esperar
+ayudar
+llamar
+mirar
+pensar
+comprar
+pagar
+leer
+escribir
+dormir
+salir
+llegar
+usar
+cambiar
+
+# adjectives
+bueno
+malo
+grande
+pequeño
+nuevo
+viejo
+fácil
+difícil
+rápido
+lento
+caro
+barato
+abierto
+cerrado
+listo
+mejor
+peor
+mismo
+otro
+importante
+posible
+feliz
+cansado

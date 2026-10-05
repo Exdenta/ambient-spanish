@@ -7,9 +7,13 @@ import argparse
 import hashlib
 import json
 import os
+import random
+import re
 import secrets
+import shutil
 import sys
 import tempfile
+import unicodedata
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -50,6 +54,45 @@ MAX_PENDING_DECISIONS = 128
 MAX_DECISION_AGE_SECONDS = 24 * 60 * 60
 DEFAULT_STATE_PATH = Path.home() / ".codex" / "state" / "ambient-spanish" / "state.json"
 DEFAULT_CURRICULUM_PATH = Path(__file__).resolve().parent.parent / "references" / "curriculum.json"
+DEFAULT_LEXICON_PATH = (
+    Path(__file__).resolve().parent.parent / "references" / "levels" / "lexicon.tsv"
+)
+# A personal curriculum written by `vocab` lives beside the state it indexes,
+# so the two travel together and the shipped curriculum stays the default.
+USER_CURRICULUM_FILENAME = "curriculum.json"
+USER_CURRICULUM_META_FILENAME = "curriculum.meta.json"
+LEVELS = ("A0", "A1", "A2", "B1", "B2", "C1")
+LEVEL_DESCRIPTIONS = {
+    "A0": "Absolute beginner: greetings and a survival core.",
+    "A1": "Beginner: everyday basics such as family, food, time and simple actions.",
+    "A2": "Elementary: routine tasks, shopping, work and travel.",
+    "B1": "Intermediate: opinions, plans, news and most everyday topics.",
+    "B2": "Upper intermediate: abstract topics, work and debate.",
+    "C1": "Advanced: nuanced, formal and specialised vocabulary.",
+}
+LEXICON_FIELDS = ("level", "id", "spanish", "english", "kind", "usage")
+KINDS = ("verb", "noun", "adjective", "adverb", "phrase", "connector")
+KIND_ALIASES = {
+    "v": "verb",
+    "n": "noun",
+    "adj": "adjective",
+    "adv": "adverb",
+    "expr": "phrase",
+    "expression": "phrase",
+    "interjection": "phrase",
+    "conj": "connector",
+    "conjunction": "connector",
+}
+# Lexicon rows without a hand-written usage note get the one for their kind.
+KIND_USAGE = {
+    "verb": "Conjugate to fit; use where the reply describes this action.",
+    "noun": "Use where the reply names this thing.",
+    "adjective": "Agree in gender and number; use where the reply describes this quality.",
+    "adverb": "Use where the reply qualifies a statement this way.",
+    "phrase": "Use as a set expression where the reply would say this.",
+    "connector": "Use to link two ideas the way the English would.",
+}
+LEADING_ARTICLES = ("el ", "la ", "los ", "las ", "un ", "una ")
 
 
 class StateError(RuntimeError):
@@ -89,9 +132,26 @@ def _state_path(value: str | None) -> Path:
     return Path(raw).expanduser().resolve() if raw else DEFAULT_STATE_PATH
 
 
-def _curriculum_path(value: str | None) -> Path:
-    raw = value or os.environ.get("AMBIENT_SPANISH_CURRICULUM")
-    return Path(raw).expanduser().resolve() if raw else DEFAULT_CURRICULUM_PATH
+def _curriculum_source(value: str | None, state_path: Path) -> tuple[Path, str]:
+    """Resolve the curriculum: flag, then environment, then the user's, then shipped."""
+    if value:
+        return Path(value).expanduser().resolve(), "flag"
+    raw = os.environ.get("AMBIENT_SPANISH_CURRICULUM")
+    if raw:
+        return Path(raw).expanduser().resolve(), "env"
+    personal = state_path.parent / USER_CURRICULUM_FILENAME
+    if personal.exists():
+        return personal, "user"
+    return DEFAULT_CURRICULUM_PATH, "shipped"
+
+
+def _curriculum_path(value: str | None, state_path: Path) -> Path:
+    return _curriculum_source(value, state_path)[0]
+
+
+def _lexicon_path(value: str | None) -> Path:
+    raw = value or os.environ.get("AMBIENT_SPANISH_LEXICON")
+    return Path(raw).expanduser().resolve() if raw else DEFAULT_LEXICON_PATH
 
 
 def _timezone(name: str) -> ZoneInfo:
@@ -140,7 +200,7 @@ def _read_json(path: Path) -> Any:
         raise StateError(f"Invalid JSON in {path}: {exc}") from exc
 
 
-def _atomic_write(path: Path, value: dict[str, Any]) -> bool:
+def _atomic_write(path: Path, value: Any) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
     handle = tempfile.NamedTemporaryFile(
         mode="w",
@@ -207,6 +267,271 @@ def _load_curriculum(path: Path) -> list[dict[str, str]]:
         seen.add(term_id)
         result.append(normalized)
     return result
+
+
+def _load_lexicon(path: Path) -> dict[str, list[dict[str, str]]]:
+    """Level packs from the graded lexicon: the words new at each level, in teaching order."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError as exc:
+        raise StateError(f"Lexicon not found: {path}") from exc
+    if not lines or tuple(lines[0].split("\t")) != LEXICON_FIELDS:
+        header = " ".join(LEXICON_FIELDS)
+        raise StateError(f"Lexicon {path} must start with the tab-separated header: {header}")
+    packs: dict[str, list[dict[str, str]]] = {level: [] for level in LEVELS}
+    seen: set[str] = set()
+    for number, line in enumerate(lines[1:], start=2):
+        if not line.strip():
+            continue
+        fields = line.split("\t")
+        if len(fields) != len(LEXICON_FIELDS):
+            raise StateError(f"Lexicon line {number} has {len(fields)} fields")
+        row = dict(zip(LEXICON_FIELDS, fields))
+        if row["level"] not in packs:
+            raise StateError(f"Lexicon line {number} has unknown level {row['level']}")
+        if row["kind"] not in KINDS:
+            raise StateError(f"Lexicon line {number} has unknown kind {row['kind']}")
+        if not row["id"] or not row["spanish"] or not row["english"]:
+            raise StateError(f"Lexicon line {number} lacks an id, spanish or english")
+        if row["id"] in seen:
+            raise StateError(f"Duplicate lexicon id: {row['id']}")
+        seen.add(row["id"])
+        packs[row["level"]].append(
+            {
+                "id": row["id"],
+                "spanish": row["spanish"],
+                "english": row["english"],
+                "kind": row["kind"],
+                "usage": row["usage"] or KIND_USAGE[row["kind"]],
+            }
+        )
+    return packs
+
+
+def _word_key(text: str) -> str:
+    """Case-, spacing- and punctuation-insensitive form of a Spanish entry."""
+    folded = unicodedata.normalize("NFC", text).casefold().strip()
+    folded = folded.strip("¿¡!?.,;:\"'«»“”()[]")
+    return " ".join(folded.split())
+
+
+def _accentless(text: str) -> str:
+    """Drop accents but keep ñ, which is a different letter, not an accented n."""
+    decomposed = unicodedata.normalize("NFD", text.replace("ñ", "\0"))
+    stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
+    return stripped.replace("\0", "ñ")
+
+
+def _slug(text: str) -> str:
+    decomposed = unicodedata.normalize("NFD", text.casefold())
+    stripped = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "-", stripped).strip("-") or "term"
+
+
+def _read_word_list(path: Path) -> list[dict[str, str]]:
+    """Entries from a user word list.
+
+    Either a JSON array (of strings, or of objects with `spanish` and optional
+    `english`, `kind`, `usage`, `id`), or text with one `spanish | english |
+    kind` entry per line, where english and kind are optional, a tab may stand
+    in for `|` (so an Anki or spreadsheet export works as is), and `#` starts
+    a comment.
+    """
+    try:
+        text = path.expanduser().read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise StateError(f"Word list not found: {path}") from exc
+    entries: list[dict[str, str]] = []
+    if text.lstrip().startswith("["):
+        try:
+            items = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise StateError(f"Invalid JSON in {path}: {exc}") from exc
+        for index, item in enumerate(items):
+            if isinstance(item, str):
+                item = {"spanish": item}
+            if not isinstance(item, dict) or not isinstance(item.get("spanish"), str):
+                raise StateError(f"{path}: item {index} needs a 'spanish' string")
+            entries.append(
+                {
+                    key: str(item[key]).strip()
+                    for key in ("spanish", "english", "kind", "usage", "id")
+                    if item.get(key) not in (None, "")
+                }
+            )
+    else:
+        for line in text.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = [part.strip() for part in line.split("\t" if "\t" in line else "|")]
+            entry = {"spanish": parts[0]}
+            for key, value in zip(("english", "kind"), parts[1:3]):
+                if value:
+                    entry[key] = value
+            entries.append(entry)
+    return [entry for entry in entries if _word_key(entry.get("spanish", ""))]
+
+
+class VocabularyError(StateError):
+    """A `vocab` request that cannot be built as given; `details` says why."""
+
+    def __init__(self, message: str, details: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.details = details
+
+
+class _Catalog:
+    """Every term `vocab` can draw on, looked up by Spanish form or id."""
+
+    def __init__(self) -> None:
+        self.by_key: dict[str, dict[str, str]] = {}
+        self.by_id: dict[str, dict[str, str]] = {}
+        self.by_accentless: dict[str, list[str]] = {}
+
+    def add(self, entry: dict[str, str]) -> None:
+        key = _word_key(entry["spanish"])
+        if key in self.by_key:
+            return
+        self.by_key[key] = entry
+        self.by_id.setdefault(entry["id"], entry)
+        self.by_accentless.setdefault(_accentless(key), []).append(key)
+
+    def find(self, text: str) -> dict[str, str] | None:
+        key = _word_key(text)
+        candidates = [key] + [
+            key[len(article) :] for article in LEADING_ARTICLES if key.startswith(article)
+        ]
+        for candidate in candidates:
+            if candidate in self.by_key:
+                return self.by_key[candidate]
+        if key in self.by_id:
+            return self.by_id[key]
+        for candidate in candidates:
+            matches = self.by_accentless.get(_accentless(candidate), [])
+            if len(matches) == 1:
+                return self.by_key[matches[0]]
+        return None
+
+    def unique_id(self, text: str) -> str:
+        base = _slug(text)
+        candidate, suffix = base, 2
+        while candidate in self.by_id:
+            candidate, suffix = f"{base}-{suffix}", suffix + 1
+        return candidate
+
+
+def _compose_vocabulary(
+    packs: dict[str, list[dict[str, str]]],
+    *,
+    level: str | None,
+    current: list[dict[str, str]],
+    keep_known: list[dict[str, str]],
+    keep_queue: list[dict[str, str]],
+    add_known: list[dict[str, str]],
+    remove_known: list[dict[str, str]],
+    learn_first: list[dict[str, str]],
+) -> dict[str, Any]:
+    """Order a personal curriculum: everything known first, then the learning queue.
+
+    Known: the kept known tier, the level packs up to `level`, and `add_known`,
+    minus anything removed or queued to learn. Queue: `learn_first` in the
+    order given, then the removed words, the kept queue, and every remaining
+    lexicon word, easiest level first. Each Spanish form appears once.
+    """
+    catalog = _Catalog()
+    for pack_level in LEVELS:
+        for entry in packs[pack_level]:
+            catalog.add(entry)
+    for entry in current:
+        catalog.add(entry)
+
+    unresolved: list[dict[str, Any]] = []
+    not_found: list[str] = []
+
+    def resolve(raw: dict[str, str], source: str) -> dict[str, str] | None:
+        found = catalog.find(raw["spanish"])
+        if found is not None:
+            return found
+        if source == "remove-known":
+            not_found.append(raw["spanish"])
+            return None
+        kind = KIND_ALIASES.get(raw.get("kind", "").lower(), raw.get("kind", "").lower())
+        missing = [field for field in ("english", "kind") if not raw.get(field)]
+        if missing or kind not in KINDS:
+            unresolved.append(
+                {
+                    "spanish": raw["spanish"],
+                    "list": source,
+                    "problem": f"missing {', '.join(missing)}"
+                    if missing
+                    else f"unknown kind {raw['kind']}",
+                }
+            )
+            return None
+        term_id = raw.get("id") or catalog.unique_id(raw["spanish"])
+        if term_id in catalog.by_id:
+            term_id = catalog.unique_id(term_id)
+        entry = {
+            "id": term_id,
+            "spanish": raw["spanish"].strip(),
+            "english": raw["english"],
+            "kind": kind,
+            "usage": raw.get("usage") or KIND_USAGE[kind],
+        }
+        catalog.add(entry)
+        return entry
+
+    added = [entry for raw in add_known if (entry := resolve(raw, "add-known"))]
+    learn = [entry for raw in learn_first if (entry := resolve(raw, "learn-first"))]
+    removed = [entry for raw in remove_known if (entry := resolve(raw, "remove-known"))]
+    if unresolved:
+        raise VocabularyError(
+            "Some words are in no level pack and lack an english gloss or kind; "
+            "give them as `spanish | english | kind`",
+            {"unresolved": unresolved},
+        )
+    added_keys = {_word_key(entry["spanish"]) for entry in added}
+    dropped_keys = {_word_key(entry["spanish"]) for entry in removed + learn}
+    conflicts = sorted(added_keys & dropped_keys)
+    if conflicts:
+        raise VocabularyError(
+            "Words listed both as known and as unknown or to learn",
+            {"conflicts": conflicts},
+        )
+
+    placed: set[str] = set()
+    known: list[dict[str, str]] = []
+    queue: list[dict[str, str]] = []
+
+    def place(target: list[dict[str, str]], entry: dict[str, str]) -> None:
+        key = _word_key(entry["spanish"])
+        if key not in placed:
+            placed.add(key)
+            target.append(entry)
+
+    base = list(keep_known)
+    if level is not None:
+        for pack_level in LEVELS[: LEVELS.index(level) + 1]:
+            base.extend(packs[pack_level])
+    for entry in base:
+        if _word_key(entry["spanish"]) not in dropped_keys:
+            place(known, entry)
+    for entry in added:
+        place(known, entry)
+    for entry in learn + removed + keep_queue:
+        place(queue, entry)
+    for pack_level in LEVELS:
+        for entry in packs[pack_level]:
+            place(queue, entry)
+    return {
+        "known": known,
+        "queue": queue,
+        "added": added,
+        "removed": removed,
+        "learn_first": learn,
+        "not_found": not_found,
+    }
 
 
 def _new_state(
@@ -1113,7 +1438,7 @@ def _split_ids(raw: str) -> list[str]:
 
 def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum))
+    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
     now = _parse_now(args.now, args.timezone)
     start = _parse_date(args.start_date, "start_date") if args.start_date else now.date()
     with _locked(state_path):
@@ -1143,7 +1468,7 @@ def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum))
+    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
     with _locked(state_path):
         state, now, write_durability = _load_or_create_state(
             state_path, curriculum, now_value=args.now
@@ -1174,7 +1499,7 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum))
+    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
     by_id = {term["id"]: term for term in curriculum}
     used = _split_ids(args.used)
     unknown = sorted(term_id for term_id in used if term_id not in by_id)
@@ -1236,7 +1561,8 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum))
+    curriculum_path, curriculum_source = _curriculum_source(args.curriculum, state_path)
+    curriculum = _load_curriculum(curriculum_path)
     by_id = {term["id"]: term for term in curriculum}
     with _locked(state_path):
         state, now, write_durability = _load_or_create_state(
@@ -1246,6 +1572,19 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
     context["write_durability"] = write_durability
     context["baseline_known_count"] = state["config"]["baseline_known_count"]
     context["start_date"] = state["config"]["start_date"]
+    meta_path = state_path.parent / USER_CURRICULUM_META_FILENAME
+    build = None
+    if curriculum_source == "user" and meta_path.exists():
+        try:
+            build = _read_json(meta_path)
+        except StateError:
+            build = None
+    context["curriculum"] = {
+        "path": str(curriculum_path),
+        "source": curriculum_source,
+        "size": len(curriculum),
+        "build": build,
+    }
     terms = state["progress"]["terms"]
     offers = state["progress"].get("offers", {})
     used_terms = []
@@ -1275,7 +1614,7 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum))
+    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
     with _locked(state_path):
         state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         config = state["config"]
@@ -1328,6 +1667,200 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
         "changes": changes,
         "state_path": str(state_path),
     }
+
+
+def _cmd_levels(args: argparse.Namespace) -> dict[str, Any]:
+    lexicon_path = _lexicon_path(args.lexicon)
+    packs = _load_lexicon(lexicon_path)
+    rng = random.Random(args.seed) if args.seed is not None else random.SystemRandom()
+    levels = []
+    cumulative = 0
+    for level in LEVELS:
+        pack = packs[level]
+        cumulative += len(pack)
+        row: dict[str, Any] = {
+            "level": level,
+            "description": LEVEL_DESCRIPTIONS[level],
+            "new_terms": len(pack),
+            "known_if_chosen": cumulative,
+        }
+        if args.sample:
+            row["sample"] = [
+                {key: term[key] for key in ("id", "spanish", "english", "kind")}
+                for term in rng.sample(pack, min(args.sample, len(pack)))
+            ]
+        levels.append(row)
+    return {"ok": True, "lexicon": str(lexicon_path), "levels": levels}
+
+
+def _merge_history(target: dict[str, Any], source: dict[str, Any], timezone_name: str) -> None:
+    """Fold one term's usage history into another's: the same word under a new id."""
+    target["use_count"] = int(target["use_count"]) + int(source["use_count"])
+    for field, pick in (("introduced_at", min), ("last_used_at", max)):
+        target[field] = pick(
+            (target[field], source[field]),
+            key=lambda value: _parse_timestamp(value, timezone_name, field=field).timestamp(),
+        )
+
+
+def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
+    if args.curriculum or os.environ.get("AMBIENT_SPANISH_CURRICULUM"):
+        raise StateError(
+            "vocab writes the personal curriculum beside the state; "
+            "drop --curriculum and unset AMBIENT_SPANISH_CURRICULUM"
+        )
+    if args.level is None and not args.keep_known and not args.add_known:
+        raise StateError("Choose a starting point: --level, --keep-known, or --add-known")
+    level = None if args.level in (None, "NONE") else args.level
+    state_path = _state_path(args.state)
+    packs = _load_lexicon(_lexicon_path(args.lexicon))
+    lists = {
+        name: [entry for path in paths for entry in _read_word_list(Path(path))]
+        for name, paths in (
+            ("add_known", args.add_known),
+            ("remove_known", args.remove_known),
+            ("learn_first", args.learn_first),
+        )
+    }
+    current_path, _ = _curriculum_source(None, state_path)
+    personal_path = state_path.parent / USER_CURRICULUM_FILENAME
+    meta_path = state_path.parent / USER_CURRICULUM_META_FILENAME
+
+    with _locked(state_path):
+        current = _load_curriculum(current_path)
+        keep_known: list[dict[str, str]] = []
+        keep_queue: list[dict[str, str]] = []
+        if state_path.exists():
+            state, now, _ = _load_or_create_state(state_path, current, now_value=args.now)
+            config = state["config"]
+            batch_index = max(_batch_index(state, now.date()), 0)
+            learning_start = min(
+                len(current),
+                config["baseline_known_count"] + batch_index * config["batch_size"],
+            )
+            if args.keep_known:
+                keep_known = current[:learning_start]
+                keep_queue = current[learning_start:]
+        else:
+            now = _parse_now(args.now, DEFAULT_TIMEZONE)
+            state = _new_state(
+                now,
+                timezone_name=DEFAULT_TIMEZONE,
+                dialect=DEFAULT_DIALECT,
+                cadence_days=DEFAULT_CADENCE_DAYS,
+                batch_size=DEFAULT_BATCH_SIZE,
+            )
+            config = state["config"]
+
+        composed = _compose_vocabulary(
+            packs,
+            level=level,
+            current=current,
+            keep_known=keep_known,
+            keep_queue=keep_queue,
+            **lists,
+        )
+        known: list[dict[str, str]] = composed["known"]
+        queue: list[dict[str, str]] = composed["queue"]
+
+        # Usage history must keep pointing at curriculum ids. A word that moved
+        # to a new id takes its history along; a used word the new vocabulary
+        # dropped stays, as known, rather than losing what was recorded.
+        terms = state["progress"]["terms"]
+        timezone_name = config["timezone"]
+        current_by_id = {term["id"]: term for term in current}
+        final_ids = {term["id"] for term in known + queue}
+        final_by_key = {_word_key(term["spanish"]): term for term in known + queue}
+        merged: list[dict[str, str]] = []
+        kept: list[str] = []
+        for term_id in list(terms):
+            if term_id in final_ids:
+                continue
+            old = current_by_id[term_id]
+            match = final_by_key.get(_word_key(old["spanish"]))
+            if match is None:
+                known.append(old)
+                final_ids.add(term_id)
+                kept.append(term_id)
+                continue
+            history = terms.pop(term_id)
+            if match["id"] in terms:
+                _merge_history(terms[match["id"]], history, timezone_name)
+            else:
+                terms[match["id"]] = history
+            merged.append({"from": term_id, "to": match["id"]})
+
+        curriculum = [
+            {key: term[key] for key in ("id", "spanish", "english", "kind", "usage")}
+            for term in known + queue
+        ]
+        if not curriculum:
+            raise StateError("The resulting vocabulary is empty")
+        seen_ids: set[str] = set()
+        for term in curriculum:
+            base, suffix = term["id"], 2
+            while term["id"] in seen_ids:
+                term["id"], suffix = f"{base}-{suffix}", suffix + 1
+            seen_ids.add(term["id"])
+        offers = state["progress"]["offers"]
+        for term_id in list(offers):
+            if term_id not in seen_ids:
+                del offers[term_id]
+        # Decisions were issued against the old curriculum; a reply in flight
+        # simply records nothing.
+        state["progress"]["pending_decisions"] = {}
+        config["baseline_known_count"] = len(known)
+        config["start_date"] = now.date().isoformat()
+        state["updated_at"] = now.isoformat()
+        _validate_state(state, curriculum)
+
+        batch = config["batch_size"]
+        result: dict[str, Any] = {
+            "ok": True,
+            "dry_run": args.dry_run,
+            "level": level or "none",
+            "keep_known": args.keep_known,
+            "known_count": len(known),
+            "queue_count": len(queue),
+            "learning": [
+                {"spanish": term["spanish"], "english": term["english"]}
+                for term in curriculum[len(known) : len(known) + batch]
+            ],
+            "next_up": [term["spanish"] for term in curriculum[len(known) + batch :][:12]],
+            "added_known": len(composed["added"]),
+            "removed_known": len(composed["removed"]),
+            "learn_first": len(composed["learn_first"]),
+            "not_found": composed["not_found"],
+            "history": {"moved": merged, "kept_as_known": kept},
+            "known_per_reply": config["known_per_reply"],
+            "start_date": config["start_date"],
+            "curriculum_path": str(personal_path),
+            "state_path": str(state_path),
+        }
+        if args.dry_run:
+            return result
+
+        for path in (personal_path, state_path):
+            if path.exists():
+                shutil.copy2(path, path.with_name(path.name + ".previous"))
+        durable = _atomic_write(personal_path, curriculum)
+        durable = _atomic_write(
+            meta_path,
+            {
+                "built_at": now.isoformat(),
+                "level": level or "none",
+                "keep_known": args.keep_known,
+                "known_count": len(known),
+                "queue_count": len(queue),
+                "added_known": len(composed["added"]),
+                "removed_known": len(composed["removed"]),
+                "learn_first": len(composed["learn_first"]),
+            },
+        ) and durable
+        durable = _atomic_write(state_path, state) and durable
+        result["known_manifest"] = _write_manifest(state_path, curriculum[: len(known)])
+    result["write_durability"] = "confirmed" if durable else "uncertain"
+    return result
 
 
 def _add_common(parser: argparse.ArgumentParser) -> None:
@@ -1404,6 +1937,44 @@ def _parser() -> argparse.ArgumentParser:
     pause_group.add_argument("--resume", action="store_true")
     configure.set_defaults(handler=_cmd_configure)
 
+    levels = subparsers.add_parser(
+        "levels", help="List the level packs, optionally with a sample of each"
+    )
+    levels.add_argument("--lexicon", help="Override the graded lexicon TSV path")
+    levels.add_argument(
+        "--sample", type=int, default=0, help="Random terms to show per level"
+    )
+    levels.add_argument("--seed", type=int, help="Make --sample reproducible")
+    levels.set_defaults(handler=_cmd_levels)
+
+    vocab = subparsers.add_parser(
+        "vocab",
+        help="Rebuild the personal curriculum from a level pack and word lists",
+    )
+    _add_common(vocab)
+    vocab.add_argument("--lexicon", help="Override the graded lexicon TSV path")
+    vocab.add_argument(
+        "--level",
+        type=str.upper,
+        choices=[*LEVELS, "NONE"],
+        help="Treat every lexicon word up to this level as already known",
+    )
+    vocab.add_argument(
+        "--keep-known",
+        action="store_true",
+        help="Start from the words known today and keep the current learning order",
+    )
+    for flag, text in (
+        ("--add-known", "Word list to mark as known"),
+        ("--remove-known", "Word list to take out of known and learn soon"),
+        ("--learn-first", "Word list to learn before anything else, in order"),
+    ):
+        vocab.add_argument(flag, action="append", default=[], metavar="FILE", help=text)
+    vocab.add_argument(
+        "--dry-run", action="store_true", help="Report the result without writing"
+    )
+    vocab.set_defaults(handler=_cmd_vocab)
+
     return parser
 
 
@@ -1411,6 +1982,11 @@ def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
         result = args.handler(args)
+    except VocabularyError as exc:
+        print(
+            _json_dump({"ok": False, "error": str(exc), **exc.details}), file=sys.stderr
+        )
+        return 2
     except StateError as exc:
         print(_json_dump({"ok": False, "error": str(exc)}), file=sys.stderr)
         return 2

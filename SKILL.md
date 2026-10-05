@@ -33,7 +33,7 @@ Under `sample`, the inline array is the whole budget and is weighted by part of 
 
 Tiers come from the calendar alone. Every `cadence_days` (default 3), a new batch of `batch_size` (default 3) terms becomes `learning`, and the previous batch is promoted to `known` — whether or not its terms were ever actually used.
 
-The first `baseline_known_count` curriculum entries are treated as already known and are never taught as a batch. They hold the user's pre-existing vocabulary — currently a CEFR A1 core — so `known` starts large and grows from there.
+The first `baseline_known_count` curriculum entries are treated as already known and are never taught as a batch. They hold the user's pre-existing vocabulary, so `known` starts large and grows from there. That is either the shipped curriculum's A1 core, or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
 
 ## Runtime workflow
 
@@ -104,9 +104,12 @@ python3 <skill-root>/scripts/ambient_state.py configure --cadence-days 3
 python3 <skill-root>/scripts/ambient_state.py configure --batch-size 3
 python3 <skill-root>/scripts/ambient_state.py configure --known-per-reply all   # no cap
 python3 <skill-root>/scripts/ambient_state.py configure --known-per-reply 18    # density cap
-python3 <skill-root>/scripts/ambient_state.py configure --baseline-known 321
 python3 <skill-root>/scripts/ambient_state.py configure --dialect es-ES
+python3 <skill-root>/scripts/ambient_state.py levels                      # CEFR level packs and their sizes
+python3 <skill-root>/scripts/ambient_state.py vocab --level B1 --dry-run  # preview a rebuild
 ```
+
+To set the level, add or remove known words, or choose what is taught next, follow the `ambient-spanish-vocab` skill (`skills/ambient-spanish-vocab/SKILL.md` in this repo). `vocab` writes a personal `curriculum.json` beside the state, which then replaces the shipped curriculum. `status` reports which one is in use under `curriculum`. Use `configure --baseline-known` only with the shipped curriculum, where 321 covers its pre-known block.
 
 Do not reset or overwrite state unless the user explicitly requests it. For state semantics and migration rules, read [references/state-contract.md](references/state-contract.md).
 

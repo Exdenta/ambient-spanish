@@ -1,0 +1,4464 @@
+level	id	spanish	english	kind	usage
+A0	hola	hola	hello	phrase	Use as a greeting.
+A0	adios	adiós	goodbye	phrase	Use as a parting.
+A0	gracias	gracias	thanks	phrase	Use to thank.
+A0	por-favor	por favor	please	phrase	Use to make a polite request.
+A0	de-nada	de nada	you're welcome	phrase	Use to answer thanks.
+A0	perdon	perdón	sorry	phrase	Use to apologise.
+A0	lo-siento	lo siento	I'm sorry	phrase	
+A0	vale	vale	OK / fine	phrase	Use to acknowledge or accept. Distinctly Peninsular.
+A0	si	sí	yes	adverb	
+A0	hasta-luego	hasta luego	see you later	phrase	Use as a casual parting. Very common in Spain.
+A0	buenos-dias	buenos días	good morning	phrase	Use as a morning greeting.
+A0	buenas-noches	buenas noches	good night	phrase	
+A0	bien	bien	well / fine	adverb	Use for something working correctly.
+A0	mal	mal	badly / wrong	adverb	Use for something working incorrectly.
+A0	muy	muy	very	adverb	Use directly before an adjective or adverb.
+A0	mas	más	more	adverb	Use for a comparative or an increase.
+A0	menos	menos	less / fewer	adverb	Use for a comparative or a decrease.
+A0	mucho	mucho	a lot / much	adjective	Use for a large quantity or degree.
+A0	poco	poco	little / few	adjective	Use for a small quantity or degree.
+A0	tambien	también	also / too	adverb	Use where the reply adds a second point of the same kind.
+A0	ya	ya	already	adverb	Use when something has happened sooner than expected.
+A0	ahora	ahora	now	adverb	Use for the present moment.
+A0	hoy	hoy	today	noun	Use for the current day.
+A0	manana	mañana	tomorrow / morning	noun	Use for the next day; context disambiguates the morning sense.
+A0	ayer	ayer	yesterday	noun	Use for the previous day.
+A0	siempre	siempre	always	adverb	Use for something with no exception.
+A0	nunca	nunca	never	adverb	Use for something that does not happen at all.
+A0	aqui	aquí	here	adverb	Use to point at the current file, line, or context.
+A0	alli	allí	there	adverb	Use to point at a different location.
+A0	antes	antes	before / earlier	adverb	Use for what came previously.
+A0	despues	después	after / afterwards	adverb	Use for what follows.
+A0	luego	luego	then / later	adverb	Use for the next step in a sequence.
+A0	tarde	tarde	late	adverb	Use when something happens after it should.
+A0	pronto	pronto	soon	adverb	Use for something expected shortly.
+A0	otra-vez	otra vez	again	phrase	Use for a repeat of the same action.
+A0	dia	día	day	noun	Use for a calendar day or a daily cadence.
+A0	noche	noche	night	noun	
+A0	semana	semana	week	noun	Use for a weekly period or cadence.
+A0	mes	mes	month	noun	Use for a monthly period.
+A0	ano	año	year	noun	Use for a yearly period.
+A0	hora	hora	hour / time of day	noun	Use for a duration in hours or a clock time.
+A0	tiempo	tiempo	weather / time	noun	Use for the weather or for elapsed time.
+A0	momento	momento	moment	noun	Use for a specific point in time.
+A0	casa	casa	house / home	noun	Use for a house or home.
+A0	agua	agua	water	noun	Use for water; it takes el but is feminine.
+A0	comida	comida	food / meal	noun	Use for food or a meal.
+A0	cafe	café	coffee	noun	Use for coffee.
+A0	pan	pan	bread	noun	Use for bread.
+A0	dinero	dinero	money	noun	Use for money.
+A0	trabajo	trabajo	work / job	noun	Use for effort or for a scheduled job.
+A0	nombre	nombre	name	noun	Use for the identifier of something.
+A0	numero	número	number	noun	Use for a count or a numeric value.
+A0	amigo	amigo	friend	noun	Use for a friend.
+A0	familia	familia	family	noun	Use for a family or a family of related items.
+A0	padre	padre	father	noun	Use for a father; padres also means parents.
+A0	madre	madre	mother	noun	Use for a mother.
+A0	hijo	hijo	son / child	noun	Use for offspring.
+A0	hombre	hombre	man	noun	Use for an adult male.
+A0	mujer	mujer	woman	noun	Use for an adult female.
+A0	nino	niño	child / boy	noun	Use for a child; niña is a girl.
+A0	persona	persona	person	noun	Use for a single individual.
+A0	gente	gente	people	noun	Use as a collective for persons; it is grammatically singular.
+A0	ciudad	ciudad	city	noun	Use for a city.
+A0	pais	país	country	noun	
+A0	calle	calle	street	noun	Use for a street.
+A0	coche	coche	car	noun	Peninsular; carro and auto are Latin American.
+A0	tienda	tienda	shop	noun	Use for a shop.
+A0	mesa	mesa	table	noun	Use for a table.
+A0	puerta	puerta	door	noun	Use for a door or an entry point.
+A0	libro	libro	book	noun	Use for a book.
+A0	telefono	teléfono	phone	noun	
+A0	movil	móvil	mobile phone	noun	Peninsular; celular is Latin American.
+A0	ordenador	ordenador	computer	noun	Peninsular; computadora is Latin American.
+A0	cosa	cosa	thing	noun	Use for an unspecified item when precision is not needed.
+A0	problema	problema	problem	noun	Use for a defect or an obstacle.
+A0	pregunta	pregunta	question	noun	Use for something being asked.
+A0	respuesta	respuesta	answer / response	noun	Use for a reply or an API response.
+A0	idea	idea	idea	noun	
+A0	parte	parte	part	noun	Use for a component of a whole.
+A0	vida	vida	life	noun	Use for lifetime or lifespan, literal or figurative.
+A0	mundo	mundo	world	noun	Use for the broader real-world context.
+A0	ser	ser	to be (essential)	verb	Use for identity and permanent qualities. Conjugate to fit or skip.
+A0	estar	estar	to be (state)	verb	Use for states and locations. Conjugate to fit or skip.
+A0	tener	tener	to have	verb	Use for possession or obligation. Conjugate to fit or skip.
+A0	hacer	hacer	to do / make	verb	Use for doing or making. Conjugate to fit or skip.
+A0	ir	ir	to go	verb	Use for movement or intention. Conjugate to fit or skip.
+A0	venir	venir	to come	verb	Use for arriving. Conjugate to fit or skip.
+A0	querer	querer	to want	verb	Use for wanting. Conjugate to fit or skip.
+A0	poder	poder	to be able / can	verb	Use for ability or permission. Conjugate to fit or skip.
+A0	decir	decir	to say	verb	Use for saying. Conjugate to fit or skip.
+A0	ver	ver	to see	verb	Use for seeing. Conjugate to fit or skip.
+A0	dar	dar	to give	verb	Use for giving. Conjugate to fit or skip.
+A0	saber	saber	to know (facts)	verb	Use for knowing information. Conjugate to fit or skip.
+A0	comer	comer	to eat	verb	
+A0	beber	beber	to drink	verb	Peninsular preference over tomar. Conjugate to fit or skip.
+A0	hablar	hablar	to speak	verb	Use for speaking. Conjugate to fit or skip.
+A0	vivir	vivir	to live	verb	
+A0	trabajar	trabajar	to work	verb	
+A0	necesitar	necesitar	to need	verb	Use for a requirement. Conjugate to fit the sentence or skip.
+A0	gustar	gustar	to be pleasing / to like	verb	The thing liked is the subject. Conjugate to fit or skip.
+A0	entender	entender	to understand	verb	Use for comprehension. Conjugate to fit or skip.
+A0	buscar	buscar	to look for / search	verb	Use for searching. Conjugate to fit or skip.
+A0	abrir	abrir	to open	verb	Use for opening. Conjugate to fit or skip.
+A0	cerrar	cerrar	to close	verb	Use for closing. Conjugate to fit or skip.
+A0	empezar	empezar	to start / begin	verb	Use for the beginning of a process. Conjugate to fit or skip.
+A0	terminar	terminar	to finish / end	verb	Use for completion. Conjugate to fit or skip.
+A0	esperar	esperar	to wait / to expect	verb	Use for waiting or expecting. Conjugate to fit or skip.
+A0	ayudar	ayudar	to help	verb	Use for helping. Conjugate to fit or skip.
+A0	llamar	llamar	to call / to name	verb	Use for calling or naming. Conjugate to fit or skip.
+A0	mirar	mirar	to look at	verb	Use for looking deliberately. Conjugate to fit or skip.
+A0	pensar	pensar	to think	verb	Use for thinking. Conjugate to fit or skip.
+A0	comprar	comprar	to buy	verb	
+A0	pagar	pagar	to pay	verb	
+A0	leer	leer	to read	verb	Use for reading. Conjugate to fit or skip.
+A0	escribir	escribir	to write	verb	Use for writing. Conjugate to fit or skip.
+A0	dormir	dormir	to sleep	verb	
+A0	salir	salir	to leave / go out	verb	Use for exiting. Conjugate to fit or skip.
+A0	llegar	llegar	to arrive	verb	Use for arriving. Conjugate to fit or skip.
+A0	usar	usar	to use	verb	Use for employing a tool or option. Conjugate to fit the sentence or skip.
+A0	cambiar	cambiar	to change	verb	Use for modifying something. Conjugate to fit the sentence or skip.
+A0	bueno	bueno	good	adjective	Use for a positive quality or outcome.
+A0	malo	malo	bad	adjective	Use for a negative quality or outcome.
+A0	grande	grande	big / large	adjective	Use for size or scale.
+A0	pequeno	pequeño	small	adjective	Use for size or scope.
+A0	nuevo	nuevo	new	adjective	Use for something recently added.
+A0	viejo	viejo	old	adjective	Use for something long-standing or outdated.
+A0	facil	fácil	easy	adjective	Use for low effort or low difficulty.
+A0	dificil	difícil	difficult / hard	adjective	Use for high effort or high difficulty.
+A0	rapido	rápido	fast / quickly	adverb	Use for speed of an action or a result.
+A0	lento	lento	slow	adjective	Use for low speed or poor performance.
+A0	caro	caro	expensive	adjective	Use for high cost.
+A0	barato	barato	cheap	adjective	Use for low cost.
+A0	abierto	abierto	open	adjective	Use for an open state.
+A0	cerrado	cerrado	closed	adjective	Use for a closed state.
+A0	listo	listo	ready	adjective	Use when something is prepared to run or ship.
+A0	mejor	mejor	better / best	adjective	
+A0	peor	peor	worse / worst	adjective	
+A0	mismo	mismo	same	adjective	Use for identity between two things.
+A0	otro	otro	other / another	adjective	Use for an additional or alternative item.
+A0	importante	importante	important	adjective	Use for something that materially matters.
+A0	posible	posible	possible	adjective	Use for feasibility.
+A0	feliz	feliz	happy	adjective	
+A0	cansado	cansado	tired	adjective	Use for tiredness.
+A1	casi	casi	almost	adverb	Use for something very close but not complete.
+A1	bastante	bastante	quite / fairly	adverb	Use to soften an adjective without exaggerating it.
+A1	demasiado	demasiado	too much / too many	adverb	Use for an excess that causes a problem.
+A1	solo	solo	only / just	adverb	Use to narrow a statement to one case.
+A1	todavia	todavía	still / yet	adverb	Use for a state that has not changed.
+A1	despacio	despacio	slowly	adverb	Use for a deliberately slow pace.
+A1	juntos	juntos	together	adverb	Use for things that act or ship as a pair.
+A1	aparte	aparte	separately / aside	adverb	Use to set one item apart from the rest.
+A1	entonces	entonces	then / so	connector	Use for a consequence in a narrated sequence.
+A1	temprano	temprano	early	adverb	Use when something happens sooner than planned.
+A1	vez	vez	time / occurrence	noun	Use for a countable occurrence of an event.
+A1	cerca	cerca	near / close	adverb	Use for physical or figurative closeness.
+A1	lejos	lejos	far	adverb	Use for distance, literal or figurative.
+A1	pero	pero	but	connector	Use for a simple contrast inside one sentence.
+A1	porque	porque	because	connector	Use to give the direct reason for something.
+A1	aunque	aunque	although	connector	Use to concede a point while keeping the main claim.
+A1	ademas	además	besides / moreover	connector	Use to add a reinforcing point.
+A1	asi	así	like this / that way	adverb	Use to point at the manner just described.
+A1	todo	todo	all / everything	adjective	Use for the complete set.
+A1	nada	nada	nothing	noun	Use for the empty case or a null result.
+A1	algo	algo	something	noun	Use for an unspecified thing.
+A1	alguien	alguien	someone	noun	Use for an unspecified person.
+A1	nadie	nadie	nobody	noun	Use when no person is involved.
+A1	cada	cada	each / every	adjective	Use for per-item iteration.
+A1	varios	varios	several	adjective	Use for an unspecified plural, more than two.
+A1	largo	largo	long	adjective	Use for length or duration.
+A1	corto	corto	short	adjective	Use for brevity in length or duration.
+A1	seguro	seguro	sure / safe	adjective	Use for certainty or for safety.
+A1	diferente	diferente	different	adjective	Use for a contrast between two things.
+A1	igual	igual	the same / equal	adjective	Use for equivalence between two things.
+A1	primero	primero	first	adjective	Use for the first item in an order.
+A1	ultimo	último	last / latest	adjective	Use for the final or most recent item.
+A1	siguiente	siguiente	next	adjective	Use for the item that follows.
+A1	ejemplo	ejemplo	example	noun	Use when giving an illustration.
+A1	palabra	palabra	word	noun	Use for a single lexical item.
+A1	razon	razón	reason	noun	Use for the cause or justification.
+A1	caso	caso	case	noun	Use for a specific scenario or branch.
+A1	final	final	end	noun	Use for the last point of a sequence or period.
+A1	anadir	añadir	to add	verb	Use for adding an item. Conjugate to fit or skip.
+A1	quitar	quitar	to remove	verb	Use for removing an item. Conjugate to fit or skip.
+A1	probar	probar	to try / to test	verb	Use for testing or trying something. Conjugate to fit or skip.
+A1	encontrar	encontrar	to find	verb	Use for locating something. Conjugate to fit or skip.
+A1	funcionar	funcionar	to work / function	verb	Use when something operates correctly. Conjugate to fit or skip.
+A1	pasar	pasar	to happen / to pass	verb	Use for an event occurring. Conjugate to fit or skip.
+A1	guay	guay	cool / great	adjective	Use colloquially for approval. Distinctly Peninsular.
+A1	claro	claro	of course / clear	adverb	Use to agree or to mark something obvious.
+A1	quiza	quizá	maybe / perhaps	adverb	Use for uncertainty.
+A1	enseguida	enseguida	right away	adverb	Use for something happening immediately.
+A1	mientras	mientras	while	connector	Use for two things happening at once.
+A1	cuando	cuando	when	connector	Use to place something in time.
+A1	donde	donde	where	connector	Use to place something in space.
+A1	hacia	hacia	towards	connector	Use for direction or a trend.
+A1	hasta	hasta	until / up to	connector	Use for a limit in time or quantity.
+A1	desde	desde	since / from	connector	Use for a starting point.
+A1	durante	durante	during	connector	Use for a span of time.
+A1	alquilar	alquilar	to rent	verb	Peninsular; rentar is Latin American. Conjugate to fit or skip.
+A1	conocer	conocer	to know (be familiar)	verb	Use for familiarity with people or places. Conjugate to fit or skip.
+A1	poner	poner	to put	verb	Use for placing or setting. Conjugate to fit or skip.
+A1	llevar	llevar	to carry / to take	verb	Use for carrying or elapsed duration. Conjugate to fit or skip.
+A1	dejar	dejar	to leave / to let	verb	Use for leaving something or allowing it. Conjugate to fit or skip.
+A1	escuchar	escuchar	to listen	verb	Use for listening. Conjugate to fit or skip.
+A1	preguntar	preguntar	to ask	verb	Use for asking a question. Conjugate to fit or skip.
+A1	contestar	contestar	to answer	verb	Use for answering. Conjugate to fit or skip.
+A1	creer	creer	to believe	verb	Use for believing. Conjugate to fit or skip.
+A1	recordar	recordar	to remember	verb	Use for remembering. Conjugate to fit or skip.
+A1	olvidar	olvidar	to forget	verb	Use for forgetting. Conjugate to fit or skip.
+A1	aprender	aprender	to learn	verb	Use for learning. Conjugate to fit or skip.
+A1	ensenar	enseñar	to teach / to show	verb	Use for teaching or showing. Conjugate to fit or skip.
+A1	volver	volver	to return	verb	Use for going back. Conjugate to fit or skip.
+A1	quedar	quedar	to remain / be left	verb	Use for what is left over. Conjugate to fit or skip.
+A1	parecer	parecer	to seem	verb	Use for appearances. Conjugate to fit or skip.
+A1	perder	perder	to lose	verb	Use for losing. Conjugate to fit or skip.
+A1	subir	subir	to go up / upload	verb	Use for increasing or uploading. Conjugate to fit or skip.
+A1	seguir	seguir	to follow / continue	verb	Use for following or carrying on. Conjugate to fit or skip.
+A1	bonito	bonito	nice / pretty	adjective	Peninsular preference over lindo.
+A1	alto	alto	tall / high	adjective	Use for height or a high value.
+A1	lleno	lleno	full	adjective	Use for a full container or capacity.
+A1	fuerte	fuerte	strong / loud	adjective	Use for strength or volume.
+A1	libre	libre	free / available	adjective	Use for availability, not price.
+A1	normal	normal	normal	adjective	Use for the usual case.
+A1	uno	uno	one	noun	Use for a count of one.
+A1	medio	medio	half	adjective	Use for half of a quantity or duration.
+A1	correo	correo	email / post	noun	Use for email or postal mail.
+A1	dato	dato	piece of data	noun	Use for a datum; datos is data.
+A1	cambio	cambio	change	noun	Use for a change or a diff.
+A1	tio	tío	guy / uncle	noun	Colloquial for a bloke; literally an uncle. Very common in Spain.
+A1	hermano	hermano	brother	noun	Use for a brother; hermana is a sister.
+A1	grupo	grupo	group	noun	Use for a set of people or items.
+A1	jefe	jefe	boss	noun	Use for a manager or owner of a decision.
+A1	rojo	rojo	red	adjective	Use for the colour red, including failing states.
+A1	verde	verde	green	adjective	Use for the colour green, including passing states.
+A1	azul	azul	blue	adjective	Use for the colour blue.
+A1	negro	negro	black	adjective	Use for the colour black.
+A1	blanco	blanco	white	adjective	Use for the colour white or a blank value.
+A1	gris	gris	grey	adjective	Use for the colour grey or something greyed out.
+A1	naranja	naranja	orange	adjective	Use for the colour orange.
+A1	rosa	rosa	pink	adjective	Use for the colour pink.
+A1	color	color	colour	noun	Use for colour as a property.
+A1	piso	piso	flat / floor	noun	Peninsular; departamento is Latin American.
+A1	patata	patata	potato	noun	Peninsular; papa is Latin American.
+A1	tapa	tapa	small dish / lid	noun	Use for a bar snack or a lid.
+A1	cerveza	cerveza	beer	noun	Use for beer.
+A1	cena	cena	dinner	noun	Use for the evening meal.
+A1	autobus	autobús	bus	noun	Use for a bus. Peninsular.
+A1	plaza	plaza	square / slot	noun	Use for a town square or an available slot.
+A1	precio	precio	price	noun	Use for a price.
+A1	cuenta	cuenta	account / bill	noun	Use for an account or a bill.
+A1	oficina	oficina	office	noun	Use for an office.
+A1	empresa	empresa	company	noun	Use for a company.
+A1	sol	sol	sun	noun	Use for the sun or sunshine.
+A1	frio	frío	cold	adjective	Use for low temperature.
+A1	campo	campo	field / countryside	noun	Use for a field, including a data field.
+A1	mano	mano	hand	noun	Use for a hand; it is feminine despite ending in -o.
+A1	ojo	ojo	eye	noun	Use for an eye, or as a warning to look out.
+A1	cabeza	cabeza	head	noun	Use for a head or the top of something.
+A1	pie	pie	foot	noun	Use for a foot or the bottom of something.
+A1	cara	cara	face	noun	Use for a face or the visible side of something.
+A1	gafas	gafas	glasses	noun	Peninsular; lentes is Latin American.
+A1	destacar	destacar	to highlight / stand out	verb	Use for emphasizing the notable item.
+A1	espanol	español	Spanish	adjective	
+A1	tomar	tomar	to take / drink	verb	
+A1	deber	deber	must / to owe	verb	
+A1	tan	tan	so	adverb	
+A1	lugar	lugar	place	noun	
+A1	gran	gran	great / big	adjective	
+A1	historia	historia	story / history	noun	
+A1	contar	contar	to tell / count	verb	
+A1	verdad	verdad	truth	noun	
+A1	centro	centro	center	noun	
+A1	chico	chico	boy / guy	noun	
+A1	sentar	sentar	to sit down	verb	
+A1	forma	forma	form / way / shape	noun	
+A1	fiesta	fiesta	party	noun	
+A1	viaje	viaje	trip	noun	
+A1	joven	joven	young person / young	noun	
+A1	pedir	pedir	to ask for / order	verb	
+A1	mayor	mayor	older / greater	adjective	
+A1	musica	música	music	noun	
+A1	sentir	sentir	to feel	verb	
+A1	lengua	lengua	language / tongue	noun	
+A1	entrar	entrar	to enter	verb	
+A1	fin	fin	end	noun	
+A1	producto	producto	product	noun	
+A1	clase	clase	class	noun	
+A1	pueblo	pueblo	village / town	noun	
+A1	cultura	cultura	culture	noun	
+A1	explicar	explicar	to explain	verb	
+A1	decidir	decidir	to decide	verb	
+A1	estudio	estudio	study / studio	noun	
+A1	companero	compañero	partner / classmate	noun	
+A1	preparar	preparar	to prepare	verb	
+A1	hotel	hotel	hotel	noun	
+A1	tanto	tanto	so much	adverb	
+A1	ofrecer	ofrecer	to offer	verb	
+A1	tipo	tipo	type / guy	noun	
+A1	amor	amor	love	noun	
+A1	senor	señor	man / sir	noun	
+A1	social	social	social	adjective	
+A1	estudiar	estudiar	to study	verb	
+A1	manera	manera	way	noun	
+A1	restaurante	restaurante	restaurant	noun	
+A1	nacer	nacer	to be born	verb	
+A1	pelicula	película	movie	noun	
+A1	recibir	recibir	to receive	verb	
+A1	oir	oír	to hear	verb	
+A1	realizar	realizar	to carry out / achieve	verb	
+A1	cocina	cocina	kitchen / cooking	noun	
+A1	novio	novio	boyfriend	noun	
+A1	descubrir	descubrir	to discover	verb	
+A1	unico	único	only / unique	adjective	
+A1	utilizar	utilizar	to use	verb	
+A1	existir	existir	to exist	verb	
+A1	visitar	visitar	to visit	verb	
+A1	conseguir	conseguir	to get / achieve	verb	
+A1	morir	morir	to die	verb	
+A1	playa	playa	beach	noun	
+A1	presentar	presentar	to present / introduce	verb	
+A1	universidad	universidad	university	noun	
+A1	famoso	famoso	famous	adjective	
+A1	publico	público	public	adjective	
+A1	significar	significar	to mean	verb	
+A1	ropa	ropa	clothes	noun	
+A1	interesar	interesar	to interest	verb	
+A1	ganar	ganar	to win / earn	verb	
+A1	zona	zona	area	noun	
+A1	vacaciones	vacaciones	vacation	noun	
+A1	abuelo	abuelo	grandfather	noun	
+A1	relacion	relación	relationship	noun	
+A1	informacion	información	information	noun	
+A1	encantar	encantar	to delight / love	verb	
+A1	preferir	preferir	to prefer	verb	
+A1	tipico	típico	typical	adjective	
+A1	viajar	viajar	to travel	verb	
+A1	papel	papel	paper / role	noun	
+A1	crear	crear	to create	verb	
+A1	deporte	deporte	sport	noun	
+A1	profesor	profesor	teacher	noun	
+A1	lado	lado	side	noun	
+A1	experiencia	experiencia	experience	noun	
+A1	gracia	gracia	humor / grace	noun	
+A1	antiguo	antiguo	old / ancient	adjective	
+A1	cine	cine	cinema	noun	
+A1	propio	propio	own	adjective	
+A1	escuela	escuela	school	noun	
+A1	museo	museo	museum	noun	
+A1	actividad	actividad	activity	noun	
+A1	habitacion	habitación	room	noun	
+A1	barrio	barrio	neighborhood	noun	
+A1	soler	soler	to usually do	verb	
+A1	foto	foto	photo	noun	
+A1	economico	económico	economic / cheap	adjective	
+A1	especial	especial	special	adjective	
+A1	cuerpo	cuerpo	body	noun	
+A1	vender	vender	to sell	verb	
+A1	pareja	pareja	couple / partner	noun	
+A1	punto	punto	point / dot	noun	
+A1	bailar	bailar	to dance	verb	
+A1	imagen	imagen	image	noun	
+A1	formar	formar	to form	verb	
+A1	levantar	levantar	to lift / raise	verb	
+A1	policia	policía	police officer / police	noun	
+A1	obra	obra	work / construction	noun	
+A1	celebrar	celebrar	to celebrate	verb	
+A1	plato	plato	dish / plate	noun	
+A1	extranjero	extranjero	foreigner / foreign	noun	
+A1	bar	bar	bar	noun	
+A1	tema	tema	topic	noun	
+A1	valer	valer	to be worth	verb	
+A1	jugar	jugar	to play	verb	
+A1	necesario	necesario	necessary	adjective	
+A1	personal	personal	personal	adjective	
+A1	cultural	cultural	cultural	adjective	
+A1	verano	verano	summer	noun	
+A1	mar	mar	sea	noun	
+A1	sacar	sacar	to take out / get	verb	
+A1	incluso	incluso	even	adverb	
+A1	familiar	familiar	family / familiar	adjective	
+A1	casar	casar	to marry	verb	
+A1	vestir	vestir	to dress	verb	
+A1	argentino	argentino	Argentine	adjective	
+A1	dirigir	dirigir	to direct / lead	verb	
+A1	siglo	siglo	century	noun	
+A1	vino	vino	wine	noun	
+A1	organizar	organizar	to organize	verb	
+A1	ingles	inglés	English	noun	
+A1	curso	curso	course	noun	
+A1	programa	programa	program	noun	
+A1	voz	voz	voice	noun	
+A1	tranquilo	tranquilo	calm / quiet	adjective	
+A1	cancion	canción	song	noun	
+A1	situacion	situación	situation	noun	
+A1	isla	isla	island	noun	
+A1	acuerdo	acuerdo	agreement	noun	
+A1	principal	principal	main	adjective	
+A1	tocar	tocar	to touch / play (instrument)	verb	
+A1	junto	junto	together	adjective	
+A1	capitulo	capítulo	chapter	noun	
+A1	mercado	mercado	market	noun	
+A1	parque	parque	park	noun	
+A1	carne	carne	meat	noun	
+A1	carta	carta	letter / menu	noun	
+A1	popular	popular	popular	adjective	
+A1	cliente	cliente	customer	noun	
+A1	mayoria	mayoría	majority	noun	
+A1	cenar	cenar	to have dinner	verb	
+A1	aire	aire	air	noun	
+A1	cantar	cantar	to sing	verb	
+A1	andar	andar	to walk	verb	
+A1	edad	edad	age	noun	
+A1	teatro	teatro	theater	noun	
+A1	dedicar	dedicar	to dedicate / devote	verb	
+A1	interesante	interesante	interesting	adjective	
+A1	director	director	director / manager	noun	
+A1	traer	traer	to bring	verb	
+A1	fruto	fruto	fruit	noun	
+A1	correr	correr	to run	verb	
+A1	estudiante	estudiante	student	noun	
+A1	rey	rey	king	noun	
+A1	habitante	habitante	inhabitant	noun	
+A1	ahi	ahí	there	adverb	
+A1	invitar	invitar	to invite	verb	
+A1	tradicional	tradicional	traditional	adjective	
+A1	compra	compra	purchase	noun	
+A1	preocupar	preocupar	to worry	verb	
+A1	servicio	servicio	service	noun	
+A1	origen	origen	origin	noun	
+A1	planta	planta	plant / floor	noun	
+A1	responder	responder	to answer	verb	
+A1	internet	internet	internet	noun	
+A1	idioma	idioma	language	noun	
+A1	noticia	noticia	news	noun	
+A1	mexicano	mexicano	Mexican	adjective	
+A1	flor	flor	flower	noun	
+A1	vecino	vecino	neighbor	noun	
+A1	medico	médico	doctor	noun	
+A1	rico	rico	rich / tasty	adjective	
+A1	camino	camino	path / road	noun	
+A1	ayuda	ayuda	help	noun	
+A1	suelo	suelo	ground / floor	noun	
+A1	nacional	nacional	national	adjective	
+A1	avion	avión	airplane	noun	
+A1	natural	natural	natural	adjective	
+A1	animal	animal	animal	noun	
+A1	turista	turista	tourist	noun	
+A1	triste	triste	sad	adjective	
+A1	capital	capital	capital	noun	
+A1	disfrutar	disfrutar	to enjoy	verb	
+A1	epoca	época	era / period	noun	
+A1	general	general	general	adjective	
+A1	texto	texto	text	noun	
+A1	pintar	pintar	to paint	verb	
+A1	banco	banco	bank / bench	noun	
+A1	periodico	periódico	newspaper	noun	
+A1	poblacion	población	population / town	noun	
+A1	region	región	region	noun	
+A1	montana	montaña	mountain	noun	
+A1	aspecto	aspecto	aspect / appearance	noun	
+A1	comenzar	comenzar	to begin	verb	
+A1	visita	visita	visit	noun	
+A1	bicicleta	bicicleta	bicycle	noun	
+A1	pobre	pobre	poor	adjective	
+A1	guapo	guapo	handsome / good-looking	adjective	
+A1	television	televisión	television	noun	
+A1	mostrar	mostrar	to show	verb	
+A1	acercar	acercar	to bring closer	verb	
+A1	dios	dios	god	noun	
+A1	pues	pues	well / then	connector	
+A1	expresion	expresión	expression	noun	
+A1	cansar	cansar	to tire	verb	
+A1	tradicion	tradición	tradition	noun	
+A1	comprender	comprender	to understand	verb	
+A1	futbol	fútbol	soccer	noun	
+A1	beso	beso	kiss	noun	
+A1	naturaleza	naturaleza	nature	noun	
+A1	reir	reír	to laugh	verb	
+A1	calidad	calidad	quality	noun	
+A1	divertir	divertir	to amuse	verb	
+A1	construir	construir	to build	verb	
+A1	ocupar	ocupar	to occupy	verb	
+A1	bano	baño	bathroom / bath	noun	
+A1	horario	horario	schedule	noun	
+A1	agencia	agencia	agency	noun	
+A1	frase	frase	sentence / phrase	noun	
+A1	frances	francés	French	adjective	
+A1	situar	situar	to place / locate	verb	
+A1	enviar	enviar	to send	verb	
+A1	mama	mamá	mom	noun	
+A1	santo	santo	holy / saint	adjective	
+A1	arte	arte	art	noun	
+A1	gana	gana	desire / urge	noun	
+A1	cuidar	cuidar	to look after	verb	
+A1	comunicar	comunicar	to communicate	verb	
+A1	coger	coger	to take / grab	verb	
+A1	compartir	compartir	to share	verb	
+A1	cuadro	cuadro	painting / square	noun	
+A1	negocio	negocio	business	noun	
+A1	aceite	aceite	oil	noun	
+A1	direccion	dirección	address / direction	noun	
+A1	internacional	internacional	international	adjective	
+A1	europeo	europeo	European	adjective	
+A1	cama	cama	bed	noun	
+A1	edificio	edificio	building	noun	
+A1	comercial	comercial	commercial	adjective	
+A1	paseo	paseo	walk / stroll	noun	
+A1	indigena	indígena	indigenous	adjective	
+A1	serio	serio	serious	adjective	
+A1	pescado	pescado	fish (food)	noun	
+A1	enorme	enorme	huge	adjective	
+A1	contento	contento	happy / pleased	adjective	
+A1	puesto	puesto	stall / position	noun	
+A1	dulce	dulce	sweet	adjective	
+A1	bebida	bebida	drink	noun	
+A1	maravilloso	maravilloso	wonderful	adjective	
+A1	vista	vista	view / sight	noun	
+A1	regalo	regalo	gift	noun	
+A1	pasear	pasear	to go for a walk	verb	
+A1	literatura	literatura	literature	noun	
+A1	practicar	practicar	to practice	verb	
+A1	piel	piel	skin	noun	
+A1	electronico	electrónico	electronic	adjective	
+A1	caracter	carácter	character	noun	
+A1	distinto	distinto	different	adjective	
+A1	ambiente	ambiente	atmosphere / environment	noun	
+A1	enamorar	enamorar	to make fall in love	verb	
+A1	aeropuerto	aeropuerto	airport	noun	
+A1	fotografia	fotografía	photograph	noun	
+A1	calor	calor	heat	noun	
+A1	pintura	pintura	paint / painting	noun	
+A1	fantastico	fantástico	fantastic	adjective	
+A1	costa	costa	coast	noun	
+A1	interes	interés	interest	noun	
+A1	paisaje	paisaje	landscape	noun	
+A1	italiano	italiano	Italian	adjective	
+A1	cocinar	cocinar	to cook	verb	
+A1	politico	político	political	adjective	
+A1	rio	río	river	noun	
+A1	iglesia	iglesia	church	noun	
+A1	sitio	sitio	place / site	noun	
+A1	resto	resto	rest	noun	
+A1	diario	diario	newspaper / diary	noun	
+A1	metro	metro	subway / meter	noun	
+A1	proteger	proteger	to protect	verb	
+A1	caminar	caminar	to walk	verb	
+A1	detective	detective	detective	noun	
+A1	observar	observar	to observe	verb	
+A1	verdura	verdura	vegetable	noun	
+A1	descansar	descansar	to rest	verb	
+A1	pagina	página	page	noun	
+A1	bello	bello	beautiful	adjective	
+A1	alimento	alimento	food	noun	
+A1	acordar	acordar	to agree / remember	verb	
+A1	sala	sala	room / hall	noun	
+A1	maleta	maleta	suitcase	noun	
+A1	cielo	cielo	sky	noun	
+A1	espectaculo	espectáculo	show	noun	
+A1	cubano	cubano	Cuban	adjective	
+A1	marcar	marcar	to mark / dial	verb	
+A1	historico	histórico	historic	adjective	
+A1	actual	actual	current	adjective	
+A1	aleman	alemán	German	adjective	
+A1	partido	partido	match / party	noun	
+A1	muchacho	muchacho	boy / lad	noun	
+A1	leche	leche	milk	noun	
+A1	consejo	consejo	advice	noun	
+A1	jardin	jardín	garden	noun	
+A1	sorprender	sorprender	to surprise	verb	
+A1	perdonar	perdonar	to forgive	verb	
+A1	zapato	zapato	shoe	noun	
+A1	guia	guía	guide	noun	
+A1	madera	madera	wood	noun	
+A1	rodear	rodear	to surround	verb	
+A1	tele	tele	TV	noun	
+A1	ay	ay	ouch / oh dear	phrase	
+A1	marca	marca	brand / mark	noun	
+A1	exposicion	exposición	exhibition	noun	
+A1	turistico	turístico	tourist	adjective	
+A1	concierto	concierto	concert	noun	
+A1	moderno	moderno	modern	adjective	
+A1	falso	falso	false / fake	adjective	
+A1	estrella	estrella	star	noun	
+A1	conservar	conservar	to keep / preserve	verb	
+A1	socio	socio	partner / member	noun	
+A1	oferta	oferta	offer	noun	
+A1	barco	barco	boat	noun	
+A1	minuto	minuto	minute	noun	
+A1	taxi	taxi	taxi	noun	
+A1	marido	marido	husband	noun	
+A1	tren	tren	train	noun	
+A1	alla	allá	over there	adverb	
+A1	americano	americano	American	adjective	
+A1	escritor	escritor	writer	noun	
+A1	precioso	precioso	gorgeous / precious	adjective	
+A1	baile	baile	dance	noun	
+A1	papa	papá	dad	noun	
+A1	separar	separar	to separate	verb	
+A1	relajar	relajar	to relax	verb	
+A1	justo	justo	fair / just	adjective	
+A1	actuar	actuar	to act	verb	
+A1	receta	receta	recipe	noun	
+A1	oportunidad	oportunidad	opportunity	noun	
+A1	fisico	físico	physical	adjective	
+A1	pintor	pintor	painter	noun	
+A1	ejercicio	ejercicio	exercise	noun	
+A1	pared	pared	wall	noun	
+A1	perfecto	perfecto	perfect	adjective	
+A1	peruano	peruano	Peruvian	adjective	
+A1	disco	disco	record / disc	noun	
+A1	lago	lago	lake	noun	
+A1	copa	copa	glass / cup	noun	
+A1	huevo	huevo	egg	noun	
+A1	arroz	arroz	rice	noun	
+A1	peso	peso	weight	noun	
+A1	chileno	chileno	Chilean	adjective	
+A1	anuncio	anuncio	ad / announcement	noun	
+A1	clasico	clásico	classic	adjective	
+A1	pajaro	pájaro	bird	noun	
+A1	invierno	invierno	winter	noun	
+A1	estacion	estación	station / season	noun	
+A1	vivo	vivo	alive / lively	adjective	
+A1	terraza	terraza	terrace	noun	
+A1	humor	humor	humor / mood	noun	
+A1	silencio	silencio	silence	noun	
+A1	ideal	ideal	ideal	adjective	
+A1	tirar	tirar	to throw / pull	verb	
+A1	aventura	aventura	adventure	noun	
+A1	motivo	motivo	reason	noun	
+A1	mejorar	mejorar	to improve	verb	
+A1	turismo	turismo	tourism	noun	
+A1	oficial	oficial	official	adjective	
+A1	costar	costar	to cost	verb	
+A1	excursion	excursión	excursion / trip	noun	
+A1	planeta	planeta	planet	noun	
+A1	revolucion	revolución	revolution	noun	
+A1	robar	robar	to steal	verb	
+A1	norte	norte	north	noun	
+A1	declarar	declarar	to declare	verb	
+A1	matar	matar	to kill	verb	
+A1	biblioteca	biblioteca	library	noun	
+A1	chocolate	chocolate	chocolate	noun	
+A1	hermoso	hermoso	beautiful	adjective	
+A1	clima	clima	climate	noun	
+A1	callar	callar	to be quiet	verb	
+A1	festival	festival	festival	noun	
+A1	japones	japonés	Japanese	adjective	
+A1	gritar	gritar	to shout	verb	
+A1	arabe	árabe	Arab / Arabic	adjective	
+A1	encuentro	encuentro	meeting / encounter	noun	
+A1	ocio	ocio	leisure	noun	
+A1	peligroso	peligroso	dangerous	adjective	
+A1	desayuno	desayuno	breakfast	noun	
+A1	increible	increíble	incredible	adjective	
+A1	ingrediente	ingrediente	ingredient	noun	
+A1	venta	venta	sale	noun	
+A1	sorpresa	sorpresa	surprise	noun	
+A1	llama	llama	flame / llama	noun	
+A1	sano	sano	healthy	adjective	
+A1	vuelo	vuelo	flight	noun	
+A1	acostar	acostar	to put to bed	verb	
+A1	musico	músico	musician	noun	
+A1	inca	inca	Inca	adjective	
+A1	original	original	original	adjective	
+A1	mediterraneo	mediterráneo	Mediterranean	adjective	
+A1	gratuito	gratuito	free (no cost)	adjective	
+A1	catedral	catedral	cathedral	noun	
+A1	primo	primo	cousin	noun	
+A1	sal	sal	salt	noun	
+A1	frecuente	frecuente	frequent	adjective	
+A1	pasion	pasión	passion	noun	
+A1	flamenco	flamenco	flamenco	noun	
+A1	estres	estrés	stress	noun	
+A1	fabricar	fabricar	to manufacture	verb	
+A1	puerto	puerto	port	noun	
+A1	favorito	favorito	favorite	adjective	
+A1	desayunar	desayunar	to have breakfast	verb	
+A1	salsa	salsa	sauce	noun	
+A1	vendedor	vendedor	seller	noun	
+A1	actor	actor	actor	noun	
+A1	moneda	moneda	coin / currency	noun	
+A1	sur	sur	south	noun	
+A1	ecologico	ecológico	ecological / organic	adjective	
+A1	reserva	reserva	reservation / reserve	noun	
+A1	reservar	reservar	to book / reserve	verb	
+A1	adulto	adulto	adult	noun	
+A1	excelente	excelente	excellent	adjective	
+A1	seco	seco	dry	adjective	
+A1	gallego	gallego	Galician	adjective	
+A1	ruta	ruta	route	noun	
+A1	cantante	cantante	singer	noun	
+A1	cita	cita	appointment / quote	noun	
+A1	continente	continente	continent	noun	
+A1	hispano	hispano	Hispanic	adjective	
+A1	alrededor	alrededor	around	adverb	
+A1	maya	maya	Mayan	adjective	
+A1	llover	llover	to rain	verb	
+A1	aburrir	aburrir	to bore	verb	
+A1	colegio	colegio	school	noun	
+A1	discoteca	discoteca	nightclub	noun	
+A1	actualidad	actualidad	present time / current affairs	noun	
+A1	costumbre	costumbre	custom / habit	noun	
+A1	simpatico	simpático	nice / friendly	adjective	
+A1	quizas	quizás	maybe	adverb	
+A1	sentimiento	sentimiento	feeling	noun	
+A1	fuerza	fuerza	strength / force	noun	
+A1	piscina	piscina	swimming pool	noun	
+A1	artista	artista	artist	noun	
+A1	catalan	catalán	Catalan	adjective	
+A1	bolsillo	bolsillo	pocket	noun	
+A1	prisa	prisa	hurry	noun	
+A1	agradable	agradable	pleasant	adjective	
+A1	caballo	caballo	horse	noun	
+A1	mueble	mueble	furniture	noun	
+A1	silla	silla	chair	noun	
+A1	nieto	nieto	grandson	noun	
+A1	esconder	esconder	to hide	verb	
+A1	freir	freír	to fry	verb	
+A1	supermercado	supermercado	supermarket	noun	
+A1	gordo	gordo	fat	adjective	
+A1	directo	directo	direct	adjective	
+A1	abogado	abogado	lawyer	noun	
+A1	amar	amar	to love	verb	
+A1	camara	cámara	camera	noun	
+A1	virgen	virgen	virgin	noun	
+A1	saludar	saludar	to greet	verb	
+A1	impresionante	impresionante	impressive	adjective	
+A1	canal	canal	channel	noun	
+A1	parar	parar	to stop	verb	
+A1	colombiano	colombiano	Colombian	adjective	
+A1	variar	variar	to vary	verb	
+A1	extraordinario	extraordinario	extraordinary	adjective	
+A1	selva	selva	jungle	noun	
+A1	desierto	desierto	desert	noun	
+A1	altura	altura	height	noun	
+A1	dedo	dedo	finger	noun	
+A1	conectar	conectar	to connect	verb	
+A1	apartamento	apartamento	apartment	noun	
+A1	volcan	volcán	volcano	noun	
+A1	carretera	carretera	highway / road	noun	
+A1	avenida	avenida	avenue	noun	
+A1	romantico	romántico	romantic	adjective	
+A1	apellido	apellido	surname	noun	
+A1	guitarra	guitarra	guitar	noun	
+A1	tenis	tenis	tennis	noun	
+A1	pasaporte	pasaporte	passport	noun	
+A1	cocinero	cocinero	cook / chef	noun	
+A1	divorciar	divorciar	to divorce	verb	
+A1	secundario	secundario	secondary	adjective	
+A1	moreno	moreno	dark-haired / tanned	adjective	
+A1	gimnasio	gimnasio	gym	noun	
+A1	curioso	curioso	curious	adjective	
+A1	amable	amable	kind	adjective	
+A1	ritual	ritual	ritual	noun	
+A1	pollo	pollo	chicken	noun	
+A1	marzo	marzo	March	noun	
+A1	saludo	saludo	greeting	noun	
+A1	dividir	dividir	to divide	verb	
+A1	tortilla	tortilla	omelette	noun	
+A1	holandes	holandés	Dutch	adjective	
+A1	ensalada	ensalada	salad	noun	
+A1	arena	arena	sand	noun	
+A1	esquina	esquina	corner	noun	
+A1	alojamiento	alojamiento	accommodation	noun	
+A1	gastronomia	gastronomía	gastronomy	noun	
+A1	estadounidense	estadounidense	American (US)	adjective	
+A1	abrazo	abrazo	hug	noun	
+A1	crema	crema	cream	noun	
+A1	pacifico	pacífico	peaceful	adjective	
+A1	nacionalidad	nacionalidad	nationality	noun	
+A1	rural	rural	rural	adjective	
+A1	paella	paella	paella	noun	
+A1	nocturno	nocturno	nocturnal / night	adjective	
+A1	bailarin	bailarín	dancer	noun	
+A1	sobrino	sobrino	nephew	noun	
+A1	soltero	soltero	single (unmarried)	adjective	
+A1	tropical	tropical	tropical	adjective	
+A1	romano	romano	Roman	adjective	
+A1	exotico	exótico	exotic	adjective	
+A1	cadena	cadena	chain	noun	
+A1	fundacion	fundación	foundation	noun	
+A1	tabaco	tabaco	tobacco	noun	
+A1	encanto	encanto	charm	noun	
+A1	monumento	monumento	monument	noun	
+A1	fabrica	fábrica	factory	noun	
+A1	fascinante	fascinante	fascinating	adjective	
+A1	nadar	nadar	to swim	verb	
+A1	temperatura	temperatura	temperature	noun	
+A1	pausa	pausa	pause	noun	
+A1	concentrar	concentrar	to concentrate	verb	
+A1	inolvidable	inolvidable	unforgettable	adjective	
+A1	monton	montón	pile / lots	noun	
+A1	portugues	portugués	Portuguese	adjective	
+A1	cafeteria	cafetería	cafe	noun	
+A1	chino	chino	Chinese	adjective	
+A1	deportista	deportista	athlete	noun	
+A1	piano	piano	piano	noun	
+A1	alcohol	alcohol	alcohol	noun	
+A1	cacao	cacao	cocoa	noun	
+A1	tremendo	tremendo	tremendous	adjective	
+A1	mango	mango	mango	noun	
+A1	jazz	jazz	jazz	noun	
+A1	farmacia	farmacia	pharmacy	noun	
+A1	postura	postura	posture / stance	noun	
+A1	empanada	empanada	savory pie	noun	
+A1	dolar	dólar	dollar	noun	
+A1	kilometro	kilómetro	kilometer	noun	
+A1	viudo	viudo	widower	noun	
+A1	jubilar	jubilar	to retire	verb	
+A1	filmar	filmar	to film	verb	
+A1	glaciar	glaciar	glacier	noun	
+A1	brasileno	brasileño	Brazilian	adjective	
+A1	mezquita	mezquita	mosque	noun	
+A1	urraca	urraca	magpie	noun	
+A1	miope	miope	short-sighted	adjective	
+A1	columpio	columpio	swing	noun	
+A2	a-veces	a veces	sometimes	phrase	Use for occasional occurrence.
+A2	sobre-todo	sobre todo	above all / especially	phrase	Use to single out the most important item.
+A2	en-general	en general	in general	phrase	Use for the typical case.
+A2	por-supuesto	por supuesto	of course	phrase	Use to affirm strongly.
+A2	mas-o-menos	más o menos	more or less	phrase	Use for an approximation.
+A2	de-repente	de repente	suddenly	phrase	Use for an abrupt change.
+A2	por-ahora	por ahora	for now	phrase	Use for a temporary state.
+A2	como	como	as / like	connector	Use for comparison or manner.
+A2	segun	según	according to	connector	Use to attribute a claim to a source.
+A2	sin-mas	sin más	without further ado	phrase	Use for doing something plainly and directly.
+A2	conducir	conducir	to drive	verb	Peninsular; manejar is Latin American. Conjugate to fit or skip.
+A2	enfadarse	enfadarse	to get angry	verb	Peninsular; enojarse is Latin American. Conjugate to fit or skip.
+A2	romper	romper	to break	verb	Use for breaking something. Conjugate to fit or skip.
+A2	bajar	bajar	to go down / download	verb	Use for decreasing or downloading. Conjugate to fit or skip.
+A2	elegir	elegir	to choose	verb	Use for choosing. Conjugate to fit or skip.
+A2	guardar	guardar	to keep / to save	verb	Use for saving or storing. Conjugate to fit or skip.
+A2	bajo	bajo	short / low	adjective	Use for a low value or short height.
+A2	ancho	ancho	wide	adjective	Use for width.
+A2	estrecho	estrecho	narrow	adjective	Use for narrowness or a tight constraint.
+A2	limpio	limpio	clean	adjective	Use for cleanliness or a clean state.
+A2	sucio	sucio	dirty	adjective	Use for dirtiness or messy data.
+A2	vacio	vacío	empty	adjective	Use for an empty container or value.
+A2	debil	débil	weak	adjective	Use for weakness.
+A2	ocupado	ocupado	busy	adjective	Use for being busy or a resource in use.
+A2	imposible	imposible	impossible	adjective	Use for infeasibility.
+A2	suficiente	suficiente	enough	adjective	Use for adequacy.
+A2	raro	raro	strange / rare	adjective	Use for oddity or rarity.
+A2	cero	cero	zero	noun	Use for a zero count or an empty result.
+A2	dos	dos	two	noun	Use for a count of two.
+A2	tres	tres	three	noun	Use for a count of three.
+A2	cuatro	cuatro	four	noun	Use for a count of four.
+A2	cinco	cinco	five	noun	Use for a count of five.
+A2	diez	diez	ten	noun	Use for a count of ten.
+A2	veinte	veinte	twenty	noun	Use for a count of twenty.
+A2	cien	cien	a hundred	noun	Use for a round hundred.
+A2	mil	mil	a thousand	noun	Use for a round thousand.
+A2	mitad	mitad	half (the half)	noun	Use for one of two equal parts.
+A2	doble	doble	double	adjective	Use for twice a quantity.
+A2	raton	ratón	mouse	noun	Use for a computer mouse or the animal. Peninsular.
+A2	fichero	fichero	file	noun	Use for a file. Peninsular alongside archivo.
+A2	pantalla	pantalla	screen	noun	Use for a display.
+A2	teclado	teclado	keyboard	noun	Use for a keyboard.
+A2	carpeta	carpeta	folder	noun	Use for a directory.
+A2	enlace	enlace	link	noun	Use for a hyperlink or a connection.
+A2	red	red	network	noun	Use for a network.
+A2	copia	copia	copy	noun	Use for a copy or a backup.
+A2	prueba	prueba	test	noun	Use for a test or a piece of evidence.
+A2	paso	paso	step	noun	Use for a step in a process.
+A2	equipo	equipo	team	noun	Use for a team or a set of equipment.
+A2	amarillo	amarillo	yellow	adjective	Use for the colour yellow, including warnings.
+A2	nevera	nevera	fridge	noun	Peninsular; refrigerador is Latin American.
+A2	salon	salón	living room	noun	Use for a sitting room. Peninsular.
+A2	armario	armario	wardrobe / cupboard	noun	Use for a wardrobe or cupboard.
+A2	ventana	ventana	window	noun	Use for a window.
+A2	llave	llave	key	noun	Use for a physical key or an access key.
+A2	caja	caja	box	noun	Use for a box or a container.
+A2	luz	luz	light	noun	Use for light or electric power.
+A2	zumo	zumo	juice	noun	Peninsular; jugo is Latin American.
+A2	bocadillo	bocadillo	sandwich	noun	Use for a filled roll. Peninsular.
+A2	billete	billete	ticket	noun	Peninsular; boleto is Latin American.
+A2	ascensor	ascensor	lift	noun	Use for an elevator. Peninsular.
+A2	aparcamiento	aparcamiento	car park	noun	Peninsular; estacionamiento is Latin American.
+A2	acera	acera	pavement	noun	Peninsular; banqueta is Latin American.
+A2	deberes	deberes	homework	noun	Use for homework. Peninsular.
+A2	tarjeta	tarjeta	card	noun	Use for a payment card or a card in a UI.
+A2	reunion	reunión	meeting	noun	Use for a meeting.
+A2	lluvia	lluvia	rain	noun	Use for rain.
+A2	nube	nube	cloud	noun	Use for a cloud, including cloud infrastructure.
+A2	arbol	árbol	tree	noun	Use for a tree, including a tree structure.
+A2	dolor	dolor	pain	noun	Use for pain or a painful problem.
+A2	camiseta	camiseta	t-shirt	noun	Peninsular; remera is Latin American.
+A2	chaqueta	chaqueta	jacket	noun	Peninsular; saco is Latin American.
+A2	jersey	jersey	jumper / sweater	noun	Use for a pullover. Peninsular.
+A2	sin-embargo	sin embargo	however	connector	Use to introduce a contrast in an explanation.
+A2	de-hecho	de hecho	in fact	connector	Use to reinforce or correct with a stronger fact.
+A2	por-lo-visto	por lo visto	apparently	connector	Use for something inferred from evidence rather than confirmed.
+A2	entorno	entorno	environment	noun	Used for both surroundings and a technical environment.
+A2	suponer	suponer	to suppose / to entail	verb	Two senses: assuming something, or something implying a cost.
+A2	senalar	señalar	to point out	verb	Use for drawing attention to a detail.
+A2	evitar	evitar	to avoid / prevent	verb	Use for steering clear of a problem.
+A2	riesgo	riesgo	risk	noun	Use for exposure to a bad outcome.
+A2	aprovechar	aprovechar	to make the most of	verb	Use for exploiting an opportunity or existing resource.
+A2	imprescindible	imprescindible	essential / indispensable	adjective	Use for something that cannot be omitted.
+A2	tardar	tardar	to take (time)	verb	Use for how long something takes; no direct English equivalent.
+A2	cifra	cifra	figure / number	noun	Use for a reported quantity.
+A2	reducir	reducir	to reduce	verb	Use for lowering a quantity or scope.
+A2	aumentar	aumentar	to increase	verb	Use for raising a quantity.
+A2	comportamiento	comportamiento	behavior	noun	Use for how a person or system acts.
+A2	resolver	resolver	to resolve / solve	verb	Use for settling a problem or ambiguity.
+A2	mantener	mantener	to maintain / keep	verb	Use for preserving a state over time.
+A2	medir	medir	to measure	verb	Use for quantifying something.
+A2	tierra	tierra	land / earth	noun	
+A2	acabar	acabar	to finish	verb	
+A2	servir	servir	to serve / be useful	verb	
+A2	intentar	intentar	to try	verb	
+A2	convertir	convertir	to turn into	verb	
+A2	aparecer	aparecer	to appear	verb	
+A2	producir	producir	to produce	verb	
+A2	miedo	miedo	fear	noun	
+A2	acompanar	acompañar	to accompany	verb	
+A2	considerar	considerar	to consider	verb	
+A2	tratar	tratar	to try / treat	verb	
+A2	uso	uso	use	noun	
+A2	desaparecer	desaparecer	to disappear	verb	
+A2	humano	humano	human	adjective	
+A2	sistema	sistema	system	noun	
+A2	vuelta	vuelta	turn / return	noun	
+A2	relacionar	relacionar	to relate	verb	
+A2	espacio	espacio	space	noun	
+A2	muerte	muerte	death	noun	
+A2	permitir	permitir	to allow	verb	
+A2	realidad	realidad	reality	noun	
+A2	guerra	guerra	war	noun	
+A2	educacion	educación	education	noun	
+A2	participar	participar	to participate	verb	
+A2	desear	desear	to wish / want	verb	
+A2	aun	aun	even	adverb	
+A2	cierto	cierto	certain / true	adjective	
+A2	disponer	disponer	to have available	verb	
+A2	pelo	pelo	hair	noun	
+A2	objeto	objeto	object	noun	
+A2	estado	estado	state	noun	
+A2	suerte	suerte	luck	noun	
+A2	principio	principio	beginning / principle	noun	
+A2	imaginar	imaginar	to imagine	verb	
+A2	echar	echar	to throw / pour	verb	
+A2	salud	salud	health	noun	
+A2	gobierno	gobierno	government	noun	
+A2	sentido	sentido	sense / meaning	noun	
+A2	tampoco	tampoco	neither / not either	adverb	
+A2	entrada	entrada	entrance / ticket	noun	
+A2	culpabilizar	culpabilizar	to blame	verb	
+A2	mensaje	mensaje	message	noun	
+A2	trabajador	trabajador	worker	noun	
+A2	importar	importar	to matter / import	verb	
+A2	futuro	futuro	future	noun	
+A2	derecho	derecho	right / law	noun	
+A2	vivienda	vivienda	housing	noun	
+A2	reconocer	reconocer	to recognize	verb	
+A2	faltar	faltar	to lack / be missing	verb	
+A2	obtener	obtener	to obtain	verb	
+A2	juego	juego	game	noun	
+A2	extrano	extraño	strange	adjective	
+A2	rato	rato	while	noun	
+A2	alumno	alumno	student / pupil	noun	
+A2	exito	éxito	success	noun	
+A2	opinion	opinión	opinion	noun	
+A2	sonar	sonar	to sound / ring	verb	
+A2	proponer	proponer	to propose	verb	
+A2	sueno	sueño	dream / sleep	noun	
+A2	meter	meter	to put in	verb	
+A2	asunto	asunto	matter / issue	noun	
+A2	aceptar	aceptar	to accept	verb	
+A2	hecho	hecho	fact	noun	
+A2	boca	boca	mouth	noun	
+A2	comunidad	comunidad	community	noun	
+A2	serie	serie	series	noun	
+A2	nota	nota	note / grade	noun	
+A2	sociedad	sociedad	society	noun	
+A2	movimiento	movimiento	movement	noun	
+A2	objetivo	objetivo	goal / objective	noun	
+A2	cumplir	cumplir	to fulfill / turn (age)	verb	
+A2	comun	común	common	adjective	
+A2	gasto	gasto	expense	noun	
+A2	recoger	recoger	to pick up	verb	
+A2	resultado	resultado	result	noun	
+A2	gusto	gusto	taste / pleasure	noun	
+A2	loco	loco	crazy	adjective	
+A2	proximo	próximo	next	adjective	
+A2	desarrollar	desarrollar	to develop	verb	
+A2	comunicacion	comunicación	communication	noun	
+A2	energia	energía	energy	noun	
+A2	representar	representar	to represent	verb	
+A2	consumir	consumir	to consume	verb	
+A2	moda	moda	fashion	noun	
+A2	nivel	nivel	level	noun	
+A2	caer	caer	to fall	verb	
+A2	laboral	laboral	work-related	adjective	
+A2	cuento	cuento	story / tale	noun	
+A2	nervioso	nervioso	nervous	adjective	
+A2	llorar	llorar	to cry	verb	
+A2	cantidad	cantidad	amount	noun	
+A2	modelo	modelo	model	noun	
+A2	mover	mover	to move	verb	
+A2	perro	perro	dog	noun	
+A2	profesional	profesional	professional	adjective	
+A2	contacto	contacto	contact	noun	
+A2	atencion	atención	attention	noun	
+A2	premio	premio	prize	noun	
+A2	continuar	continuar	to continue	verb	
+A2	colocar	colocar	to place	verb	
+A2	sector	sector	sector	noun	
+A2	incluir	incluir	to include	verb	
+A2	importancia	importancia	importance	noun	
+A2	bolsa	bolsa	bag / stock market	noun	
+A2	pena	pena	pity / sorrow	noun	
+A2	proyecto	proyecto	project	noun	
+A2	verdadero	verdadero	true / real	adjective	
+A2	autor	autor	author	noun	
+A2	necesidad	necesidad	need	noun	
+A2	letra	letra	letter / lyrics	noun	
+A2	local	local	local	adjective	
+A2	material	material	material	noun	
+A2	cuarto	cuarto	room / quarter	noun	
+A2	consumo	consumo	consumption	noun	
+A2	linea	línea	line	noun	
+A2	compania	compañía	company	noun	
+A2	abandonar	abandonar	to abandon / leave	verb	
+A2	depender	depender	to depend	verb	
+A2	duro	duro	hard	adjective	
+A2	mundial	mundial	worldwide / global	adjective	
+A2	condicion	condición	condition	noun	
+A2	economia	economía	economy	noun	
+A2	falta	falta	lack / mistake	noun	
+A2	taller	taller	workshop	noun	
+A2	reunir	reunir	to gather / bring together	verb	
+A2	espalda	espalda	back	noun	
+A2	enfadar	enfadar	to anger / annoy	verb	
+A2	tomate	tomate	tomato	noun	
+A2	conversacion	conversación	conversation	noun	
+A2	plastico	plástico	plastic	noun	
+A2	novela	novela	novel	noun	
+A2	numeroso	numeroso	numerous	adjective	
+A2	tarea	tarea	task / homework	noun	
+A2	plata	plata	silver	noun	
+A2	privar	privar	to deprive	verb	
+A2	brazo	brazo	arm	noun	
+A2	transporte	transporte	transport	noun	
+A2	despedir	despedir	to say goodbye / fire	verb	
+A2	fondo	fondo	bottom / background	noun	
+A2	concurso	concurso	contest	noun	
+A2	traje	traje	suit	noun	
+A2	par	par	pair / couple	noun	
+A2	miembro	miembro	member	noun	
+A2	ciudadano	ciudadano	citizen	noun	
+A2	responsable	responsable	responsible	noun	
+A2	ciencia	ciencia	science	noun	
+A2	efecto	efecto	effect	noun	
+A2	resultar	resultar	to turn out / result	verb	
+A2	salida	salida	exit / departure	noun	
+A2	demostrar	demostrar	to demonstrate / prove	verb	
+A2	fecha	fecha	date	noun	
+A2	ruido	ruido	noise	noun	
+A2	paz	paz	peace	noun	
+A2	revista	revista	magazine	noun	
+A2	piedra	piedra	stone	noun	
+A2	entrevista	entrevista	interview	noun	
+A2	corazon	corazón	heart	noun	
+A2	anunciar	anunciar	to announce	verb	
+A2	superior	superior	superior / upper	adjective	
+A2	sufrir	sufrir	to suffer	verb	
+A2	comentar	comentar	to comment / mention	verb	
+A2	especie	especie	species / kind	noun	
+A2	cubrir	cubrir	to cover	verb	
+A2	total	total	total	adjective	
+A2	organizacion	organización	organization	noun	
+A2	experto	experto	expert	noun	
+A2	carrera	carrera	career / degree / race	noun	
+A2	diverso	diverso	diverse	adjective	
+A2	regalar	regalar	to give as a gift	verb	
+A2	publicidad	publicidad	advertising	noun	
+A2	prometer	prometer	to promise	verb	
+A2	provocar	provocar	to cause / provoke	verb	
+A2	poeta	poeta	poet	noun	
+A2	azucar	azúcar	sugar	noun	
+A2	duda	duda	doubt	noun	
+A2	periodista	periodista	journalist	noun	
+A2	maximo	máximo	maximum	adjective	
+A2	solucion	solución	solution	noun	
+A2	civil	civil	civil	adjective	
+A2	medicina	medicina	medicine	noun	
+A2	conocimiento	conocimiento	knowledge	noun	
+A2	emocion	emoción	emotion	noun	
+A2	volar	volar	to fly	verb	
+A2	hambre	hambre	hunger	noun	
+A2	boda	boda	wedding	noun	
+A2	fresco	fresco	fresh / cool	adjective	
+A2	decision	decisión	decision	noun	
+A2	presente	presente	present	adjective	
+A2	tecnologia	tecnología	technology	noun	
+A2	arriba	arriba	up / above	adverb	
+A2	informar	informar	to inform	verb	
+A2	sonreir	sonreír	to smile	verb	
+A2	recuperar	recuperar	to recover / get back	verb	
+A2	posibilidad	posibilidad	possibility	noun	
+A2	hospital	hospital	hospital	noun	
+A2	documento	documento	document	noun	
+A2	menor	menor	smaller / minor / younger	adjective	
+A2	accidente	accidente	accident	noun	
+A2	invitado	invitado	guest	noun	
+A2	adecuar	adecuar	to adapt / adjust	verb	
+A2	orden	orden	order / tidiness	noun	
+A2	genial	genial	great / brilliant	adjective	
+A2	enfermedad	enfermedad	illness	noun	
+A2	valorar	valorar	to value / assess	verb	
+A2	crisis	crisis	crisis	noun	
+A2	articulo	artículo	article	noun	
+A2	cumpleanos	cumpleaños	birthday	noun	
+A2	contrato	contrato	contract	noun	
+A2	segundo	segundo	second	noun	
+A2	diferencia	diferencia	difference	noun	
+A2	capacidad	capacidad	capacity / ability	noun	
+A2	recomendar	recomendar	to recommend	verb	
+A2	interior	interior	interior / inside	adjective	
+A2	terrible	terrible	terrible	adjective	
+A2	complicar	complicar	to complicate	verb	
+A2	medida	medida	measure	noun	
+A2	doler	doler	to hurt	verb	
+A2	obligar	obligar	to force / oblige	verb	
+A2	radio	radio	radio	noun	
+A2	luchar	luchar	to fight / struggle	verb	
+A2	devolver	devolver	to return / give back	verb	
+A2	completo	completo	complete / full	adjective	
+A2	instalar	instalar	to install	verb	
+A2	elemento	elemento	element	noun	
+A2	crecer	crecer	to grow	verb	
+A2	diseno	diseño	design	noun	
+A2	hogar	hogar	home	noun	
+A2	unir	unir	to join / unite	verb	
+A2	abajo	abajo	down / below	adverb	
+A2	lavar	lavar	to wash	verb	
+A2	hoja	hoja	leaf / sheet	noun	
+A2	animar	animar	to cheer up / encourage	verb	
+A2	encargar	encargar	to order / put in charge	verb	
+A2	detener	detener	to stop / arrest	verb	
+A2	repetir	repetir	to repeat	verb	
+A2	prestar	prestar	to lend	verb	
+A2	infantil	infantil	children's / childish	adjective	
+A2	recuerdo	recuerdo	memory / souvenir	noun	
+A2	personaje	personaje	character	noun	
+A2	cientifico	científico	scientific	adjective	
+A2	ajo	ajo	garlic	noun	
+A2	limpiar	limpiar	to clean	verb	
+A2	control	control	control	noun	
+A2	libertad	libertad	freedom	noun	
+A2	caracteristica	característica	feature / characteristic	noun	
+A2	expresar	expresar	to express	verb	
+A2	botella	botella	bottle	noun	
+A2	referir	referir	to refer / relate	verb	
+A2	indicar	indicar	to indicate	verb	
+A2	religioso	religioso	religious	adjective	
+A2	alegria	alegría	joy	noun	
+A2	lista	lista	list	noun	
+A2	mandar	mandar	to send / order	verb	
+A2	molestar	molestar	to bother / disturb	verb	
+A2	ritmo	ritmo	rhythm / pace	noun	
+A2	base	base	base / basis	noun	
+A2	protagonista	protagonista	main character / lead	noun	
+A2	belleza	belleza	beauty	noun	
+A2	kilo	kilo	kilo	noun	
+A2	danza	danza	dance	noun	
+A2	examen	examen	exam	noun	
+A2	dieta	dieta	diet	noun	
+A2	figura	figura	figure	noun	
+A2	generacion	generación	generation	noun	
+A2	leyenda	leyenda	legend	noun	
+A2	memoria	memoria	memory	noun	
+A2	regresar	regresar	to return / go back	verb	
+A2	cotidiano	cotidiano	everyday	adjective	
+A2	superar	superar	to overcome / surpass	verb	
+A2	valor	valor	value / courage	noun	
+A2	confianza	confianza	trust / confidence	noun	
+A2	llamada	llamada	call	noun	
+A2	seguridad	seguridad	security / safety	noun	
+A2	apoyar	apoyar	to support / back	verb	
+A2	propietario	propietario	owner	noun	
+A2	fuego	fuego	fire	noun	
+A2	instrumento	instrumento	instrument / tool	noun	
+A2	ayuntamiento	ayuntamiento	town hall	noun	
+A2	accion	acción	action	noun	
+A2	palacio	palacio	palace	noun	
+A2	amante	amante	lover	noun	
+A2	universitario	universitario	university / academic	adjective	
+A2	grado	grado	degree / grade	noun	
+A2	extender	extender	to extend / spread	verb	
+A2	golpe	golpe	blow / hit	noun	
+A2	componer	componer	to compose / make up	verb	
+A2	soportar	soportar	to bear / support	verb	
+A2	instituto	instituto	institute / high school	noun	
+A2	comodo	cómodo	comfortable	adjective	
+A2	timido	tímido	shy	adjective	
+A2	pista	pista	clue / track	noun	
+A2	publicar	publicar	to publish	verb	
+A2	aplicar	aplicar	to apply	verb	
+A2	viento	viento	wind	noun	
+A2	solicitar	solicitar	to request / apply for	verb	
+A2	acostumbrar	acostumbrar	to get used to / accustom	verb	
+A2	sueldo	sueldo	salary	noun	
+A2	residencia	residencia	residence	noun	
+A2	mezclar	mezclar	to mix	verb	
+A2	titulo	título	title / degree	noun	
+A2	controlar	controlar	to control	verb	
+A2	pasta	pasta	pasta / dough	noun	
+A2	poema	poema	poem	noun	
+A2	comercio	comercio	trade / shop	noun	
+A2	asociacion	asociación	association	noun	
+A2	secreto	secreto	secret	noun	
+A2	construccion	construcción	construction	noun	
+A2	oliva	oliva	olive	noun	
+A2	jornada	jornada	workday / day	noun	
+A2	verguenza	vergüenza	shame / embarrassment	noun	
+A2	especializar	especializar	to specialize	verb	
+A2	muerto	muerto	dead person	noun	
+A2	investigacion	investigación	research	noun	
+A2	durar	durar	to last	verb	
+A2	cruzar	cruzar	to cross	verb	
+A2	web	web	web	adjective	
+A2	diente	diente	tooth	noun	
+A2	secretario	secretario	secretary	noun	
+A2	influencia	influencia	influence	noun	
+A2	alejar	alejar	to move away	verb	
+A2	sonrisa	sonrisa	smile	noun	
+A2	marchar	marchar	to march / go	verb	
+A2	personalidad	personalidad	personality	noun	
+A2	destino	destino	destiny / destination	noun	
+A2	jamon	jamón	ham	noun	
+A2	pleno	pleno	full	adjective	
+A2	habitual	habitual	usual / habitual	adjective	
+A2	musical	musical	musical	adjective	
+A2	lanzar	lanzar	to throw / launch	verb	
+A2	grave	grave	serious	adjective	
+A2	consistir	consistir	to consist	verb	
+A2	llegada	llegada	arrival	noun	
+A2	dentro	dentro	inside	adverb	
+A2	verbo	verbo	verb	noun	
+A2	consultar	consultar	to consult / check	verb	
+A2	latinoamericano	latinoamericano	Latin American	adjective	
+A2	recorrer	recorrer	to travel through / cover	verb	
+A2	urbano	urbano	urban	adjective	
+A2	practica	práctica	practice	noun	
+A2	minimo	mínimo	minimum	adjective	
+A2	maiz	maíz	corn	noun	
+A2	montar	montar	to ride / set up	verb	
+A2	puro	puro	pure	adjective	
+A2	oro	oro	gold	noun	
+A2	apetecer	apetecer	to feel like / fancy	verb	
+A2	moto	moto	motorbike	noun	
+A2	estilo	estilo	style	noun	
+A2	poesia	poesía	poetry	noun	
+A2	tratamiento	tratamiento	treatment	noun	
+A2	quemar	quemar	to burn	verb	
+A2	campana	campaña	campaign	noun	
+A2	inteligente	inteligente	intelligent	adjective	
+A2	util	útil	useful	adjective	
+A2	rubio	rubio	blond	adjective	
+A2	mirada	mirada	look / gaze	noun	
+A2	desconocer	desconocer	to not know / be unaware of	verb	
+A2	establecer	establecer	to establish	verb	
+A2	domingo	domingo	Sunday	noun	
+A2	variedad	variedad	variety	noun	
+A2	fundamental	fundamental	fundamental	adjective	
+A2	delgado	delgado	thin / slim	adjective	
+A2	despacho	despacho	office	noun	
+A2	distancia	distancia	distance	noun	
+A2	funcion	función	function	noun	
+A2	describir	describir	to describe	verb	
+A2	sensacion	sensación	sensation / feeling	noun	
+A2	dificultad	dificultad	difficulty	noun	
+A2	decorar	decorar	to decorate	verb	
+A2	tecla	tecla	key	noun	
+A2	catolico	católico	Catholic	adjective	
+A2	cuidado	cuidado	care / carefulness	noun	
+A2	amistad	amistad	friendship	noun	
+A2	gesto	gesto	gesture	noun	
+A2	ocasion	ocasión	occasion	noun	
+A2	oscuro	oscuro	dark	adjective	
+A2	monasterio	monasterio	monastery	noun	
+A2	basar	basar	to base	verb	
+A2	politica	política	politics / policy	noun	
+A2	luna	luna	moon	noun	
+A2	balcon	balcón	balcony	noun	
+A2	patron	patrón	boss / pattern	noun	
+A2	gato	gato	cat	noun	
+A2	acceso	acceso	access	noun	
+A2	deportivo	deportivo	sports / sporty	adjective	
+A2	literario	literario	literary	adjective	
+A2	sonar-verb	soñar	to dream	verb	
+A2	castellano	castellano	Spanish / Castilian	noun	
+A2	fuera	fuera	outside	adverb	
+A2	presidente	presidente	president	noun	
+A2	frontera	frontera	border	noun	
+A2	entregar	entregar	to hand over / deliver	verb	
+A2	despertar	despertar	to wake up	verb	
+A2	fundar	fundar	to found	verb	
+A2	productor	productor	producer	noun	
+A2	caliente	caliente	hot	adjective	
+A2	peligro	peligro	danger	noun	
+A2	lujo	lujo	luxury	noun	
+A2	emplear	emplear	to use / employ	verb	
+A2	lectura	lectura	reading	noun	
+A2	atractivo	atractivo	attractive	adjective	
+A2	industria	industria	industry	noun	
+A2	notar	notar	to notice	verb	
+A2	alimentacion	alimentación	food / nutrition	noun	
+A2	prohibir	prohibir	to forbid / ban	verb	
+A2	error	error	mistake / error	noun	
+A2	cortar	cortar	to cut	verb	
+A2	atraer	atraer	to attract	verb	
+A2	mezcla	mezcla	mix	noun	
+A2	adaptar	adaptar	to adapt	verb	
+A2	encender	encender	to turn on / light	verb	
+A2	picar	picar	to sting / chop / nibble	verb	
+A2	gastar	gastar	to spend / waste	verb	
+A2	fatal	fatal	awful / terrible	adjective	
+A2	confiar	confiar	to trust	verb	
+A2	prensa	prensa	press	noun	
+A2	plan	plan	plan	noun	
+A2	empleado	empleado	employee	noun	
+A2	asistir	asistir	to attend	verb	
+A2	pierna	pierna	leg	noun	
+A2	causa	causa	cause	noun	
+A2	bosque	bosque	forest	noun	
+A2	aparato	aparato	device / appliance	noun	
+A2	simbolo	símbolo	symbol	noun	
+A2	amplio	amplio	wide / broad	adjective	
+A2	magnifico	magnífico	magnificent	adjective	
+A2	medicamento	medicamento	medicine / drug	noun	
+A2	alquiler	alquiler	rent	noun	
+A2	vaso	vaso	glass	noun	
+A2	exterior	exterior	exterior / outside	adjective	
+A2	territorio	territorio	territory	noun	
+A2	marcha	marcha	march / departure	noun	
+A2	limon	limón	lemon	noun	
+A2	imperio	imperio	empire	noun	
+A2	positivo	positivo	positive	adjective	
+A2	pertenecer	pertenecer	to belong	verb	
+A2	militar	militar	military	adjective	
+A2	municipal	municipal	municipal	adjective	
+A2	creativo	creativo	creative	adjective	
+A2	agradecer	agradecer	to thank / be grateful for	verb	
+A2	habla	habla	speech	noun	
+A2	autentico	auténtico	authentic	adjective	
+A2	version	versión	version	noun	
+A2	avanzar	avanzar	to advance	verb	
+A2	tamano	tamaño	size	noun	
+A2	basura	basura	trash	noun	
+A2	suceder	suceder	to happen	verb	
+A2	nacimiento	nacimiento	birth	noun	
+A2	practico	práctico	practical	adjective	
+A2	educativo	educativo	educational	adjective	
+A2	enfermo	enfermo	sick person	noun	
+A2	regla	regla	rule / ruler	noun	
+A2	iberico	ibérico	Iberian	adjective	
+A2	lucha	lucha	fight / struggle	noun	
+A2	pez	pez	fish	noun	
+A2	colgar	colgar	to hang	verb	
+A2	inmigrante	inmigrante	immigrant	noun	
+A2	colonial	colonial	colonial	adjective	
+A2	explicacion	explicación	explanation	noun	
+A2	alegre	alegre	cheerful	adjective	
+A2	aconsejar	aconsejar	to advise	verb	
+A2	trasladar	trasladar	to move / transfer	verb	
+A2	sabor	sabor	flavor / taste	noun	
+A2	maestro	maestro	teacher / master	noun	
+A2	coloquial	coloquial	colloquial	adjective	
+A2	video	vídeo	video	noun	
+A2	presentacion	presentación	presentation	noun	
+A2	queso	queso	cheese	noun	
+A2	ordenar	ordenar	to tidy / order	verb	
+A2	provincia	provincia	province	noun	
+A2	frecuencia	frecuencia	frequency	noun	
+A2	madrileno	madrileño	from Madrid	adjective	
+A2	entero	entero	whole / entire	adjective	
+A2	estupendo	estupendo	wonderful / great	adjective	
+A2	peninsula	península	peninsula	noun	
+A2	visitante	visitante	visitor	noun	
+A2	real	real	real / royal	adjective	
+A2	alimentar	alimentar	to feed	verb	
+A2	seleccion	selección	selection / team	noun	
+A2	correcto	correcto	correct	adjective	
+A2	clave	clave	key	noun	
+A2	espectacular	espectacular	spectacular	adjective	
+A2	tango	tango	tango	noun	
+A2	inventar	inventar	to invent	verb	
+A2	charlar	charlar	to chat	verb	
+A2	tela	tela	fabric / cloth	noun	
+A2	valle	valle	valley	noun	
+A2	similar	similar	similar	adjective	
+A2	atravesar	atravesar	to cross / go through	verb	
+A2	maravilla	maravilla	wonder / marvel	noun	
+A2	enterar	enterar	to find out	verb	
+A2	elegante	elegante	elegant	adjective	
+A2	contratar	contratar	to hire	verb	
+A2	indio	indio	Indian	noun	
+A2	fama	fama	fame	noun	
+A2	apreciar	apreciar	to appreciate	verb	
+A2	acento	acento	accent	noun	
+A2	camarero	camarero	waiter	noun	
+A2	deseo	deseo	wish / desire	noun	
+A2	metodo	método	method	noun	
+A2	especialista	especialista	specialist	noun	
+A2	arreglar	arreglar	to fix / arrange	verb	
+A2	consumidor	consumidor	consumer	noun	
+A2	soledad	soledad	loneliness	noun	
+A2	facilidad	facilidad	ease	noun	
+A2	conjunto	conjunto	set / group / outfit	noun	
+A2	de-acuerdo	de acuerdo	okay / agreed	phrase	
+A2	cultivar	cultivar	to grow / cultivate	verb	
+A2	dictadura	dictadura	dictatorship	noun	
+A2	griego	griego	Greek	adjective	
+A2	estatua	estatua	statue	noun	
+A2	paro	paro	unemployment	noun	
+A2	patio	patio	courtyard / yard	noun	
+A2	especialidad	especialidad	specialty	noun	
+A2	acto	acto	act / ceremony	noun	
+A2	derecha	derecha	right	noun	
+A2	limpieza	limpieza	cleaning	noun	
+A2	etapa	etapa	stage	noun	
+A2	superficie	superficie	surface	noun	
+A2	saltar	saltar	to jump	verb	
+A2	vasco	vasco	Basque	adjective	
+A2	interrumpir	interrumpir	to interrupt	verb	
+A2	infancia	infancia	childhood	noun	
+A2	beca	beca	scholarship	noun	
+A2	central	central	central	adjective	
+A2	participante	participante	participant	noun	
+A2	descanso	descanso	rest / break	noun	
+A2	inspirar	inspirar	to inspire	verb	
+A2	biologico	biológico	biological	adjective	
+A2	investigar	investigar	to research / investigate	verb	
+A2	extremo	extremo	end / extreme	noun	
+A2	contexto	contexto	context	noun	
+A2	mentira	mentira	lie	noun	
+A2	respirar	respirar	to breathe	verb	
+A2	nene	nene	baby / little kid	noun	
+A2	vela	vela	candle / sail	noun	
+A2	actuacion	actuación	performance	noun	
+A2	comparar	comparar	to compare	verb	
+A2	bebe	bebé	baby	noun	
+A2	paquete	paquete	package	noun	
+A2	religion	religión	religion	noun	
+A2	izquierda	izquierda	left	noun	
+A2	pieza	pieza	piece	noun	
+A2	termino	término	term	noun	
+A2	introducir	introducir	to introduce / insert	verb	
+A2	ingeniero	ingeniero	engineer	noun	
+A2	combinar	combinar	to combine	verb	
+A2	dibujo	dibujo	drawing	noun	
+A2	fenomeno	fenómeno	phenomenon	noun	
+A2	confirmar	confirmar	to confirm	verb	
+A2	paloma	paloma	pigeon / dove	noun	
+A2	joya	joya	jewel	noun	
+A2	reloj	reloj	clock / watch	noun	
+A2	compromiso	compromiso	commitment / engagement	noun	
+A2	alma	alma	soul	noun	
+A2	profesion	profesión	profession	noun	
+A2	odiar	odiar	to hate	verb	
+A2	espejo	espejo	mirror	noun	
+A2	universal	universal	universal	adjective	
+A2	electrico	eléctrico	electric	adjective	
+A2	sombrero	sombrero	hat	noun	
+A2	ensenanza	enseñanza	teaching / education	noun	
+A2	formacion	formación	training / education	noun	
+A2	artesania	artesanía	handicrafts	noun	
+A2	templo	templo	temple	noun	
+A2	escolar	escolar	school	adjective	
+A2	delicioso	delicioso	delicious	adjective	
+A2	reina	reina	queen	noun	
+A2	tecnico	técnico	technical	adjective	
+A2	hispanohablante	hispanohablante	Spanish-speaking	adjective	
+A2	inmenso	inmenso	immense	adjective	
+A2	mente	mente	mind	noun	
+A2	sabado	sábado	Saturday	noun	
+A2	apagar	apagar	to turn off / put out	verb	
+A2	carnaval	carnaval	carnival	noun	
+A2	escapar	escapar	to escape	verb	
+A2	extranar	extrañar	to surprise / miss	verb	
+A2	destinar	destinar	to assign / allocate	verb	
+A2	labio	labio	lip	noun	
+A2	mochila	mochila	backpack	noun	
+A2	velocidad	velocidad	speed	noun	
+A2	riqueza	riqueza	wealth	noun	
+A2	permiso	permiso	permission / permit	noun	
+A2	habito	hábito	habit	noun	
+A2	responsabilidad	responsabilidad	responsibility	noun	
+A2	evento	evento	event	noun	
+A2	venga	venga	come on	phrase	
+A2	horrible	horrible	horrible	adjective	
+A2	oler	oler	to smell	verb	
+A2	cola	cola	queue / tail	noun	
+A2	activo	activo	active	adjective	
+A2	solucionar	solucionar	to solve	verb	
+A2	reclamar	reclamar	to demand / claim	verb	
+A2	alcalde	alcalde	mayor	noun	
+A2	primavera	primavera	spring	noun	
+A2	placer	placer	pleasure	noun	
+A2	sofa	sofá	sofa	noun	
+A2	identidad	identidad	identity	noun	
+A2	casco	casco	helmet / old town	noun	
+A2	artistico	artístico	artistic	adjective	
+A2	cristiano	cristiano	Christian	adjective	
+A2	particular	particular	private / particular	adjective	
+A2	misterioso	misterioso	mysterious	adjective	
+A2	dormitorio	dormitorio	bedroom	noun	
+A2	aficion	afición	hobby / fondness	noun	
+A2	solar	solar	solar	adjective	
+A2	violento	violento	violent	adjective	
+A2	bastar	bastar	to be enough	verb	
+A2	sencillo	sencillo	simple	adjective	
+A2	bici	bici	bike	noun	
+A2	magico	mágico	magic	adjective	
+A2	defender	defender	to defend	verb	
+A2	doctor	doctor	doctor	noun	
+A2	acontecimiento	acontecimiento	event	noun	
+A2	cuello	cuello	neck	noun	
+A2	felicidad	felicidad	happiness	noun	
+A2	mentir	mentir	to lie	verb	
+A2	asesinar	asesinar	to murder	verb	
+A2	teoria	teoría	theory	noun	
+A2	genero	género	gender / genre	noun	
+A2	industrial	industrial	industrial	adjective	
+A2	negativo	negativo	negative	adjective	
+A2	coincidir	coincidir	to coincide / agree	verb	
+A2	cristal	cristal	glass / crystal	noun	
+A2	cercano	cercano	nearby / close	adjective	
+A2	conquistar	conquistar	to conquer	verb	
+A2	alojar	alojar	to lodge / accommodate	verb	
+A2	almuerzo	almuerzo	lunch	noun	
+A2	trafico	tráfico	traffic	noun	
+A2	arquitectura	arquitectura	architecture	noun	
+A2	andaluz	andaluz	Andalusian	adjective	
+A2	sinonimo	sinónimo	synonym	noun	
+A2	atras	atrás	back / behind	adverb	
+A2	lector	lector	reader	noun	
+A2	impuesto	impuesto	tax	noun	
+A2	firmar	firmar	to sign	verb	
+A2	tono	tono	tone	noun	
+A2	regimen	régimen	regime	noun	
+A2	permanecer	permanecer	to remain / stay	verb	
+A2	cana	caña	small beer / reed	noun	
+A2	esperanza	esperanza	hope	noun	
+A2	terreno	terreno	land / terrain	noun	
+A2	llenar	llenar	to fill	verb	
+A2	ducha	ducha	shower	noun	
+A2	interpretar	interpretar	to interpret / perform	verb	
+A2	recorrido	recorrido	route / journey	noun	
+A2	procesion	procesión	procession	noun	
+A2	millon	millón	million	noun	
+A2	domicilio	domicilio	home address	noun	
+A2	identificar	identificar	to identify	verb	
+A2	afueras	afueras	outskirts	noun	
+A2	trozo	trozo	piece / chunk	noun	
+A2	exacto	exacto	exact	adjective	
+A2	materno	materno	maternal / mother	adjective	
+A2	droga	droga	drug	noun	
+A2	curar	curar	to cure / heal	verb	
+A2	gramatica	gramática	grammar	noun	
+A2	remedio	remedio	remedy / solution	noun	
+A2	helado	helado	ice cream	noun	
+A2	gramo	gramo	gram	noun	
+A2	corte	corte	cut	noun	
+A2	repartir	repartir	to distribute / share out	verb	
+A2	rincon	rincón	corner	noun	
+A2	tumba	tumba	tomb / grave	noun	
+A2	enfermero	enfermero	nurse	noun	
+A2	discutir	discutir	to argue / discuss	verb	
+A2	anciano	anciano	elderly person	noun	
+A2	cebolla	cebolla	onion	noun	
+A2	manzana	manzana	apple / block	noun	
+A2	carino	cariño	affection / dear	noun	
+A2	taza	taza	cup	noun	
+A2	sierra	sierra	mountain range / saw	noun	
+A2	empresario	empresario	businessman / entrepreneur	noun	
+A2	oceano	océano	ocean	noun	
+A2	banda	banda	band / strip	noun	
+A2	abrazar	abrazar	to hug	verb	
+A2	desastre	desastre	disaster	noun	
+A2	suave	suave	soft / smooth	adjective	
+A2	colaborar	colaborar	to collaborate	verb	
+A2	norteamericano	norteamericano	North American	adjective	
+A2	ruina	ruina	ruin	noun	
+A2	musulman	musulmán	Muslim	adjective	
+A2	ejercito	ejército	army	noun	
+A2	representante	representante	representative	noun	
+A2	inspector	inspector	inspector	noun	
+A2	conferencia	conferencia	lecture / conference	noun	
+A2	horror	horror	horror	noun	
+A2	esqui	esquí	ski	noun	
+A2	galeria	galería	gallery	noun	
+A2	oreja	oreja	ear	noun	
+A2	creacion	creación	creation	noun	
+A2	gallina	gallina	hen / chicken	noun	
+A2	bolso	bolso	handbag	noun	
+A2	diccionario	diccionario	dictionary	noun	
+A2	esposo	esposo	husband / spouse	noun	
+A2	fumar	fumar	to smoke	verb	
+A2	pronunciar	pronunciar	to pronounce	verb	
+A2	monte	monte	mountain / hill	noun	
+A2	banar	bañar	to bathe	verb	
+A2	camisa	camisa	shirt	noun	
+A2	besar	besar	to kiss	verb	
+A2	disculpar	disculpar	to excuse / forgive	verb	
+A2	hombro	hombro	shoulder	noun	
+A2	tonto	tonto	silly / fool	adjective	
+A2	colega	colega	colleague / mate	noun	
+A2	punta	punta	tip / point	noun	
+A2	panuelo	pañuelo	handkerchief / scarf	noun	
+A2	opinar	opinar	to think / give an opinion	verb	
+A2	intercambio	intercambio	exchange	noun	
+A2	admirar	admirar	to admire	verb	
+A2	periodo	periodo	period	noun	
+A2	pasajero	pasajero	passenger	noun	
+A2	siesta	siesta	nap	noun	
+A2	esclavo	esclavo	slave	noun	
+A2	coleccion	colección	collection	noun	
+A2	reaccionar	reaccionar	to react	verb	
+A2	independencia	independencia	independence	noun	
+A2	libreria	librería	bookshop	noun	
+A2	propuesta	propuesta	proposal	noun	
+A2	diminutivo	diminutivo	diminutive	noun	
+A2	edicion	edición	edition	noun	
+A2	lejano	lejano	distant / far	adjective	
+A2	te	té	tea	noun	
+A2	maquina	máquina	machine	noun	
+A2	cuero	cuero	leather	noun	
+A2	documental	documental	documentary	noun	
+A2	pescar	pescar	to fish	verb	
+A2	agenda	agenda	diary / agenda	noun	
+A2	via	vía	track / road / way	noun	
+A2	respetar	respetar	to respect	verb	
+A2	intercambiar	intercambiar	to exchange	verb	
+A2	postre	postre	dessert	noun	
+A2	sopa	sopa	soup	noun	
+A2	consulta	consulta	consultation / surgery	noun	
+A2	tranquilidad	tranquilidad	calm / peace of mind	noun	
+A2	asiento	asiento	seat	noun	
+A2	juventud	juventud	youth	noun	
+A2	desconectar	desconectar	to disconnect / switch off	verb	
+A2	exquisito	exquisito	exquisite / delicious	adjective	
+A2	agarrar	agarrar	to grab	verb	
+A2	escalera	escalera	stairs / ladder	noun	
+A2	vegetal	vegetal	plant / vegetable	adjective	
+A2	pasillo	pasillo	corridor	noun	
+A2	equipaje	equipaje	luggage	noun	
+A2	grabar	grabar	to record / engrave	verb	
+A2	pasado	pasado	past	noun	
+A2	querido	querido	dear	adjective	
+A2	asustar	asustar	to scare	verb	
+A2	tesoro	tesoro	treasure	noun	
+A2	critico	crítico	critical	adjective	
+A2	pegar	pegar	to hit / stick	verb	
+A2	vitamina	vitamina	vitamin	noun	
+A2	miel	miel	honey	noun	
+A2	plano	plano	plan / flat / map	noun	
+A2	lana	lana	wool	noun	
+A2	agricultura	agricultura	agriculture	noun	
+A2	jugador	jugador	player	noun	
+A2	porcentaje	porcentaje	percentage	noun	
+A2	casualidad	casualidad	coincidence / chance	noun	
+A2	aplicacion	aplicación	application / app	noun	
+A2	tonteria	tontería	nonsense / silly thing	noun	
+A2	pizza	pizza	pizza	noun	
+A2	pension	pensión	pension / guesthouse	noun	
+A2	descubrimiento	descubrimiento	discovery	noun	
+A2	batalla	batalla	battle	noun	
+A2	comedor	comedor	dining room	noun	
+A2	ligero	ligero	light	adjective	
+A2	mono	mono	monkey / cute	noun	
+A2	latino	latino	Latin	adjective	
+A2	desesperar	desesperar	to despair / lose patience	verb	
+A2	parada	parada	stop	noun	
+A2	estomago	estómago	stomach	noun	
+A2	exiliar	exiliar	to exile	verb	
+A2	inscribir	inscribir	to register / enroll	verb	
+A2	calefaccion	calefacción	heating	noun	
+A2	mediano	mediano	medium	adjective	
+A2	lio	lío	mess / fuss	noun	
+A2	ola	ola	wave	noun	
+A2	harina	harina	flour	noun	
+A2	viajero	viajero	traveler	noun	
+A2	avisar	avisar	to warn / notify	verb	
+A2	exagerar	exagerar	to exaggerate	verb	
+A2	empujar	empujar	to push	verb	
+A2	asistente	asistente	assistant	noun	
+A2	sangre	sangre	blood	noun	
+A2	conductor	conductor	driver	noun	
+A2	paraiso	paraíso	paradise	noun	
+A2	feo	feo	ugly	adjective	
+A2	adorar	adorar	to adore / love	verb	
+A2	marisco	marisco	seafood / shellfish	noun	
+A2	hierba	hierba	grass / herb	noun	
+A2	tortuga	tortuga	turtle / tortoise	noun	
+A2	cualidad	cualidad	quality / trait	noun	
+A2	aparcar	aparcar	to park	verb	
+A2	broma	broma	joke / prank	noun	
+A2	campesino	campesino	peasant / farmer	noun	
+A2	dibujar	dibujar	to draw	verb	
+A2	ramo	ramo	bouquet / bunch	noun	
+A2	academia	academia	academy / training school	noun	
+A2	eleccion	elección	election / choice	noun	
+A2	sesion	sesión	session	noun	
+A2	barba	barba	beard	noun	
+A2	huir	huir	to flee / run away	verb	
+A2	autonomo	autónomo	self-employed / autonomous	adjective	
+A2	intervenir	intervenir	to intervene / take part	verb	
+A2	atraccion	atracción	attraction	noun	
+A2	pantalon	pantalón	trousers / pants	noun	
+A2	africano	africano	African	adjective	
+A2	educar	educar	to educate / raise	verb	
+A2	salar	salar	to salt	verb	
+A2	asistencia	asistencia	attendance / assistance	noun	
+A2	corregir	corregir	to correct	verb	
+A2	gas	gas	gas	noun	
+A2	peluqueria	peluquería	hair salon	noun	
+A2	boliviano	boliviano	Bolivian	adjective	
+A2	culto	culto	worship / cult	noun	
+A2	informal	informal	informal	adjective	
+A2	tension	tensión	tension / blood pressure	noun	
+A2	liga	liga	league	noun	
+A2	geografico	geográfico	geographic	adjective	
+A2	femenino	femenino	feminine / female	adjective	
+A2	engordar	engordar	to gain weight / fatten	verb	
+A2	feria	feria	fair	noun	
+A2	sentimental	sentimental	sentimental	adjective	
+A2	garaje	garaje	garage	noun	
+A2	temporal	temporal	temporary	adjective	
+A2	dueno	dueño	owner	noun	
+A2	pelar	pelar	to peel	verb	
+A2	arquitecto	arquitecto	architect	noun	
+A2	municipio	municipio	municipality	noun	
+A2	lider	líder	leader	noun	
+A2	desaparicion	desaparición	disappearance	noun	
+A2	festivo	festivo	holiday / festive	adjective	
+A2	mina	mina	mine	noun	
+A2	pimiento	pimiento	pepper	noun	
+A2	alegrar	alegrar	to cheer up / make happy	verb	
+A2	hervir	hervir	to boil	verb	
+A2	individual	individual	individual / single	adjective	
+A2	destruir	destruir	to destroy	verb	
+A2	azafata	azafata	flight attendant	noun	
+A2	seda	seda	silk	noun	
+A2	invertir	invertir	to invest / reverse	verb	
+A2	marino	marino	marine / sea	adjective	
+A2	circular	circular	to circulate / drive	verb	
+A2	regreso	regreso	return	noun	
+A2	comunicado	comunicado	statement / announcement	noun	
+A2	galleta	galleta	cookie / biscuit	noun	
+A2	mision	misión	mission	noun	
+A2	vaquero	vaquero	cowboy / jeans	noun	
+A2	molestia	molestia	nuisance / discomfort	noun	
+A2	brillar	brillar	to shine	verb	
+A2	formula	fórmula	formula	noun	
+A2	duchar	duchar	to shower	verb	
+A2	plancha	plancha	iron / griddle	noun	
+A2	aperitivo	aperitivo	appetizer / snack	noun	
+A2	navegar	navegar	to sail / browse	verb	
+A2	terapia	terapia	therapy	noun	
+A2	corriente	corriente	current / ordinary	adjective	
+A2	televisor	televisor	television set	noun	
+A2	inicio	inicio	start / beginning	noun	
+A2	aprobar	aprobar	to pass / approve	verb	
+A2	natacion	natación	swimming	noun	
+A2	fotografo	fotógrafo	photographer	noun	
+A2	acondicionar	acondicionar	to fit out / condition	verb	
+A2	euro	euro	euro	noun	
+A2	gracioso	gracioso	funny	adjective	
+A2	perfume	perfume	perfume	noun	
+A2	apasionar	apasionar	to fascinate / thrill	verb	
+A2	bodega	bodega	wine cellar / winery	noun	
+A2	estancia	estancia	stay	noun	
+A2	independiente	independiente	independent	adjective	
+A2	taxista	taxista	taxi driver	noun	
+A2	cinta	cinta	ribbon / tape	noun	
+A2	resumen	resumen	summary	noun	
+A2	horno	horno	oven	noun	
+A2	aficionado	aficionado	fan / amateur	noun	
+A2	equilibrar	equilibrar	to balance	verb	
+A2	ruidoso	ruidoso	noisy	adjective	
+A2	ave	ave	bird	noun	
+A2	torre	torre	tower	noun	
+A2	escultura	escultura	sculpture	noun	
+A2	espera	espera	wait	noun	
+A2	orgulloso	orgulloso	proud	adjective	
+A2	canto	canto	singing / song	noun	
+A2	generoso	generoso	generous	adjective	
+A2	hamburguesa	hamburguesa	hamburger	noun	
+A2	orilla	orilla	shore / bank	noun	
+A2	filosofia	filosofía	philosophy	noun	
+A2	prima	prima	female cousin	noun	
+A2	ataque	ataque	attack	noun	
+A2	nieve	nieve	snow	noun	
+A2	sorprendente	sorprendente	surprising	adjective	
+A2	recomendable	recomendable	advisable / recommended	adjective	
+A2	ron	ron	rum	noun	
+A2	dependiente	dependiente	shop assistant	noun	
+A2	instalacion	instalación	installation / facility	noun	
+A2	multinacional	multinacional	multinational	noun	
+A2	retirar	retirar	to withdraw / remove	verb	
+A2	cajon	cajón	drawer	noun	
+A2	detras	detrás	behind	adverb	
+A2	oh	oh	oh	phrase	
+A2	envase	envase	container / packaging	noun	
+A2	traducir	traducir	to translate	verb	
+A2	vamos	vamos	let's go / come on	phrase	
+A2	yoga	yoga	yoga	noun	
+A2	salvaje	salvaje	wild	adjective	
+A2	menu	menú	menu / set meal	noun	
+A2	hielo	hielo	ice	noun	
+A2	actriz	actriz	actress	noun	
+A2	delante	delante	in front	adverb	
+A2	ahorro	ahorro	saving	noun	
+A2	yogur	yogur	yogurt	noun	
+A2	atender	atender	to attend to / serve	verb	
+A2	emitir	emitir	to issue / broadcast	verb	
+A2	muro	muro	wall	noun	
+A2	pelota	pelota	ball	noun	
+A2	regular	regular	to regulate	verb	
+A2	bahia	bahía	bay	noun	
+A2	heroe	héroe	hero	noun	
+A2	cereal	cereal	cereal	noun	
+A2	puente	puente	bridge	noun	
+A2	criticar	criticar	to criticize	verb	
+A2	infusion	infusión	herbal tea / infusion	noun	
+A2	exclamar	exclamar	to exclaim	verb	
+A2	constitucion	constitución	constitution	noun	
+A2	roca	roca	rock	noun	
+A2	nota-explicativa	nota explicativa	explanatory note	noun	
+A2	aislar	aislar	to isolate / insulate	verb	
+A2	salto	salto	jump	noun	
+A2	patrimonio	patrimonio	heritage / assets	noun	
+A2	gratis	gratis	free	adjective	
+A2	mapa	mapa	map	noun	
+A2	facultad	facultad	faculty / ability	noun	
+A2	despedida	despedida	farewell	noun	
+A2	concreto	concreto	specific / concrete	adjective	
+A2	electrodomestico	electrodoméstico	household appliance	noun	
+A2	vigilar	vigilar	to watch over / monitor	verb	
+A2	valiente	valiente	brave	adjective	
+A2	exportar	exportar	to export	verb	
+A2	adelgazar	adelgazar	to lose weight	verb	
+A2	timbre	timbre	doorbell / stamp	noun	
+A2	deprisa	deprisa	quickly	adverb	
+A2	marron	marrón	brown	adjective	
+A2	otono	otoño	autumn	noun	
+A2	rogar	rogar	to beg / plead	verb	
+A2	conversar	conversar	to chat / converse	verb	
+A2	afectivo	afectivo	emotional / affectionate	adjective	
+A2	intenso	intenso	intense	adjective	
+A2	callejero	callejero	street / stray	adjective	
+A2	guiar	guiar	to guide	verb	
+A2	conservador	conservador	conservative	adjective	
+A2	orquesta	orquesta	orchestra	noun	
+A2	publicacion	publicación	publication	noun	
+A2	signo	signo	sign	noun	
+A2	programar	programar	to program / schedule	verb	
+A2	archivo	archivo	file / archive	noun	
+A2	alcoholico	alcohólico	alcoholic	adjective	
+A2	canadiense	canadiense	Canadian	adjective	
+A2	almacen	almacén	warehouse / store	noun	
+A2	lujoso	lujoso	luxurious	adjective	
+A2	uf	uf	ugh / phew	phrase	
+A2	paciente	paciente	patient	noun	
+A2	laboratorio	laboratorio	laboratory	noun	
+A2	sueco	sueco	Swedish	adjective	
+A2	descendiente	descendiente	descendant	noun	
+A2	portatil	portátil	laptop / portable	adjective	
+A2	sombra	sombra	shadow / shade	noun	
+A2	sanitario	sanitario	health-related / medical	adjective	
+A2	formal	formal	formal	adjective	
+A2	zapatilla	zapatilla	sneaker / slipper	noun	
+A2	comodidad	comodidad	comfort	noun	
+A2	bravo	bravo	fierce / brave	adjective	
+A2	intensivo	intensivo	intensive	adjective	
+A2	altitud	altitud	altitude	noun	
+A2	paja	paja	straw	noun	
+A2	picante	picante	spicy	adjective	
+A2	agitar	agitar	to shake / stir	verb	
+A2	gazpacho	gazpacho	gazpacho	noun	
+A2	pluma	pluma	feather / pen	noun	
+A2	barca	barca	small boat	noun	
+A2	secuestrar	secuestrar	to kidnap / hijack	verb	
+A2	tutear	tutear	to address informally (tú)	verb	
+A2	caribeno	caribeño	Caribbean	adjective	
+A2	matematica	matemática	mathematics	noun	
+A2	voluntario	voluntario	volunteer	noun	
+A2	refresco	refresco	soft drink	noun	
+A2	cabra	cabra	goat	noun	
+A2	sociable	sociable	sociable	adjective	
+A2	uva	uva	grape	noun	
+A2	discreto	discreto	discreet	adjective	
+A2	mural	mural	mural	noun	
+A2	instruccion	instrucción	instruction	noun	
+A2	fabuloso	fabuloso	fabulous	adjective	
+A2	muela	muela	molar	noun	
+A2	coco	coco	coconut	noun	
+A2	calentar	calentar	to heat / warm up	verb	
+A2	hispanoamericano	hispanoamericano	Spanish-American	adjective	
+A2	tranquilizar	tranquilizar	to calm down	verb	
+A2	talento	talento	talent	noun	
+A2	proteccion	protección	protection	noun	
+A2	vencer	vencer	to defeat / expire	verb	
+A2	uniforme	uniforme	uniform	noun	
+A2	hacienda	hacienda	estate / treasury	noun	
+A2	aviso	aviso	notice / warning	noun	
+A2	esquiar	esquiar	to ski	verb	
+A2	vegano	vegano	vegan	adjective	
+A2	andino	andino	Andean	adjective	
+A2	centrico	céntrico	central	adjective	
+A2	exclusivo	exclusivo	exclusive	adjective	
+A2	verso	verso	verse / line of poetry	noun	
+A2	musculo	músculo	muscle	noun	
+A2	sintoma	síntoma	symptom	noun	
+A2	amueblar	amueblar	to furnish	verb	
+A2	emocionar	emocionar	to move / thrill	verb	
+A2	desconocido	desconocido	stranger / unknown	noun	
+A2	protagonizar	protagonizar	to star in	verb	
+A2	extension	extensión	extension	noun	
+A2	revolucionario	revolucionario	revolutionary	adjective	
+A2	vehiculo	vehículo	vehicle	noun	
+A2	amanecer	amanecer	dawn / sunrise	noun	
+A2	afeitar	afeitar	to shave	verb	
+A2	balneario	balneario	spa resort	noun	
+A2	baloncesto	baloncesto	basketball	noun	
+A2	cordillera	cordillera	mountain range	noun	
+A2	bombero	bombero	firefighter	noun	
+A2	bloque	bloque	block	noun	
+A2	margarita	margarita	daisy	noun	
+A2	humedo	húmedo	humid / damp	adjective	
+A2	gorra	gorra	cap	noun	
+A2	fiel	fiel	faithful	adjective	
+A2	prehispanico	prehispánico	pre-Hispanic	adjective	
+A2	campeonato	campeonato	championship	noun	
+A2	estresado	estresado	stressed	adjective	
+A2	venezolano	venezolano	Venezuelan	adjective	
+A2	cartel	cartel	poster / sign	noun	
+A2	simbolizar	simbolizar	to symbolize	verb	
+A2	cobre	cobre	copper	noun	
+A2	jabon	jabón	soap	noun	
+A2	identico	idéntico	identical	adjective	
+A2	fresa	fresa	strawberry	noun	
+A2	recado	recado	errand / message	noun	
+A2	inscripcion	inscripción	registration / inscription	noun	
+A2	palma	palma	palm	noun	
+A2	salina	salina	salt flat / salt mine	noun	
+A2	pirana	piraña	piranha	noun	
+A2	surrealista	surrealista	surrealist	adjective	
+A2	titular	titular	headline / holder	noun	
+A2	nostalgia	nostalgia	nostalgia	noun	
+A2	vaca	vaca	cow	noun	
+A2	huerto	huerto	vegetable garden / orchard	noun	
+A2	ceramica	cerámica	ceramics / pottery	noun	
+A2	barroco	barroco	baroque	adjective	
+A2	millonario	millonario	millionaire	adjective	
+A2	horoscopo	horóscopo	horoscope	noun	
+A2	informativo	informativo	informative / news	adjective	
+A2	capa	capa	layer / cape	noun	
+A2	emocionante	emocionante	exciting	adjective	
+A2	serrano	serrano	mountain / highland	adjective	
+A2	vestido	vestido	dress	noun	
+A2	dentista	dentista	dentist	noun	
+A2	cruce	cruce	crossing / intersection	noun	
+A2	inauguracion	inauguración	opening / inauguration	noun	
+A2	lienzo	lienzo	canvas	noun	
+A2	admiracion	admiración	admiration	noun	
+A2	mantequilla	mantequilla	butter	noun	
+A2	descuento	descuento	discount	noun	
+A2	aventurero	aventurero	adventurous / adventurer	adjective	
+A2	mercadillo	mercadillo	flea market / street market	noun	
+A2	fila	fila	row / line	noun	
+A2	ironia	ironía	irony	noun	
+A2	flora	flora	flora	noun	
+A2	compadre	compadre	buddy / godfather	noun	
+A2	estatal	estatal	state / public	adjective	
+A2	turno	turno	turn / shift	noun	
+A2	policiaco	policíaco	detective / police	adjective	
+A2	deprimir	deprimir	to depress	verb	
+A2	bombon	bombón	chocolate candy	noun	
+A2	moraleja	moraleja	moral of a story	noun	
+A2	cantautor	cantautor	singer-songwriter	noun	
+A2	calvo	calvo	bald	adjective	
+A2	fiebre	fiebre	fever	noun	
+A2	canela	canela	cinnamon	noun	
+A2	republica	república	republic	noun	
+A2	huy	huy	oops / wow	phrase	
+A2	solidaridad	solidaridad	solidarity	noun	
+A2	falla	falla	fault / failure	noun	
+A2	peatonal	peatonal	pedestrian	adjective	
+A2	tomo	tomo	volume	noun	
+A2	puma	puma	puma	noun	
+A2	manager	manager	manager	noun	
+A2	autoctono	autóctono	native / indigenous	adjective	
+A2	finca	finca	country estate / farm	noun	
+A2	atasco	atasco	traffic jam	noun	
+A2	monje	monje	monk	noun	
+A2	cordero	cordero	lamb	noun	
+A2	encantador	encantador	charming	adjective	
+A2	albergue	albergue	hostel / shelter	noun	
+A2	vacacion	vacación	holiday	noun	
+A2	excitar	excitar	to excite	verb	
+A2	cava	cava	cava (sparkling wine)	noun	
+A2	antiguedad	antigüedad	antiquity / seniority	noun	
+A2	chao	chao	bye	phrase	
+A2	crudo	crudo	raw	adjective	
+A2	bateria	batería	battery / drums	noun	
+A2	belga	belga	Belgian	adjective	
+A2	comunicativo	comunicativo	communicative	adjective	
+A2	paladar	paladar	palate	noun	
+A2	telediario	telediario	TV news	noun	
+A2	emigracion	emigración	emigration	noun	
+A2	amazonico	amazónico	Amazonian	adjective	
+A2	intuicion	intuición	intuition	noun	
+A2	secuestro	secuestro	kidnapping	noun	
+A2	hoguera	hoguera	bonfire	noun	
+A2	templar	templar	to temper / warm	verb	
+A2	muralla	muralla	city wall	noun	
+A2	aspirina	aspirina	aspirin	noun	
+A2	payaso	payaso	clown	noun	
+A2	ambicioso	ambicioso	ambitious	adjective	
+A2	guitarrista	guitarrista	guitarist	noun	
+A2	encuesta	encuesta	survey	noun	
+A2	suicidio	suicidio	suicide	noun	
+A2	bloqueo	bloqueo	blockade / block	noun	
+A2	churro	churro	churro	noun	
+A2	ladron	ladrón	thief	noun	
+A2	aja	ajá	aha	phrase	
+A2	canoa	canoa	canoe	noun	
+A2	fax	fax	fax	noun	
+A2	cabana	cabaña	cabin	noun	
+A2	gemelo	gemelo	twin / cufflink	noun	
+A2	expediente	expediente	file / record	noun	
+A2	rocio	rocío	dew	noun	
+A2	todoterreno	todoterreno	off-road vehicle	noun	
+A2	patria	patria	homeland	noun	
+A2	trenza	trenza	braid	noun	
+A2	oeste	oeste	west	noun	
+A2	mariposa	mariposa	butterfly	noun	
+A2	propina	propina	tip	noun	
+A2	tos	tos	cough	noun	
+A2	windsurf	windsurf	windsurfing	noun	
+A2	visar	visar	to approve / endorse	verb	
+A2	convidar	convidar	to treat / invite	verb	
+A2	horrorizar	horrorizar	to horrify	verb	
+A2	tatuaje	tatuaje	tattoo	noun	
+A2	exclamacion	exclamación	exclamation	noun	
+A2	lavabo	lavabo	washbasin / bathroom	noun	
+A2	ventanilla	ventanilla	ticket window / small window	noun	
+A2	reformar	reformar	to reform / renovate	verb	
+A2	taberna	taberna	tavern	noun	
+A2	rastro	rastro	trace / flea market	noun	
+A2	robo	robo	theft	noun	
+A2	nevar	nevar	to snow	verb	
+A2	disimular	disimular	to hide / pretend	verb	
+A2	guante	guante	glove	noun	
+A2	trigo	trigo	wheat	noun	
+A2	heredero	heredero	heir	noun	
+A2	batir	batir	to beat / whisk	verb	
+A2	peseta	peseta	peseta	noun	
+A2	clic	clic	click	noun	
+A2	cocaina	cocaína	cocaine	noun	
+A2	rosal	rosal	rosebush	noun	
+A2	noble	noble	noble	adjective	
+A2	temblar	temblar	to tremble	verb	
+A2	pisar	pisar	to step on	verb	
+A2	contemporaneo	contemporáneo	contemporary	adjective	
+A2	mulato	mulato	mulatto	noun	
+A2	rock	rock	rock (music)	noun	
+A2	rebelde	rebelde	rebellious / rebel	adjective	
+A2	contagiar	contagiar	to infect	verb	
+A2	vigilante	vigilante	guard / watchman	noun	
+A2	beisbol	béisbol	baseball	noun	
+A2	peregrino	peregrino	pilgrim	noun	
+A2	valido	válido	valid	adjective	
+A2	poncho	poncho	poncho	adjective	
+A2	delincuencia	delincuencia	crime / delinquency	noun	
+A2	criollo	criollo	creole	adjective	
+A2	asturiano	asturiano	Asturian	adjective	
+A2	record	récord	record	noun	
+A2	alpaca	alpaca	alpaca	noun	
+A2	cooperante	cooperante	aid worker	noun	
+A2	dispensario	dispensario	dispensary	noun	
+A2	voto	voto	vote	noun	
+A2	papaya	papaya	papaya	noun	
+A2	contentar	contentar	to please / satisfy	verb	
+A2	suicidar	suicidar	to commit suicide	verb	
+A2	multimillonario	multimillonario	multimillionaire	adjective	
+A2	acuario	acuario	aquarium	noun	
+A2	verbena	verbena	street party / verbena	noun	
+A2	tomillo	tomillo	thyme	noun	
+A2	tatuar	tatuar	to tattoo	verb	
+A2	consulado	consulado	consulate	noun	
+A2	invasion	invasión	invasion	noun	
+A2	orujo	orujo	orujo (pomace spirit)	noun	
+A2	costarricense	costarricense	Costa Rican	adjective	
+A2	polideportivo	polideportivo	sports center	noun	
+A2	metropolitano	metropolitano	metropolitan	adjective	
+A2	emergencia	emergencia	emergency	noun	
+B1	lograr	lograr	to manage to / achieve	verb	Use for succeeding at something that took effort.
+B1	plazo	plazo	deadline / term	noun	Use for a time window or due date.
+B1	plantear	plantear	to raise / propose	verb	Use for putting forward a question, problem, or approach.
+B1	comprobar	comprobar	to check / verify	verb	Use for confirming something empirically.
+B1	ventaja	ventaja	advantage	noun	Use for the upside of an option.
+B1	inconveniente	inconveniente	drawback	noun	Use for the downside of an option.
+B1	surgir	surgir	to arise / come up	verb	Use for problems or questions that emerge unprompted.
+B1	muestra	muestra	sample	noun	Use for a statistical or physical sample.
+B1	fuente	fuente	source	noun	Use for the origin of data or a claim.
+B1	herramienta	herramienta	tool	noun	Use for an instrument, physical or software.
+B1	informe	informe	report	noun	Use for a written summary of findings.
+B1	impedir	impedir	to prevent / block	verb	Stronger than evitar: actively stops something.
+B1	presupuesto	presupuesto	budget	noun	Use for allocated money or an estimate.
+B1	puntual	puntual	punctual / one-off	adjective	Two senses: on time, or isolated and non-recurring.
+B1	desarrollo	desarrollo	development	noun	
+B1	produccion	producción	production	noun	
+B1	anterior	anterior	previous	adjective	
+B1	proceso	proceso	process	noun	
+B1	alcanzar	alcanzar	to reach / achieve	verb	
+B1	recurso	recurso	resource	noun	
+B1	generar	generar	to generate	verb	
+B1	tecnica	técnica	technique	noun	
+B1	modo	modo	way / mode	noun	
+B1	ocurrir	ocurrir	to occur / happen	verb	
+B1	afirmar	afirmar	to state / affirm	verb	
+B1	sonido	sonido	sound	noun	
+B1	celebracion	celebración	celebration	noun	
+B1	matrimonio	matrimonio	marriage / married couple	noun	
+B1	convencer	convencer	to convince	verb	
+B1	consecuencia	consecuencia	consequence	noun	
+B1	capaz	capaz	capable	adjective	
+B1	contenido	contenido	content	noun	
+B1	ahorrar	ahorrar	to save	verb	
+B1	asegurar	asegurar	to ensure / assure	verb	
+B1	determinar	determinar	to determine	verb	
+B1	elaborar	elaborar	to make / produce	verb	
+B1	afectar	afectar	to affect	verb	
+B1	recien	recién	recently / newly	adverb	
+B1	posicion	posición	position	noun	
+B1	propiedad	propiedad	property	noun	
+B1	area	área	area	noun	
+B1	comentario	comentario	comment	noun	
+B1	ceremonia	ceremonia	ceremony	noun	
+B1	fino	fino	fine / thin	adjective	
+B1	presencia	presencia	presence	noun	
+B1	actitud	actitud	attitude	noun	
+B1	basico	básico	basic	adjective	
+B1	gestion	gestión	management	noun	
+B1	brillante	brillante	brilliant / shiny	adjective	
+B1	prever	prever	to foresee / anticipate	verb	
+B1	corresponder	corresponder	to correspond / be someone's turn	verb	
+B1	candidato	candidato	candidate	noun	
+B1	cuestion	cuestión	issue / question	noun	
+B1	pesar	pesar	to weigh	verb	
+B1	empleo	empleo	job / employment	noun	
+B1	favor	favor	favor	noun	
+B1	esfuerzo	esfuerzo	effort	noun	
+B1	tendencia	tendencia	trend	noun	
+B1	decada	década	decade	noun	
+B1	transformar	transformar	to transform	verb	
+B1	escenario	escenario	stage / scenario	noun	
+B1	contrario	contrario	opposite	noun	
+B1	experimentar	experimentar	to experience / experiment	verb	
+B1	opcion	opción	option	noun	
+B1	detalle	detalle	detail	noun	
+B1	aumento	aumento	increase	noun	
+B1	nariz	nariz	nose	noun	
+B1	dominar	dominar	to dominate / master	verb	
+B1	ingreso	ingreso	income / admission	noun	
+B1	digno	digno	worthy / dignified	adjective	
+B1	individuo	individuo	individual	noun	
+B1	exigir	exigir	to demand	verb	
+B1	estimar	estimar	to estimate / esteem	verb	
+B1	digital	digital	digital	adjective	
+B1	duracion	duración	duration	noun	
+B1	insistir	insistir	to insist	verb	
+B1	espiritu	espíritu	spirit	noun	
+B1	sexo	sexo	sex	noun	
+B1	fijar	fijar	to fix / set	verb	
+B1	descripcion	descripción	description	noun	
+B1	victima	víctima	victim	noun	
+B1	reciente	reciente	recent	adjective	
+B1	pata	pata	leg / paw	noun	
+B1	circunstancia	circunstancia	circumstance	noun	
+B1	asociar	asociar	to associate	verb	
+B1	contribuir	contribuir	to contribute	verb	
+B1	simple	simple	simple	adjective	
+B1	adquirir	adquirir	to acquire	verb	
+B1	editorial	editorial	publishing / editorial	adjective	
+B1	contener	contener	to contain	verb	
+B1	curiosidad	curiosidad	curiosity	noun	
+B1	adoptar	adoptar	to adopt	verb	
+B1	existencia	existencia	existence	noun	
+B1	rama	rama	branch	noun	
+B1	elevar	elevar	to raise / lift	verb	
+B1	seleccionar	seleccionar	to select	verb	
+B1	escena	escena	scene	noun	
+B1	crecimiento	crecimiento	growth	noun	
+B1	iniciar	iniciar	to start / begin	verb	
+B1	poseer	poseer	to possess	verb	
+B1	cementerio	cementerio	cemetery	noun	
+B1	indice	índice	index	noun	
+B1	temporada	temporada	season	noun	
+B1	preocupacion	preocupación	worry	noun	
+B1	credito	crédito	credit	noun	
+B1	pendiente	pendiente	pending / slope	adjective	
+B1	reciclar	reciclar	to recycle	verb	
+B1	breve	breve	brief	adjective	
+B1	significado	significado	meaning	noun	
+B1	fijo	fijo	fixed	adjective	
+B1	convivir	convivir	to live together / coexist	verb	
+B1	autoridad	autoridad	authority	noun	
+B1	integrar	integrar	to integrate	verb	
+B1	negar	negar	to deny	verb	
+B1	ministro	ministro	minister	noun	
+B1	quejar	quejar	to complain	verb	
+B1	curriculum	currículum	resume / CV	noun	
+B1	apenas	apenas	barely / hardly	adverb	
+B1	cobrar	cobrar	to charge / collect	verb	
+B1	definitivo	definitivo	final / definitive	adjective	
+B1	portal	portal	portal / doorway	noun	
+B1	adolescente	adolescente	teenager	noun	
+B1	transmitir	transmitir	to transmit / broadcast	verb	
+B1	financiero	financiero	financial	adjective	
+B1	definir	definir	to define	verb	
+B1	acusar	acusar	to accuse	verb	
+B1	palo	palo	stick / pole	noun	
+B1	adjetivo	adjetivo	adjective	noun	
+B1	escritura	escritura	writing / deed	noun	
+B1	humanidad	humanidad	humanity	noun	
+B1	mencionar	mencionar	to mention	verb	
+B1	causar	causar	to cause	verb	
+B1	limitar	limitar	to limit	verb	
+B1	barra	barra	bar / counter / bar (rod)	noun	
+B1	anoche	anoche	last night	adverb	
+B1	test	test	test	noun	
+B1	cargar	cargar	to load / carry	verb	
+B1	analizar	analizar	to analyze	verb	
+B1	escoger	escoger	to choose	verb	
+B1	adelante	adelante	forward / ahead	adverb	
+B1	ley	ley	law	noun	
+B1	provenir	provenir	to come from	verb	
+B1	norma	norma	rule / norm	noun	
+B1	respeto	respeto	respect	noun	
+B1	encima	encima	on top / above	adverb	
+B1	usuario	usuario	user	noun	
+B1	risa	risa	laughter	noun	
+B1	jamas	jamás	never	adverb	
+B1	anual	anual	annual	adjective	
+B1	carne-noun	carné	ID card / license	noun	
+B1	requerir	requerir	to require	verb	
+B1	colectivo	colectivo	collective	adjective	
+B1	cerdo	cerdo	pig / pork	noun	
+B1	cocer	cocer	to cook / boil	verb	
+B1	limite	límite	limit	noun	
+B1	imaginacion	imaginación	imagination	noun	
+B1	vegetariano	vegetariano	vegetarian	adjective	
+B1	techo	techo	roof / ceiling	noun	
+B1	tender	tender	to tend / hang out	verb	
+B1	recomendacion	recomendación	recommendation	noun	
+B1	princesa	princesa	princess	noun	
+B1	disenar	diseñar	to design	verb	
+B1	retrato	retrato	portrait	noun	
+B1	complejo	complejo	complex	adjective	
+B1	merecer	merecer	to deserve	verb	
+B1	conflicto	conflicto	conflict	noun	
+B1	temer	temer	to fear	verb	
+B1	promocion	promoción	promotion	noun	
+B1	asimismo	asimismo	likewise / also	connector	
+B1	eliminar	eliminar	to eliminate	verb	
+B1	alternativa	alternativa	alternative	noun	
+B1	reflejar	reflejar	to reflect	verb	
+B1	culpa	culpa	fault / guilt	noun	
+B1	apoyo	apoyo	support	noun	
+B1	imponer	imponer	to impose	verb	
+B1	imitar	imitar	to imitate	verb	
+B1	concepto	concepto	concept	noun	
+B1	lenguaje	lenguaje	language	noun	
+B1	leon	león	lion	noun	
+B1	agente	agente	agent	noun	
+B1	evolucion	evolución	evolution	noun	
+B1	cerebro	cerebro	brain	noun	
+B1	disminuir	disminuir	to decrease	verb	
+B1	debate	debate	debate	noun	
+B1	comienzo	comienzo	beginning	noun	
+B1	pastel	pastel	cake / pastry	noun	
+B1	unidad	unidad	unit / unity	noun	
+B1	metal	metal	metal	noun	
+B1	constante	constante	constant	adjective	
+B1	argumento	argumento	argument / plot	noun	
+B1	siquiera	siquiera	even / at least	adverb	
+B1	favorecer	favorecer	to favor / benefit	verb	
+B1	contaminacion	contaminación	pollution	noun	
+B1	equivocar	equivocar	to mistake / get wrong	verb	
+B1	profundo	profundo	deep	adjective	
+B1	organismo	organismo	organism / agency	noun	
+B1	equilibrio	equilibrio	balance	noun	
+B1	trato	trato	treatment / deal	noun	
+B1	justicia	justicia	justice	noun	
+B1	exponer	exponer	to expose / present	verb	
+B1	salvar	salvar	to save / rescue	verb	
+B1	tambor	tambor	drum	noun	
+B1	esencial	esencial	essential	adjective	
+B1	masa	masa	mass / dough	noun	
+B1	apretar	apretar	to squeeze / tighten	verb	
+B1	eficaz	eficaz	effective	adjective	
+B1	pariente	pariente	relative	noun	
+B1	coste	coste	cost	noun	
+B1	media	media	average	noun	
+B1	calma	calma	calm	noun	
+B1	club	club	club	noun	
+B1	solicitud	solicitud	request / application	noun	
+B1	aportar	aportar	to contribute / provide	verb	
+B1	publicitario	publicitario	advertising	adjective	
+B1	contemplar	contemplar	to contemplate / consider	verb	
+B1	psicologo	psicólogo	psychologist	noun	
+B1	domestico	doméstico	domestic	adjective	
+B1	motor	motor	engine	noun	
+B1	girar	girar	to turn / spin	verb	
+B1	presion	presión	pressure	noun	
+B1	categoria	categoría	category	noun	
+B1	incendio	incendio	fire	noun	
+B1	resumir	resumir	to summarize	verb	
+B1	mania	manía	quirk / obsession	noun	
+B1	implicar	implicar	to imply / involve	verb	
+B1	corporal	corporal	bodily	adjective	
+B1	primario	primario	primary	adjective	
+B1	institucion	institución	institution	noun	
+B1	ciclo	ciclo	cycle	noun	
+B1	procedente	procedente	coming from / appropriate	adjective	
+B1	sobrevivir	sobrevivir	to survive	verb	
+B1	distinguir	distinguir	to distinguish	verb	
+B1	violencia	violencia	violence	noun	
+B1	estructura	estructura	structure	noun	
+B1	altar	altar	altar	noun	
+B1	completar	completar	to complete	verb	
+B1	soldado	soldado	soldier	noun	
+B1	aprendizaje	aprendizaje	learning	noun	
+B1	olor	olor	smell	noun	
+B1	protesta	protesta	protest	noun	
+B1	chorizo	chorizo	chorizo	noun	
+B1	foro	foro	forum	noun	
+B1	preparacion	preparación	preparation	noun	
+B1	rodilla	rodilla	knee	noun	
+B1	quimico	químico	chemical	adjective	
+B1	combatir	combatir	to fight / combat	verb	
+B1	congreso	congreso	congress / conference	noun	
+B1	honor	honor	honor	noun	
+B1	pensamiento	pensamiento	thought	noun	
+B1	dano	daño	damage / harm	noun	
+B1	caber	caber	to fit	verb	
+B1	invento	invento	invention	noun	
+B1	mental	mental	mental	adjective	
+B1	sustituir	sustituir	to replace	verb	
+B1	reino	reino	kingdom	noun	
+B1	disponible	disponible	available	adjective	
+B1	acceder	acceder	to access / gain entry	verb	
+B1	previo	previo	previous / prior	adjective	
+B1	pronombre	pronombre	pronoun	noun	
+B1	atrever	atrever	to dare	verb	
+B1	liquido	líquido	liquid	noun	
+B1	centrar	centrar	to center / focus	verb	
+B1	periodismo	periodismo	journalism	noun	
+B1	muneca	muñeca	doll / wrist	noun	
+B1	iniciativa	iniciativa	initiative	noun	
+B1	arma	arma	weapon	noun	
+B1	verbal	verbal	verbal	adjective	
+B1	gozar	gozar	to enjoy	verb	
+B1	incorporar	incorporar	to incorporate / include	verb	
+B1	funcionamiento	funcionamiento	operation / functioning	noun	
+B1	informatico	informático	computing / IT	adjective	
+B1	recepcion	recepción	reception	noun	
+B1	perfil	perfil	profile	noun	
+B1	materia	materia	subject / matter	noun	
+B1	psicologia	psicología	psychology	noun	
+B1	habitar	habitar	to inhabit / live in	verb	
+B1	tigre	tigre	tiger	noun	
+B1	denominar	denominar	to name / call	verb	
+B1	barro	barro	mud / clay	noun	
+B1	hallar	hallar	to find	verb	
+B1	abuela	abuela	grandmother	noun	
+B1	sed	sed	thirst	noun	
+B1	confesar	confesar	to confess	verb	
+B1	extraer	extraer	to extract	verb	
+B1	sede	sede	headquarters / seat	noun	
+B1	borrar	borrar	to delete / erase	verb	
+B1	administrativo	administrativo	administrative	adjective	
+B1	victoria	victoria	victory	noun	
+B1	gol	gol	goal	noun	
+B1	recipiente	recipiente	container	noun	
+B1	vincular	vincular	to link / tie	verb	
+B1	colaboracion	colaboración	collaboration	noun	
+B1	tronco	tronco	trunk / log	noun	
+B1	harto	harto	fed up / sick of	adjective	
+B1	apuntar	apuntar	to note down / point	verb	
+B1	ligar	ligar	to flirt / link	verb	
+B1	conquista	conquista	conquest	noun	
+B1	proceder	proceder	to proceed	verb	
+B1	azteca	azteca	Aztec	adjective	
+B1	traduccion	traducción	translation	noun	
+B1	agotar	agotar	to exhaust / use up	verb	
+B1	pico	pico	peak / beak	noun	
+B1	busqueda	búsqueda	search	noun	
+B1	conceder	conceder	to grant / award	verb	
+B1	nacion	nación	nation	noun	
+B1	fomentar	fomentar	to promote / encourage	verb	
+B1	contaminar	contaminar	to pollute / contaminate	verb	
+B1	encerrar	encerrar	to lock up / enclose	verb	
+B1	solidario	solidario	supportive / charitable	adjective	
+B1	fusion	fusión	merger / fusion	noun	
+B1	comprometer	comprometer	to commit / compromise	verb	
+B1	designar	designar	to appoint / designate	verb	
+B1	espectador	espectador	spectator / viewer	noun	
+B1	casero	casero	homemade	adjective	
+B1	elefante	elefante	elephant	noun	
+B1	lampara	lámpara	lamp	noun	
+B1	pila	pila	battery / pile	noun	
+B1	grueso	grueso	thick	adjective	
+B1	improvisar	improvisar	to improvise	verb	
+B1	despierto	despierto	awake	adjective	
+B1	vision	visión	vision	noun	
+B1	firme	firme	firm	adjective	
+B1	facilitar	facilitar	to facilitate / make easier	verb	
+B1	desfile	desfile	parade	noun	
+B1	pelear	pelear	to fight	verb	
+B1	derivar	derivar	to derive / stem from	verb	
+B1	principe	príncipe	prince	noun	
+B1	empresarial	empresarial	business	adjective	
+B1	envolver	envolver	to wrap	verb	
+B1	cucharada	cucharada	spoonful	noun	
+B1	secar	secar	to dry	verb	
+B1	pago	pago	payment	noun	
+B1	raiz	raíz	root	noun	
+B1	interpretacion	interpretación	interpretation	noun	
+B1	taco	taco	swear word / heel stud	noun	
+B1	metalico	metálico	metallic	adjective	
+B1	estimular	estimular	to stimulate	verb	
+B1	sumar	sumar	to add up	verb	
+B1	influir	influir	to influence	verb	
+B1	respetuoso	respetuoso	respectful	adjective	
+B1	motivar	motivar	to motivate	verb	
+B1	solitario	solitario	solitary / lonely	adjective	
+B1	representacion	representación	representation	noun	
+B1	grasa	grasa	fat / grease	noun	
+B1	global	global	global / overall	adjective	
+B1	mitico	mítico	mythical / legendary	adjective	
+B1	cruz	cruz	cross	noun	
+B1	residuo	residuo	waste / residue	noun	
+B1	campeon	campeón	champion	noun	
+B1	columna	columna	column	noun	
+B1	sostenible	sostenible	sustainable	adjective	
+B1	herencia	herencia	inheritance	noun	
+B1	cronica	crónica	chronicle / report	noun	
+B1	absoluto	absoluto	absolute	adjective	
+B1	carton	cartón	cardboard	noun	
+B1	fascinar	fascinar	to fascinate	verb	
+B1	traslado	traslado	transfer / move	noun	
+B1	enfrente	enfrente	opposite / across	adverb	
+B1	embarazar	embarazar	to impregnate / hinder	verb	
+B1	regar	regar	to water	verb	
+B1	ombligo	ombligo	belly button	noun	
+B1	desnudo	desnudo	naked	adjective	
+B1	entusiasmo	entusiasmo	enthusiasm	noun	
+B1	tarta	tarta	cake / tart	noun	
+B1	aguacate	aguacate	avocado	noun	
+B1	lagrima	lágrima	tear	noun	
+B1	legal	legal	legal	adjective	
+B1	absurdo	absurdo	absurd	adjective	
+B1	convento	convento	convent	noun	
+B1	vidrio	vidrio	glass	noun	
+B1	colonia	colonia	colony / cologne	noun	
+B1	tecnologico	tecnológico	technological	adjective	
+B1	reaccion	reacción	reaction	noun	
+B1	arrastrar	arrastrar	to drag	verb	
+B1	planificar	planificar	to plan	verb	
+B1	registrar	registrar	to register / search	verb	
+B1	pecho	pecho	chest / breast	noun	
+B1	portero	portero	goalkeeper / doorman	noun	
+B1	conquistador	conquistador	conqueror	noun	
+B1	mancha	mancha	stain	noun	
+B1	manifestar	manifestar	to state / express	verb	
+B1	creencia	creencia	belief	noun	
+B1	mito	mito	myth	noun	
+B1	indispensable	indispensable	essential / indispensable	adjective	
+B1	iguana	iguana	iguana	noun	
+B1	sobre	sobre	envelope	noun	
+B1	biografia	biografía	biography	noun	
+B1	administrar	administrar	to manage / administer	verb	
+B1	fracaso	fracaso	failure	noun	
+B1	saludable	saludable	healthy	adjective	
+B1	fortuna	fortuna	fortune	noun	
+B1	gastronomico	gastronómico	culinary / gastronomic	adjective	
+B1	conexion	conexión	connection	noun	
+B1	enterrar	enterrar	to bury	verb	
+B1	cartera	cartera	wallet / briefcase	noun	
+B1	excusa	excusa	excuse	noun	
+B1	legumbre	legumbre	legume / pulse	noun	
+B1	seccion	sección	section	noun	
+B1	gira	gira	tour	noun	
+B1	calendario	calendario	calendar	noun	
+B1	cortes	cortés	polite	adjective	
+B1	impresion	impresión	impression / printing	noun	
+B1	peinar	peinar	to comb	verb	
+B1	postal	postal	postcard	noun	
+B1	escalada	escalada	climb / escalation	noun	
+B1	desgracia	desgracia	misfortune	noun	
+B1	redondo	redondo	round	adjective	
+B1	volumen	volumen	volume	noun	
+B1	competir	competir	to compete	verb	
+B1	criar	criar	to raise / breed	verb	
+B1	nombrar	nombrar	to name / appoint	verb	
+B1	correspondiente	correspondiente	corresponding	adjective	
+B1	armonia	armonía	harmony	noun	
+B1	creatividad	creatividad	creativity	noun	
+B1	detallar	detallar	to detail	verb	
+B1	critica	crítica	criticism / review	noun	
+B1	comic	cómic	comic	noun	
+B1	defecto	defecto	defect / flaw	noun	
+B1	disposicion	disposición	disposition / availability	noun	
+B1	juguete	juguete	toy	noun	
+B1	universo	universo	universe	noun	
+B1	civilizacion	civilización	civilization	noun	
+B1	buscador	buscador	search engine / searcher	noun	
+B1	dorar	dorar	to brown / gild	verb	
+B1	culpable	culpable	guilty / culprit	adjective	
+B1	partida	partida	game / departure	noun	
+B1	atar	atar	to tie	verb	
+B1	entrega	entrega	delivery	noun	
+B1	tristeza	tristeza	sadness	noun	
+B1	bolero	bolero	bolero	noun	
+B1	mascota	mascota	pet	noun	
+B1	fabricacion	fabricación	manufacturing	noun	
+B1	descender	descender	to descend / go down	verb	
+B1	factura	factura	invoice / bill	noun	
+B1	mineral	mineral	mineral	adjective	
+B1	linguistico	lingüístico	linguistic	adjective	
+B1	amenazar	amenazar	to threaten	verb	
+B1	ecologista	ecologista	environmentalist	adjective	
+B1	planchar	planchar	to iron	verb	
+B1	nervio	nervio	nerve	noun	
+B1	renunciar	renunciar	to resign / give up	verb	
+B1	chiste	chiste	joke	noun	
+B1	luminoso	luminoso	bright / luminous	adjective	
+B1	tribu	tribu	tribe	noun	
+B1	depresion	depresión	depression	noun	
+B1	raza	raza	race / breed	noun	
+B1	enganar	engañar	to deceive / cheat	verb	
+B1	electricidad	electricidad	electricity	noun	
+B1	intelectual	intelectual	intellectual	noun	
+B1	rito	rito	rite / ritual	noun	
+B1	garganta	garganta	throat	noun	
+B1	entrevistar	entrevistar	to interview	verb	
+B1	baja	baja	sick leave / drop	noun	
+B1	exportacion	exportación	export	noun	
+B1	semilla	semilla	seed	noun	
+B1	inteligencia	inteligencia	intelligence	noun	
+B1	pobreza	pobreza	poverty	noun	
+B1	aplaudir	aplaudir	to applaud / clap	verb	
+B1	natal	natal	native / birth	adjective	
+B1	grano	grano	grain / pimple	noun	
+B1	vaya	vaya	wow / well	phrase	
+B1	mascara	máscara	mask	noun	
+B1	guardia	guardia	guard	noun	
+B1	comisaria	comisaría	police station	noun	
+B1	obligatorio	obligatorio	mandatory / compulsory	adjective	
+B1	cultivo	cultivo	cultivation / crop	noun	
+B1	marco	marco	frame	noun	
+B1	ampliar	ampliar	to expand / extend	verb	
+B1	sillon	sillón	armchair	noun	
+B1	anotar	anotar	to note down	verb	
+B1	tapar	tapar	to cover	verb	
+B1	ficha	ficha	card / token / file	noun	
+B1	circulo	círculo	circle	noun	
+B1	ficcion	ficción	fiction	noun	
+B1	ejemplar	ejemplar	copy / specimen	noun	
+B1	petroleo	petróleo	oil / petroleum	noun	
+B1	iluminar	iluminar	to light up / illuminate	verb	
+B1	coctel	cóctel	cocktail	noun	
+B1	peinado	peinado	hairstyle	noun	
+B1	pimienta	pimienta	pepper	noun	
+B1	rasgo	rasgo	trait / feature	noun	
+B1	evidente	evidente	obvious / evident	adjective	
+B1	continuacion	continuación	continuation	noun	
+B1	explorar	explorar	to explore	verb	
+B1	barbaro	bárbaro	barbaric / awesome	adjective	
+B1	agujero	agujero	hole	noun	
+B1	interlocutor	interlocutor	interlocutor / speaker	noun	
+B1	sospechoso	sospechoso	suspicious / suspect	adjective	
+B1	originario	originario	native / originating	adjective	
+B1	suspender	suspender	to suspend / fail (exam)	verb	
+B1	manifestacion	manifestación	demonstration / protest	noun	
+B1	bacalao	bacalao	cod	noun	
+B1	equivalente	equivalente	equivalent	noun	
+B1	enfrentar	enfrentar	to face / confront	verb	
+B1	brindar	brindar	to toast / offer	verb	
+B1	una	uña	nail / fingernail	noun	
+B1	dominio	dominio	domain / mastery	noun	
+B1	difundir	difundir	to spread / broadcast	verb	
+B1	homenaje	homenaje	tribute	noun	
+B1	estetico	estético	aesthetic	adjective	
+B1	innecesario	innecesario	unnecessary	adjective	
+B1	invitacion	invitación	invitation	noun	
+B1	escala	escala	scale / stopover	noun	
+B1	cabello	cabello	hair	noun	
+B1	piramide	pirámide	pyramid	noun	
+B1	fauna	fauna	fauna / wildlife	noun	
+B1	jubilado	jubilado	retiree	noun	
+B1	sagrado	sagrado	sacred	adjective	
+B1	decoracion	decoración	decoration	noun	
+B1	relato	relato	story / account	noun	
+B1	mojar	mojar	to wet / dip	verb	
+B1	alimentario	alimentario	food	adjective	
+B1	frente	frente	front / forehead	noun	
+B1	ex	ex	ex / former	noun	
+B1	fragil	frágil	fragile	adjective	
+B1	almorzar	almorzar	to have lunch	verb	
+B1	talla	talla	size	noun	
+B1	protestar	protestar	to protest	verb	
+B1	boligrafo	bolígrafo	pen	noun	
+B1	judio	judío	Jewish	adjective	
+B1	observacion	observación	observation	noun	
+B1	carcel	cárcel	prison / jail	noun	
+B1	automatico	automático	automatic	adjective	
+B1	divino	divino	divine	adjective	
+B1	falda	falda	skirt	noun	
+B1	antepasado	antepasado	ancestor	noun	
+B1	combustible	combustible	fuel	noun	
+B1	aereo	aéreo	aerial / air	adjective	
+B1	relleno	relleno	filling / stuffing	noun	
+B1	huella	huella	footprint / trace	noun	
+B1	odio	odio	hatred	noun	
+B1	promover	promover	to promote	verb	
+B1	enamorado	enamorado	in love / lover	adjective	
+B1	borde	borde	edge	noun	
+B1	respiracion	respiración	breathing	noun	
+B1	blusa	blusa	blouse	noun	
+B1	misterio	misterio	mystery	noun	
+B1	anonimo	anónimo	anonymous	adjective	
+B1	urgente	urgente	urgent	adjective	
+B1	entusiasmar	entusiasmar	to excite / thrill	verb	
+B1	discurso	discurso	speech	noun	
+B1	izquierdo	izquierdo	left	adjective	
+B1	adoptivo	adoptivo	adoptive / adopted	adjective	
+B1	blando	blando	soft	adjective	
+B1	estadistica	estadística	statistics	noun	
+B1	occidental	occidental	western	adjective	
+B1	prevenir	prevenir	to prevent	verb	
+B1	corbata	corbata	tie	noun	
+B1	revisar	revisar	to check / review	verb	
+B1	geografia	geografía	geography	noun	
+B1	obsesion	obsesión	obsession	noun	
+B1	estupido	estúpido	stupid	adjective	
+B1	milagro	milagro	miracle	noun	
+B1	agricola	agrícola	agricultural	adjective	
+B1	vocabulario	vocabulario	vocabulary	noun	
+B1	robot	robot	robot	noun	
+B1	inicial	inicial	initial	adjective	
+B1	flexible	flexible	flexible	adjective	
+B1	ala	ala	wing	noun	
+B1	calcular	calcular	to calculate	verb	
+B1	aceituna	aceituna	olive	noun	
+B1	tragedia	tragedia	tragedy	noun	
+B1	pinta	pinta	appearance / pint	noun	
+B1	ejecutivo	ejecutivo	executive	noun	
+B1	testigo	testigo	witness	noun	
+B1	doblar	doblar	to fold / dub	verb	
+B1	democracia	democracia	democracy	noun	
+B1	artificial	artificial	artificial	adjective	
+B1	comision	comisión	commission / committee	noun	
+B1	rechazar	rechazar	to reject	verb	
+B1	rueda	rueda	wheel	noun	
+B1	irritar	irritar	to irritate	verb	
+B1	ilusion	ilusión	hope / illusion	noun	
+B1	flauta	flauta	flute	noun	
+B1	truco	truco	trick	noun	
+B1	algodon	algodón	cotton	noun	
+B1	probable	probable	likely / probable	adjective	
+B1	capitan	capitán	captain	noun	
+B1	preferencia	preferencia	preference	noun	
+B1	pistola	pistola	pistol / gun	noun	
+B1	aclarar	aclarar	to clarify	verb	
+B1	democratico	democrático	democratic	adjective	
+B1	campana-noun	campana	bell	noun	
+B1	fan	fan	fan	noun	
+B1	comunitario	comunitario	community	adjective	
+B1	cuchillo	cuchillo	knife	noun	
+B1	imprimir	imprimir	to print	verb	
+B1	tacon	tacón	heel	noun	
+B1	camello	camello	camel	noun	
+B1	impartir	impartir	to give / teach (class)	verb	
+B1	licor	licor	liqueur	noun	
+B1	diablo	diablo	devil	noun	
+B1	ruso	ruso	Russian	adjective	
+B1	localizar	localizar	to locate	verb	
+B1	insoportable	insoportable	unbearable	adjective	
+B1	molesto	molesto	annoying	adjective	
+B1	diversidad	diversidad	diversity	noun	
+B1	gota	gota	drop	noun	
+B1	sabroso	sabroso	tasty	adjective	
+B1	juvenil	juvenil	youth / juvenile	adjective	
+B1	guacamole	guacamole	guacamole	noun	
+B1	impresionar	impresionar	to impress	verb	
+B1	colina	colina	hill	noun	
+B1	volador	volador	flying	adjective	
+B1	acuatico	acuático	aquatic / water	adjective	
+B1	enemigo	enemigo	enemy	noun	
+B1	matematico	matemático	mathematical	adjective	
+B1	boton	botón	button	noun	
+B1	poderoso	poderoso	powerful	adjective	
+B1	reportaje	reportaje	feature / report	noun	
+B1	paraguas	paraguas	umbrella	noun	
+B1	herida	herida	wound / injury	noun	
+B1	obligacion	obligación	obligation	noun	
+B1	jurar	jurar	to swear	verb	
+B1	caballero	caballero	gentleman / knight	noun	
+B1	defensa	defensa	defense	noun	
+B1	contenedor	contenedor	container / bin	noun	
+B1	esqueleto	esqueleto	skeleton	noun	
+B1	promedio	promedio	average	noun	
+B1	codigo	código	code	noun	
+B1	separacion	separación	separation	noun	
+B1	sincero	sincero	sincere	adjective	
+B1	copiar	copiar	to copy	verb	
+B1	cazar	cazar	to hunt	verb	
+B1	retiro	retiro	retreat / retirement	noun	
+B1	tormenta	tormenta	storm	noun	
+B1	ofender	ofender	to offend	verb	
+B1	oral	oral	oral	adjective	
+B1	hierro	hierro	iron	noun	
+B1	ministerio	ministerio	ministry	noun	
+B1	fortaleza	fortaleza	fortress / strength	noun	
+B1	bicho	bicho	bug / critter	noun	
+B1	progreso	progreso	progress	noun	
+B1	inocente	inocente	innocent	adjective	
+B1	nido	nido	nest	noun	
+B1	afirmacion	afirmación	statement / assertion	noun	
+B1	toalla	toalla	towel	noun	
+B1	armar	armar	to assemble / arm	verb	
+B1	polvo	polvo	dust / powder	noun	
+B1	mudar	mudar	to change / shed	verb	
+B1	transportar	transportar	to transport	verb	
+B1	inmediato	inmediato	immediate	adjective	
+B1	animo	ánimo	spirit / mood	noun	
+B1	lavadora	lavadora	washing machine	noun	
+B1	escrito	escrito	written text / document	noun	
+B1	cansancio	cansancio	tiredness	noun	
+B1	tobillo	tobillo	ankle	noun	
+B1	bigote	bigote	mustache	noun	
+B1	frigorifico	frigorífico	fridge	noun	
+B1	mariachi	mariachi	mariachi	noun	
+B1	identificacion	identificación	identification	noun	
+B1	celebre	célebre	famous	adjective	
+B1	eficiente	eficiente	efficient	adjective	
+B1	ajeno	ajeno	someone else's / unrelated	adjective	
+B1	banador	bañador	swimsuit	noun	
+B1	milenario	milenario	ancient / thousand-year-old	adjective	
+B1	poster	póster	poster	noun	
+B1	desconfiar	desconfiar	to distrust	verb	
+B1	britanico	británico	British	adjective	
+B1	rollo	rollo	roll / drag / bore	noun	
+B1	gimnasia	gimnasia	gymnastics	noun	
+B1	album	álbum	album	noun	
+B1	toma	toma	taking / shot / socket	noun	
+B1	reparar	reparar	to repair	verb	
+B1	oponer	oponer	to oppose	verb	
+B1	desagradable	desagradable	unpleasant	adjective	
+B1	pirata	pirata	pirate	noun	
+B1	triunfar	triunfar	to succeed / triumph	verb	
+B1	caracteristico	característico	characteristic	adjective	
+B1	condor	cóndor	condor	noun	
+B1	maduro	maduro	mature / ripe	adjective	
+B1	despistar	despistar	to throw off / distract	verb	
+B1	buzon	buzón	mailbox	noun	
+B1	anecdota	anécdota	anecdote	noun	
+B1	bombilla	bombilla	light bulb	noun	
+B1	resistir	resistir	to resist	verb	
+B1	disfraz	disfraz	costume / disguise	noun	
+B1	emigrante	emigrante	emigrant	noun	
+B1	ecosistema	ecosistema	ecosystem	noun	
+B1	casilla	casilla	box / square	noun	
+B1	disenador	diseñador	designer	noun	
+B1	envidia	envidia	envy	noun	
+B1	carinoso	cariñoso	affectionate	adjective	
+B1	prenda	prenda	garment	noun	
+B1	extincion	extinción	extinction	noun	
+B1	rescatar	rescatar	to rescue	verb	
+B1	ceviche	ceviche	ceviche	noun	
+B1	proporcion	proporción	proportion	noun	
+B1	asesino	asesino	murderer / killer	noun	
+B1	reciclaje	reciclaje	recycling	noun	
+B1	mecanico	mecánico	mechanical	adjective	
+B1	derrotar	derrotar	to defeat	verb	
+B1	eslogan	eslogan	slogan	noun	
+B1	confirmacion	confirmación	confirmation	noun	
+B1	calavera	calavera	skull	noun	
+B1	extraterrestre	extraterrestre	extraterrestrial / alien	noun	
+B1	ensayo	ensayo	essay / rehearsal / test	noun	
+B1	pena-noun	peña	rock / club of friends	noun	
+B1	cancer	cáncer	cancer	noun	
+B1	bomba	bomba	bomb / pump	noun	
+B1	entonacion	entonación	intonation	noun	
+B1	informatica	informática	computing / IT	noun	
+B1	climatico	climático	climate	adjective	
+B1	telefonico	telefónico	telephone	adjective	
+B1	dama	dama	lady	noun	
+B1	entretener	entretener	to entertain	verb	
+B1	rizar	rizar	to curl	verb	
+B1	estropear	estropear	to spoil / break	verb	
+B1	pino	pino	pine	noun	
+B1	lacteo	lácteo	dairy	adjective	
+B1	especia	especia	spice	noun	
+B1	innovador	innovador	innovative	adjective	
+B1	superficial	superficial	superficial	adjective	
+B1	meditacion	meditación	meditation	noun	
+B1	ofrenda	ofrenda	offering	noun	
+B1	rezar	rezar	to pray	verb	
+B1	gamba	gamba	prawn / shrimp	noun	
+B1	pastor	pastor	shepherd	noun	
+B1	devorar	devorar	to devour	verb	
+B1	combinacion	combinación	combination	noun	
+B1	recuperacion	recuperación	recovery	noun	
+B1	calido	cálido	warm	adjective	
+B1	cuerda	cuerda	rope / string	noun	
+B1	cuaderno	cuaderno	notebook	noun	
+B1	cabina	cabina	booth / cabin	noun	
+B1	cosmetico	cosmético	cosmetic	noun	
+B1	oso	oso	bear	noun	
+B1	adornar	adornar	to decorate	verb	
+B1	incomodo	incómodo	uncomfortable	adjective	
+B1	asar	asar	to roast	verb	
+B1	merengue	merengue	meringue	noun	
+B1	transparente	transparente	transparent	adjective	
+B1	grafico	gráfico	graph / graphic	adjective	
+B1	reparacion	reparación	repair	noun	
+B1	apetito	apetito	appetite	noun	
+B1	dispositivo	dispositivo	device	noun	
+B1	pub	pub	pub	noun	
+B1	comerciante	comerciante	merchant / shopkeeper	noun	
+B1	triunfo	triunfo	triumph / win	noun	
+B1	flaco	flaco	skinny / thin	adjective	
+B1	abrigo	abrigo	coat	noun	
+B1	sarten	sartén	frying pan	noun	
+B1	coser	coser	to sew	verb	
+B1	espontaneo	espontáneo	spontaneous	adjective	
+B1	alfombra	alfombra	rug / carpet	noun	
+B1	asesinato	asesinato	murder	noun	
+B1	inmovil	inmóvil	motionless	adjective	
+B1	gigante	gigante	giant	adjective	
+B1	desfilar	desfilar	to parade / march	verb	
+B1	estable	estable	stable	adjective	
+B1	bienvenido	bienvenido	welcome	adjective	
+B1	saborear	saborear	to savor / taste	verb	
+B1	platano	plátano	banana	noun	
+B1	plantar	plantar	to plant	verb	
+B1	apasionante	apasionante	exciting / fascinating	adjective	
+B1	senal	señal	sign / signal	noun	
+B1	trapo	trapo	rag / cloth	noun	
+B1	uruguayo	uruguayo	Uruguayan	adjective	
+B1	diputado	diputado	deputy / member of parliament	noun	
+B1	interprete	intérprete	interpreter / performer	noun	
+B1	bienvenida	bienvenida	welcome	noun	
+B1	cosecha	cosecha	harvest	noun	
+B1	apropiar	apropiar	to appropriate	verb	
+B1	concentracion	concentración	concentration	noun	
+B1	camion	camión	truck / lorry	noun	
+B1	olfato	olfato	sense of smell	noun	
+B1	ecuatoriano	ecuatoriano	Ecuadorian	adjective	
+B1	mestizo	mestizo	mixed-race	adjective	
+B1	funcionario	funcionario	civil servant	noun	
+B1	etnico	étnico	ethnic	adjective	
+B1	bota	bota	boot	noun	
+B1	sacrificio	sacrificio	sacrifice	noun	
+B1	atacar	atacar	to attack	verb	
+B1	multitud	multitud	crowd	noun	
+B1	nativo	nativo	native	adjective	
+B1	remover	remover	to stir	verb	
+B1	recinto	recinto	enclosure / premises	noun	
+B1	olivo	olivo	olive tree	noun	
+B1	escucha	escucha	listening	noun	
+B1	cheque	cheque	check / cheque	noun	
+B1	aconsejable	aconsejable	advisable	adjective	
+B1	serpiente	serpiente	snake	noun	
+B1	liberar	liberar	to free / release	verb	
+B1	cura	cura	priest	noun	
+B1	detergente	detergente	detergent	noun	
+B1	protector	protector	protector	noun	
+B1	lapiz	lápiz	pencil	noun	
+B1	corona	corona	crown	noun	
+B1	palido	pálido	pale	adjective	
+B1	tejer	tejer	to weave / knit	verb	
+B1	antena	antena	antenna / aerial	noun	
+B1	carroza	carroza	float / carriage	noun	
+B1	rana	rana	frog	noun	
+B1	embutido	embutido	cured sausage / cold cut	noun	
+B1	fachada	fachada	facade	noun	
+B1	republicano	republicano	republican	adjective	
+B1	crimen	crimen	crime	noun	
+B1	hobby	hobby	hobby	noun	
+B1	despectivo	despectivo	derogatory / contemptuous	adjective	
+B1	diplomatico	diplomático	diplomatic	adjective	
+B1	rosado	rosado	pink	adjective	
+B1	anillo	anillo	ring	noun	
+B1	imaginativo	imaginativo	imaginative	adjective	
+B1	machista	machista	sexist / macho	adjective	
+B1	quiosco	quiosco	kiosk / newsstand	noun	
+B1	altiplano	altiplano	high plateau	noun	
+B1	rayo	rayo	lightning bolt / ray	noun	
+B1	oculto	oculto	hidden	adjective	
+B1	inmigracion	inmigración	immigration	noun	
+B1	gusano	gusano	worm	noun	
+B1	pesadilla	pesadilla	nightmare	noun	
+B1	ilegal	ilegal	illegal	adjective	
+B1	despertador	despertador	alarm clock	noun	
+B1	divorcio	divorcio	divorce	noun	
+B1	cable	cable	cable	noun	
+B1	medicinal	medicinal	medicinal	adjective	
+B1	fenomenal	fenomenal	fantastic / phenomenal	adjective	
+B1	horizonte	horizonte	horizon	noun	
+B1	panaderia	panadería	bakery	noun	
+B1	susto	susto	fright / scare	noun	
+B1	precolombino	precolombino	pre-Columbian	adjective	
+B1	pesca	pesca	fishing	noun	
+B1	asombrar	asombrar	to amaze / astonish	verb	
+B1	tinto	tinto	red (wine)	adjective	
+B1	noroeste	noroeste	northwest	noun	
+B1	muneco	muñeco	doll / puppet	noun	
+B1	secretaria	secretaría	secretariat / secretary's office	noun	
+B1	infraestructura	infraestructura	infrastructure	noun	
+B1	aislamiento	aislamiento	isolation	noun	
+B1	cojo	cojo	lame / limping	adjective	
+B1	alfajor	alfajor	alfajor (filled cookie)	noun	
+B1	tapeo	tapeo	tapas outing	noun	
+B1	proteina	proteína	protein	noun	
+B1	emisora	emisora	radio station	noun	
+B1	telefonear	telefonear	to phone	verb	
+B1	bandera	bandera	flag	noun	
+B1	amargo	amargo	bitter	adjective	
+B1	vanguardia	vanguardia	avant-garde / forefront	noun	
+B1	pianista	pianista	pianist	noun	
+B1	invadir	invadir	to invade	verb	
+B1	argot	argot	slang	noun	
+B1	ida	ida	outward trip	noun	
+B1	inseguro	inseguro	insecure / unsafe	adjective	
+B1	desmayar	desmayar	to faint	verb	
+B1	subrayar	subrayar	to underline / stress	verb	
+B1	adivinar	adivinar	to guess	verb	
+B1	morena	morena	brunette / dark-skinned woman	noun	
+B1	raya	raya	line / stripe	noun	
+B1	cosmopolita	cosmopolita	cosmopolitan	adjective	
+B1	prender	prender	to light / switch on	verb	
+B1	gigantesco	gigantesco	gigantic	adjective	
+B1	obeso	obeso	obese	adjective	
+B1	desorden	desorden	mess / disorder	noun	
+B1	merluza	merluza	hake	noun	
+B1	monitor	monitor	monitor	noun	
+B1	cintura	cintura	waist	noun	
+B1	en-publico	en público	in public	adverb	
+B1	toro	toro	bull	noun	
+B1	pelirrojo	pelirrojo	redheaded	adjective	
+B1	campamento	campamento	camp	noun	
+B1	cilantro	cilantro	cilantro / coriander	noun	
+B1	espada	espada	sword	noun	
+B1	cometer	cometer	to commit	verb	
+B1	calzado	calzado	footwear	noun	
+B1	estereotipo	estereotipo	stereotype	noun	
+B1	tostada	tostada	toast	noun	
+B1	abundancia	abundancia	abundance	noun	
+B1	disfrazar	disfrazar	to disguise	verb	
+B1	cumbre	cumbre	summit	noun	
+B1	gotico	gótico	Gothic	adjective	
+B1	nicaraguense	nicaragüense	Nicaraguan	adjective	
+B1	porvenir	porvenir	future	noun	
+B1	recepcionista	recepcionista	receptionist	noun	
+B1	reggae	reggae	reggae	noun	
+B1	adelantar	adelantar	to move forward / overtake	verb	
+B1	denunciar	denunciar	to report / denounce	verb	
+B1	oriental	oriental	eastern / oriental	adjective	
+B1	whisky	whisky	whisky	noun	
+B1	tableta	tableta	tablet	noun	
+B1	paciencia	paciencia	patience	noun	
+B1	obrero	obrero	worker / laborer	noun	
+B1	liso	liso	smooth / straight	adjective	
+B1	optimista	optimista	optimistic	adjective	
+B1	novelista	novelista	novelist	noun	
+B1	guion	guión	script	noun	
+B1	reflexionar	reflexionar	to reflect / think over	verb	
+B1	aficionar	aficionar	to get fond of	verb	
+B1	filosofo	filósofo	philosopher	noun	
+B1	comunista	comunista	communist	adjective	
+B1	aromatico	aromático	aromatic	adjective	
+B1	virtual	virtual	virtual	adjective	
+B1	casado	casado	married	adjective	
+B1	moler	moler	to grind	verb	
+B1	poblar	poblar	to populate / settle	verb	
+B1	casete	casete	cassette	noun	
+B1	ubicacion	ubicación	location	noun	
+B1	ocultar	ocultar	to hide / conceal	verb	
+B1	asado	asado	roast	noun	
+B1	esplendido	espléndido	splendid	adjective	
+B1	aniversario	aniversario	anniversary	noun	
+B1	manta	manta	blanket	noun	
+B1	sacrificar	sacrificar	to sacrifice	verb	
+B1	anchoa	anchoa	anchovy	noun	
+B1	cazador	cazador	hunter	noun	
+B1	arrasar	arrasar	to devastate / raze	verb	
+B1	fenicio	fenicio	Phoenician	adjective	
+B1	aguardiente	aguardiente	firewater / eau-de-vie	noun	
+B1	firma	firma	signature	noun	
+B1	embajador	embajador	ambassador	noun	
+B1	difunto	difunto	deceased	noun	
+B1	volcanico	volcánico	volcanic	adjective	
+B1	colesterol	colesterol	cholesterol	noun	
+B1	maquillar	maquillar	to put makeup on	verb	
+B1	entierro	entierro	burial / funeral	noun	
+B1	caloria	caloría	calorie	noun	
+B1	impermeable	impermeable	waterproof / raincoat	adjective	
+B1	pijama	pijama	pajamas	noun	
+B1	misa	misa	mass	noun	
+B1	terror	terror	terror	noun	
+B1	llanura	llanura	plain	noun	
+B1	alzar	alzar	to lift / raise	verb	
+B1	impaciente	impaciente	impatient	adjective	
+B1	fatiga	fatiga	fatigue	noun	
+B1	urbanizacion	urbanización	housing development	noun	
+B1	ternero	ternero	calf / veal	noun	
+B1	sevillano	sevillano	of Seville / Sevillian	adjective	
+B1	denominacion	denominación	designation / name	noun	
+B1	vegetacion	vegetación	vegetation	noun	
+B1	reutilizar	reutilizar	to reuse	verb	
+B1	silbar	silbar	to whistle	verb	
+B1	bohemio	bohemio	bohemian	adjective	
+B1	sardina	sardina	sardine	noun	
+B1	calamar	calamar	squid	noun	
+B1	fibra	fibra	fiber	noun	
+B1	adentro	adentro	inside	adverb	
+B1	encantado	encantado	delighted / pleased to meet you	adjective	
+B1	senderismo	senderismo	hiking	noun	
+B1	entrenar	entrenar	to train	verb	
+B1	abreviatura	abreviatura	abbreviation	noun	
+B1	preparativo	preparativo	preparation	noun	
+B1	anfitrion	anfitrión	host	noun	
+B1	pure	puré	puree / mash	noun	
+B1	placa	placa	plaque / plate	noun	
+B1	chulo	chulo	cocky / cool (slang)	adjective	
+B1	culinario	culinario	culinary	adjective	
+B1	bronce	bronce	bronze	noun	
+B1	merienda	merienda	afternoon snack	noun	
+B1	tostar	tostar	to toast	verb	
+B1	catedratico	catedrático	professor	noun	
+B1	adopcion	adopción	adoption	noun	
+B1	valioso	valioso	valuable	adjective	
+B1	asiatico	asiático	Asian	adjective	
+B1	opera	ópera	opera	noun	
+B1	muelle	muelle	dock / spring	noun	
+B1	logico	lógico	logical	adjective	
+B1	sirena	sirena	mermaid / siren	noun	
+B1	chimenea	chimenea	chimney / fireplace	noun	
+B1	valenciano	valenciano	Valencian	adjective	
+B1	itinerario	itinerario	itinerary	noun	
+B1	embarcar	embarcar	to board / embark	verb	
+B1	cubo	cubo	bucket / cube	noun	
+B1	habitat	hábitat	habitat	noun	
+B1	ecologia	ecología	ecology	noun	
+B1	lobo	lobo	wolf	noun	
+B1	pilar	pilar	pillar	noun	
+B1	mermelada	mermelada	jam	noun	
+B1	callo	callo	callus	noun	
+B1	aro	aro	hoop / ring	noun	
+B1	embajada	embajada	embassy	noun	
+B1	reparto	reparto	delivery / cast	noun	
+B1	irlandes	irlandés	Irish	adjective	
+B1	consolar	consolar	to console	verb	
+B1	vainilla	vainilla	vanilla	noun	
+B1	corrupcion	corrupción	corruption	noun	
+B1	tunel	túnel	tunnel	noun	
+B1	super	súper	great / super	adjective	
+B1	ferrocarril	ferrocarril	railway	noun	
+B1	chofer	chófer	driver	noun	
+B1	simbolico	simbólico	symbolic	adjective	
+B1	violeta	violeta	violet	noun	
+B1	murmurar	murmurar	to murmur / whisper	verb	
+B1	cepillo	cepillo	brush	noun	
+B1	rapar	rapar	to shave (head)	verb	
+B1	acampar	acampar	to camp	verb	
+B1	inevitable	inevitable	inevitable	adjective	
+B1	hinchar	hinchar	to inflate / swell	verb	
+B1	coleccionar	coleccionar	to collect	verb	
+B1	aroma	aroma	aroma	noun	
+B1	soplar	soplar	to blow	verb	
+B1	macho	macho	male	noun	
+B1	taquillero	taquillero	box-office	adjective	
+B1	parking	parking	car park	noun	
+B1	champu	champú	shampoo	noun	
+B1	granja	granja	farm	noun	
+B1	elogiar	elogiar	to praise	verb	
+B1	recto	recto	straight	adjective	
+B1	excepcional	excepcional	exceptional	adjective	
+B1	aterrizar	aterrizar	to land	verb	
+B1	comportar	comportar	to involve / entail	verb	
+B1	arrugar	arrugar	to wrinkle / crumple	verb	
+B1	hemeroteca	hemeroteca	newspaper library	noun	
+B1	guarderia	guardería	nursery / daycare	noun	
+B1	guayaba	guayaba	guava	noun	
+B1	jeta	jeta	face / cheek (slang)	noun	
+B1	arqueologico	arqueológico	archaeological	adjective	
+B1	catolicismo	catolicismo	Catholicism	noun	
+B1	espacial	espacial	spatial / space	adjective	
+B1	collar	collar	necklace / collar	noun	
+B1	contraccion	contracción	contraction	noun	
+B1	bordear	bordear	to skirt / border	verb	
+B1	palmera	palmera	palm tree	noun	
+B1	pincho	pincho	skewer / snack	noun	
+B1	aspirador	aspirador	vacuum cleaner	noun	
+B1	delantero	delantero	forward (sport)	noun	
+B1	apostol	apóstol	apostle	noun	
+B1	danes	danés	Danish	adjective	
+B1	rebaja	rebaja	discount / sale	noun	
+B1	primitivo	primitivo	primitive	adjective	
+B1	estimulante	estimulante	stimulating	adjective	
+B1	surrealismo	surrealismo	surrealism	noun	
+B1	submarinismo	submarinismo	scuba diving	noun	
+B1	casa-rural	casa rural	country house	noun	
+B1	cerca-de	cerca de	near / close to	phrase	
+B1	trompeta	trompeta	trumpet	noun	
+B1	adaptacion	adaptación	adaptation	noun	
+B1	anorak	anorak	anorak	noun	
+B1	lindar	lindar	to border on	verb	
+B1	sonriente	sonriente	smiling	adjective	
+B1	champan	champán	champagne	noun	
+B1	chulapo	chulapo	traditional Madrilenian	noun	
+B1	pradera	pradera	meadow	noun	
+B1	cofradia	cofradía	brotherhood	noun	
+B1	pina	piña	pineapple	noun	
+B1	deformacion	deformación	deformation	noun	
+B1	bordar	bordar	to embroider	verb	
+B1	escalon	escalón	step	noun	
+B1	facha	facha	fascist (slang)	noun	
+B1	comparsa	comparsa	carnival troupe	noun	
+B1	escultor	escultor	sculptor	noun	
+B1	chirimoya	chirimoya	custard apple	noun	
+B1	cunado	cuñado	brother-in-law	noun	
+B1	pionero	pionero	pioneer	noun	
+B1	naranjo	naranjo	orange tree	noun	
+B1	canelon	canelón	cannelloni	noun	
+B1	mapuche	mapuche	Mapuche	adjective	
+B1	sanidad	sanidad	health service	noun	
+B1	biologo	biólogo	biologist	noun	
+B1	madrugar	madrugar	to get up early	verb	
+B1	furgoneta	furgoneta	van	noun	
+B1	nena	nena	little girl	noun	
+B1	mensajero	mensajero	messenger	noun	
+B1	antropologia	antropología	anthropology	noun	
+B1	ingresar	ingresar	to deposit / be admitted	verb	
+B1	mesilla	mesilla	bedside table	noun	
+B1	breton	bretón	Breton	adjective	
+B1	acordeon	acordeón	accordion	noun	
+B1	violin	violín	violin	noun	
+B1	cafetero	cafetero	coffee	adjective	
+B1	bajada	bajada	descent	noun	
+B1	circulacion	circulación	traffic / circulation	noun	
+B1	ciao	ciao	bye	phrase	
+B1	jeans	jeans	jeans	noun	
+B1	sensual	sensual	sensual	adjective	
+B1	vicuna	vicuña	vicuña	noun	
+B1	afuera	afuera	outside	adverb	
+B1	polinesio	polinesio	Polynesian	adjective	
+B1	cabaret	cabaret	cabaret	noun	
+B1	fiesta-mayor	fiesta mayor	local festival	noun	
+B1	maldito	maldito	damn / cursed	adjective	
+B1	oyente	oyente	listener	noun	
+B1	araucano	araucano	Araucanian	adjective	
+B1	telepatia	telepatía	telepathy	noun	
+B1	visado	visado	visa	noun	
+B1	marques	marqués	marquis	noun	
+B1	organizador	organizador	organizer	noun	
+B1	nevada	nevada	snowfall	noun	
+B1	volante	volante	steering wheel	noun	
+B2	a-medida-que	a medida que	as / while (progressively)	connector	Use when two things change in step with each other.
+B2	en-cuanto-a	en cuanto a	as for / regarding	connector	Use to switch to the next topic in a list of points.
+B2	por-lo-tanto	por lo tanto	therefore	connector	Use for a conclusion that follows from what was just said.
+B2	es-decir	es decir	that is to say	connector	Use to restate something more plainly.
+B2	aun-asi	aun así	even so	connector	Use to concede a point but keep the original position.
+B2	de-todos-modos	de todos modos	anyway / in any case	connector	Use to move on regardless of the detail just mentioned.
+B2	asequible	asequible	affordable / attainable	adjective	Use for something within reach in price or difficulty.
+B2	de-momento	de momento	for now	phrase	Use for a provisional state that may change.
+B2	rendimiento	rendimiento	performance / yield	noun	Use for throughput, speed, or return.
+B2	en-realidad	en realidad	actually	adverb	Use to correct a likely assumption.
+B2	alcance	alcance	scope / reach	noun	Use for the boundaries of a task or effort.
+B2	a-partir-de	a partir de	from (a point) onward	connector	Use for a starting point in time or in a sequence.
+B2	enfoque	enfoque	approach / focus	noun	Use for the chosen way of tackling something.
+B2	fiable	fiable	reliable	adjective	Use for something that can be trusted to work.
+B2	a-largo-plazo	a largo plazo	in the long run	phrase	Use when weighing durable consequences.
+B2	a-pesar-de	a pesar de	despite	connector	Use to note something held true against an obstacle.
+B2	hallazgo	hallazgo	finding	noun	Use for something discovered in analysis or review.
+B2	a-corto-plazo	a corto plazo	in the short term	phrase	Use for the immediate horizon.
+B2	mientras-tanto	mientras tanto	meanwhile	connector	Use for something happening in parallel.
+B2	asegurarse	asegurarse	to make sure	verb	Reflexive; use for confirming before proceeding.
+B2	escaso	escaso	scarce / sparse	adjective	Use for insufficient quantity, including sparse data.
+B2	descartar	descartar	to rule out	verb	Use for eliminating a hypothesis or option.
+B2	por-si-acaso	por si acaso	just in case	phrase	Use for a precaution against an unlikely outcome.
+B2	ajustar	ajustar	to adjust / tune	verb	Use for calibrating a parameter or plan.
+B2	por-cierto	por cierto	by the way	connector	Use to add a side remark.
+B2	depender-de	depender de	to depend on	verb	Use for conditional outcomes.
+B2	previsto	previsto	planned / expected	adjective	Use for what was scheduled or anticipated.
+B2	seguimiento	seguimiento	follow-up / tracking	noun	Use for monitoring something over time.
+B2	merece-la-pena	merece la pena	it is worth it	phrase	Use to judge that the effort pays off.
+B2	o-sea	o sea	in other words	connector	Very common in spoken Spain Spanish for rephrasing.
+B2	adecuado	adecuado	suitable / appropriate	adjective	Use for a good fit to the purpose.
+B2	desplegar	desplegar	to deploy / roll out	verb	Standard term for deploying software in Spain.
+B2	prevision	previsión	forecast	noun	Use for a projected future value.
+B2	tener-en-cuenta	tener en cuenta	to bear in mind	phrase	Use to flag a factor that should influence a decision.
+B2	almacenar	almacenar	to store	verb	Use for persisting data or goods.
+B2	desglose	desglose	breakdown	noun	Use for a decomposition into parts.
+B2	en-resumen	en resumen	in short	connector	Use before a one-line summary.
+B2	actualizar	actualizar	to update	verb	Use for bringing something to its current version.
+B2	umbral	umbral	threshold	noun	Use for a cutoff value that triggers something.
+B2	solido	sólido	solid / robust	adjective	Use for an argument or system that holds up.
+B2	carga	carga	load / burden	noun	Use for workload or a data load.
+B2	a-grandes-rasgos	a grandes rasgos	broadly speaking	phrase	Use before a simplified overview.
+B2	respaldo	respaldo	backup / support	noun	Use for a safety copy or institutional backing.
+B2	no-obstante	no obstante	nevertheless	connector	More formal register than sin embargo.
+B2	fallar	fallar	to fail / go wrong	verb	Use for a component or plan breaking down.
+B2	imprevisto	imprevisto	unforeseen issue	noun	Use for something that derails a plan unexpectedly.
+B2	enganoso	engañoso	misleading	adjective	Use for something technically true but deceptive.
+B2	matiz	matiz	nuance	noun	Use for a fine distinction that changes meaning.
+B2	de-entrada	de entrada	from the outset	phrase	Use for something true right from the start.
+B2	dicho-esto	dicho esto	that said	connector	Use to qualify what was just conceded.
+B2	sobre-la-marcha	sobre la marcha	on the fly	phrase	Use for deciding or adjusting while in progress.
+B2	a-su-vez	a su vez	in turn	connector	Use for a chained consequence.
+B2	sesgado	sesgado	biased / skewed	adjective	Use for data or judgment tilted in one direction.
+B2	dar-por-sentado	dar por sentado	to take for granted	phrase	Use for an unexamined assumption.
+B2	salvo-que	salvo que	unless	connector	Takes the subjunctive; use for an exception condition.
+B2	exhaustivo	exhaustivo	thorough / exhaustive	adjective	Use for complete coverage of a space.
+B2	echar-un-vistazo	echar un vistazo	to take a quick look	phrase	Use for a light inspection rather than a full review.
+B2	a-menos-que	a menos que	unless	connector	Takes the subjunctive; slightly more common in speech.
+B2	rentable	rentable	profitable / worthwhile	adjective	Use when the return justifies the cost.
+B2	ponerse-al-dia	ponerse al día	to catch up	phrase	Use for closing a gap in progress or knowledge.
+B2	de-ahi-que	de ahí que	hence / which is why	connector	Takes the subjunctive; introduces a consequence.
+B2	propenso-a	propenso a	prone to	adjective	Use for a tendency toward a failure mode.
+B2	irse-de-las-manos	irse de las manos	to get out of hand	phrase	Use for scope or a problem growing uncontrollably.
+B2	arriesgado	arriesgado	risky	adjective	Use for an option with meaningful downside.
+B2	estar-al-tanto	estar al tanto	to be up to date / aware	phrase	Use for keeping informed about something.
+B2	ambiguo	ambiguo	ambiguous	adjective	Use for something open to more than one reading.
+B2	a-fin-de-cuentas	a fin de cuentas	at the end of the day	phrase	Use before the bottom-line judgment.
+B2	en-su-defecto	en su defecto	failing that	phrase	Use to introduce a fallback option.
+B2	por-defecto	por defecto	by default	phrase	Standard technical term for a default setting.
+B2	a-fondo	a fondo	in depth / thoroughly	phrase	Use for going deep rather than skimming.
+B2	en-adelante	en adelante	from now on	phrase	Use for a rule that applies going forward.
+B2	con-el-tiempo	con el tiempo	over time / eventually	phrase	Use for gradual change across a long horizon.
+B2	hasta-cierto-punto	hasta cierto punto	up to a point	phrase	Use for partial agreement with a limit.
+B2	cargo	cargo	position / charge	noun	
+B2	ambito	ámbito	scope / field	noun	
+B2	dudar	dudar	to doubt	verb	
+B2	acudir	acudir	to go / attend	verb	
+B2	administracion	administración	administration	noun	
+B2	constituir	constituir	to constitute	verb	
+B2	salario	salario	salary	noun	
+B2	beneficio	beneficio	benefit / profit	noun	
+B2	criterio	criterio	criterion / judgment	noun	
+B2	convenir	convenir	to suit / agree	verb	
+B2	caracterizar	caracterizar	to characterize	verb	
+B2	pretender	pretender	to intend / try	verb	
+B2	estrategia	estrategia	strategy	noun	
+B2	convocatoria	convocatoria	call / announcement	noun	
+B2	conciencia	conciencia	conscience / awareness	noun	
+B2	inaugurar	inaugurar	to inaugurate / open	verb	
+B2	factor	factor	factor	noun	
+B2	academico	académico	academic	adjective	
+B2	especifico	específico	specific	adjective	
+B2	labor	labor	work / task	noun	
+B2	revelar	revelar	to reveal	verb	
+B2	asumir	asumir	to assume	verb	
+B2	referencia	referencia	reference	noun	
+B2	regional	regional	regional	adjective	
+B2	reforma	reforma	reform	noun	
+B2	habilidad	habilidad	skill	noun	
+B2	tasa	tasa	rate / fee	noun	
+B2	avance	avance	advance / progress	noun	
+B2	requisito	requisito	requirement	noun	
+B2	voluntad	voluntad	will	noun	
+B2	fase	fase	phase	noun	
+B2	participacion	participación	participation	noun	
+B2	juicio	juicio	trial / judgment	noun	
+B2	masaje	masaje	massage	noun	
+B2	ajedrez	ajedrez	chess	noun	
+B2	sensible	sensible	sensitive	adjective	
+B2	energetico	energético	energy	adjective	
+B2	inferior	inferior	lower / inferior	adjective	
+B2	audiovisual	audiovisual	audiovisual	adjective	
+B2	negociar	negociar	to negotiate	verb	
+B2	operacion	operación	operation	noun	
+B2	percibir	percibir	to perceive / receive	verb	
+B2	impacto	impacto	impact	noun	
+B2	ejercer	ejercer	to exercise / practise	verb	
+B2	convocar	convocar	to summon / call	verb	
+B2	psicologico	psicológico	psychological	adjective	
+B2	conveniente	conveniente	convenient / suitable	adjective	
+B2	acogida	acogida	welcome / reception	noun	
+B2	preciso	preciso	precise / necessary	adjective	
+B2	inversion	inversión	investment	noun	
+B2	rendir	rendir	to yield / perform	verb	
+B2	oficio	oficio	trade / occupation	noun	
+B2	bienestar	bienestar	well-being	noun	
+B2	dialogo	diálogo	dialogue	noun	
+B2	tesis	tesis	thesis	noun	
+B2	chocar	chocar	to crash / clash	verb	
+B2	sugerir	sugerir	to suggest	verb	
+B2	hablante	hablante	speaker	noun	
+B2	acoger	acoger	to welcome / host	verb	
+B2	alternativo	alternativo	alternative	adjective	
+B2	proyectar	proyectar	to project / plan	verb	
+B2	confundir	confundir	to confuse / mistake	verb	
+B2	proposito	propósito	purpose	noun	
+B2	rostro	rostro	face	noun	
+B2	advertir	advertir	to warn / notice	verb	
+B2	conclusion	conclusión	conclusion	noun	
+B2	declaracion	declaración	statement / declaration	noun	
+B2	jurado	jurado	jury	noun	
+B2	dimension	dimensión	dimension	noun	
+B2	citar	citar	to quote / cite	verb	
+B2	nuclear	nuclear	nuclear	adjective	
+B2	acumular	acumular	to accumulate	verb	
+B2	demanda	demanda	demand / lawsuit	noun	
+B2	percepcion	percepción	perception	noun	
+B2	finalidad	finalidad	purpose / aim	noun	
+B2	evolucionar	evolucionar	to evolve	verb	
+B2	optar	optar	to opt / choose	verb	
+B2	congelar	congelar	to freeze	verb	
+B2	competencia	competencia	competence / competition	noun	
+B2	representativo	representativo	representative	adjective	
+B2	pastilla	pastilla	pill / tablet	noun	
+B2	transformacion	transformación	transformation	noun	
+B2	clavar	clavar	to nail / stick	verb	
+B2	arrancar	arrancar	to start / pull out	verb	
+B2	proporcionar	proporcionar	to provide	verb	
+B2	trastorno	trastorno	disorder	noun	
+B2	directivo	directivo	manager / executive	noun	
+B2	reto	reto	challenge	noun	
+B2	reduccion	reducción	reduction	noun	
+B2	orientar	orientar	to guide / orient	verb	
+B2	fotografico	fotográfico	photographic	adjective	
+B2	aula	aula	classroom	noun	
+B2	incorporacion	incorporación	joining / incorporation	noun	
+B2	desigualdad	desigualdad	inequality	noun	
+B2	continuo	continuo	continuous	adjective	
+B2	huerta	huerta	vegetable garden	noun	
+B2	testimonio	testimonio	testimony	noun	
+B2	posesion	posesión	possession	noun	
+B2	instante	instante	instant / moment	noun	
+B2	concebir	concebir	to conceive	verb	
+B2	entidad	entidad	entity / organization	noun	
+B2	intimo	íntimo	intimate / private	adjective	
+B2	latin	latín	Latin	noun	
+B2	colaborador	colaborador	collaborator / contributor	noun	
+B2	ansiedad	ansiedad	anxiety	noun	
+B2	gestionar	gestionar	to manage / handle	verb	
+B2	jubilacion	jubilación	retirement	noun	
+B2	creador	creador	creator	noun	
+B2	consciente	consciente	aware / conscious	adjective	
+B2	compensar	compensar	to compensate	verb	
+B2	burro	burro	donkey	noun	
+B2	gitano	gitano	Gypsy / Romani	noun	
+B2	hundir	hundir	to sink	verb	
+B2	plataforma	plataforma	platform	noun	
+B2	aptitud	aptitud	aptitude	noun	
+B2	bruto	bruto	gross / rough	adjective	
+B2	conformar	conformar	to form / make up	verb	
+B2	prestigio	prestigio	prestige	noun	
+B2	incrementar	incrementar	to increase	verb	
+B2	juntar	juntar	to join / gather	verb	
+B2	mayonesa	mayonesa	mayonnaise	noun	
+B2	aparicion	aparición	appearance	noun	
+B2	haz	haz	beam / bundle	noun	
+B2	apertura	apertura	opening	noun	
+B2	mejora	mejora	improvement	noun	
+B2	intimidad	intimidad	privacy / intimacy	noun	
+B2	gasolina	gasolina	petrol	noun	
+B2	estetica	estética	aesthetics	noun	
+B2	intensidad	intensidad	intensity	noun	
+B2	inmobiliario	inmobiliario	real estate	adjective	
+B2	significativo	significativo	significant	adjective	
+B2	urgencia	urgencia	urgency / emergency	noun	
+B2	emprender	emprender	to undertake / start	verb	
+B2	disparar	disparar	to shoot / fire	verb	
+B2	ceja	ceja	eyebrow	noun	
+B2	fiscal	fiscal	prosecutor / fiscal	adjective	
+B2	capturar	capturar	to capture	verb	
+B2	explosion	explosión	explosion	noun	
+B2	discusion	discusión	discussion / argument	noun	
+B2	intento	intento	attempt	noun	
+B2	boom	boom	boom	noun	
+B2	impulsar	impulsar	to drive / boost	verb	
+B2	atribuir	atribuir	to attribute	verb	
+B2	videojuego	videojuego	video game	noun	
+B2	mamifero	mamífero	mammal	noun	
+B2	padecer	padecer	to suffer	verb	
+B2	inutil	inútil	useless	adjective	
+B2	matricular	matricular	to enrol / register	verb	
+B2	peticion	petición	request	noun	
+B2	intencion	intención	intention	noun	
+B2	expansion	expansión	expansion	noun	
+B2	visible	visible	visible	adjective	
+B2	conservacion	conservación	conservation	noun	
+B2	lucir	lucir	to show off / shine	verb	
+B2	dinamico	dinámico	dynamic	adjective	
+B2	analisis	análisis	analysis	noun	
+B2	reclamacion	reclamación	complaint / claim	noun	
+B2	tumbar	tumbar	to knock down / lie down	verb	
+B2	angel	ángel	angel	noun	
+B2	marketing	marketing	marketing	noun	
+B2	hueso	hueso	bone	noun	
+B2	recurrir	recurrir	to resort / appeal	verb	
+B2	localidad	localidad	town / locality	noun	
+B2	distribucion	distribución	distribution	noun	
+B2	flexibilidad	flexibilidad	flexibility	noun	
+B2	escritorio	escritorio	desk	noun	
+B2	catastrofe	catástrofe	catastrophe	noun	
+B2	vinagre	vinagre	vinegar	noun	
+B2	partir	partir	to split / leave	verb	
+B2	emision	emisión	broadcast / emission	noun	
+B2	tramite	trámite	procedure / paperwork	noun	
+B2	folleto	folleto	brochure / leaflet	noun	
+B2	silencioso	silencioso	silent / quiet	adjective	
+B2	automovil	automóvil	car	noun	
+B2	exceso	exceso	excess	noun	
+B2	registro	registro	record / register	noun	
+B2	integracion	integración	integration	noun	
+B2	residente	residente	resident	noun	
+B2	online	online	online	adverb	
+B2	garantizar	garantizar	to guarantee	verb	
+B2	estirar	estirar	to stretch	verb	
+B2	razonable	razonable	reasonable	adjective	
+B2	financiacion	financiación	financing	noun	
+B2	investigador	investigador	researcher	noun	
+B2	felicitar	felicitar	to congratulate	verb	
+B2	liderar	liderar	to lead	verb	
+B2	cordial	cordial	cordial / warm	adjective	
+B2	aguantar	aguantar	to put up with / hold	verb	
+B2	mercancia	mercancía	goods	noun	
+B2	fragmento	fragmento	fragment	noun	
+B2	negociacion	negociación	negotiation	noun	
+B2	desplazar	desplazar	to move / displace	verb	
+B2	evaluar	evaluar	to evaluate	verb	
+B2	union	unión	union	noun	
+B2	diferenciar	diferenciar	to differentiate	verb	
+B2	promocionar	promocionar	to promote	verb	
+B2	promesa	promesa	promise	noun	
+B2	orientacion	orientación	guidance / orientation	noun	
+B2	amenaza	amenaza	threat	noun	
+B2	introduccion	introducción	introduction	noun	
+B2	refugio	refugio	shelter / refuge	noun	
+B2	pescador	pescador	fisherman	noun	
+B2	inesperado	inesperado	unexpected	adjective	
+B2	asignatura	asignatura	school subject	noun	
+B2	recaudar	recaudar	to collect / raise (funds)	verb	
+B2	estrenar	estrenar	to premiere / use for the first time	verb	
+B2	tejido	tejido	fabric / tissue	noun	
+B2	masculino	masculino	masculine / male	adjective	
+B2	incapaz	incapaz	incapable	adjective	
+B2	prohibicion	prohibición	ban	noun	
+B2	distribuir	distribuir	to distribute	verb	
+B2	concluir	concluir	to conclude	verb	
+B2	garantia	garantía	guarantee / warranty	noun	
+B2	minero	minero	mining / miner	adjective	
+B2	subida	subida	rise / climb	noun	
+B2	manchar	manchar	to stain	verb	
+B2	productivo	productivo	productive	adjective	
+B2	invencion	invención	invention	noun	
+B2	sello	sello	stamp / seal	noun	
+B2	meta	meta	goal	noun	
+B2	realista	realista	realistic	adjective	
+B2	formato	formato	format	noun	
+B2	acelerar	acelerar	to accelerate	verb	
+B2	morder	morder	to bite	verb	
+B2	escurrir	escurrir	to drain / wring out	verb	
+B2	olla	olla	pot	noun	
+B2	rapidez	rapidez	speed	noun	
+B2	defensor	defensor	defender	noun	
+B2	eterno	eterno	eternal	adjective	
+B2	acogedor	acogedor	cosy / welcoming	adjective	
+B2	redactar	redactar	to write / draft	verb	
+B2	tiro	tiro	shot	noun	
+B2	contactar	contactar	to contact	verb	
+B2	fortalecer	fortalecer	to strengthen	verb	
+B2	arrepentir	arrepentir	to regret / repent	verb	
+B2	rumor	rumor	rumour	noun	
+B2	busca	busca	search	noun	
+B2	sospechar	sospechar	to suspect	verb	
+B2	potenciar	potenciar	to boost / strengthen	verb	
+B2	plural	plural	plural	adjective	
+B2	litro	litro	litre	noun	
+B2	cursar	cursar	to study / take (a course)	verb	
+B2	implantar	implantar	to implement / introduce	verb	
+B2	conducta	conducta	behaviour	noun	
+B2	emblematico	emblemático	emblematic / iconic	adjective	
+B2	comedia	comedia	comedy	noun	
+B2	convenio	convenio	agreement	noun	
+B2	sutil	sutil	subtle	adjective	
+B2	utensilio	utensilio	utensil	noun	
+B2	soporte	soporte	support / medium	noun	
+B2	tratado	tratado	treaty	noun	
+B2	toque	toque	touch	noun	
+B2	hormiga	hormiga	ant	noun	
+B2	danar	dañar	to damage / harm	verb	
+B2	efectivo	efectivo	effective / cash	adjective	
+B2	hostal	hostal	hostel / budget hotel	noun	
+B2	interno	interno	internal	adjective	
+B2	incremento	incremento	increase	noun	
+B2	comparacion	comparación	comparison	noun	
+B2	estrategico	estratégico	strategic	adjective	
+B2	cadera	cadera	hip	noun	
+B2	semejante	semejante	similar	adjective	
+B2	gloria	gloria	glory	noun	
+B2	cubierta	cubierta	cover / deck	noun	
+B2	composicion	composición	composition	noun	
+B2	dotar	dotar	to equip / provide	verb	
+B2	disfrute	disfrute	enjoyment	noun	
+B2	concha	concha	shell	noun	
+B2	malestar	malestar	discomfort / unrest	noun	
+B2	bandeja	bandeja	tray	noun	
+B2	aportacion	aportación	contribution	noun	
+B2	convencional	convencional	conventional	adjective	
+B2	permanente	permanente	permanent	adjective	
+B2	congelador	congelador	freezer	noun	
+B2	canario	canario	Canarian	adjective	
+B2	narrar	narrar	to narrate	verb	
+B2	panico	pánico	panic	noun	
+B2	potable	potable	drinkable	adjective	
+B2	innovacion	innovación	innovation	noun	
+B2	sudar	sudar	to sweat	verb	
+B2	trayecto	trayecto	journey / route	noun	
+B2	uy	uy	oops / ouch	phrase	
+B2	miseria	miseria	misery / poverty	noun	
+B2	satisfaccion	satisfacción	satisfaction	noun	
+B2	genetico	genético	genetic	adjective	
+B2	choque	choque	crash / clash	noun	
+B2	formativo	formativo	educational / formative	adjective	
+B2	gramatical	gramatical	grammatical	adjective	
+B2	insecto	insecto	insect	noun	
+B2	redaccion	redacción	writing / editorial staff	noun	
+B2	proclamar	proclamar	to proclaim	verb	
+B2	otorgar	otorgar	to grant / award	verb	
+B2	agresivo	agresivo	aggressive	adjective	
+B2	gerente	gerente	manager	noun	
+B2	agresividad	agresividad	aggressiveness	noun	
+B2	comprador	comprador	buyer	noun	
+B2	terremoto	terremoto	earthquake	noun	
+B2	inseguridad	inseguridad	insecurity	noun	
+B2	adiccion	adicción	addiction	noun	
+B2	insomnio	insomnio	insomnia	noun	
+B2	comercializar	comercializar	to market / commercialize	verb	
+B2	apartar	apartar	to move away / set aside	verb	
+B2	excesivo	excesivo	excessive	adjective	
+B2	popularizar	popularizar	to popularize	verb	
+B2	sociologia	sociología	sociology	noun	
+B2	calmar	calmar	to calm	verb	
+B2	satisfacer	satisfacer	to satisfy	verb	
+B2	criatura	criatura	creature / baby	noun	
+B2	compensacion	compensación	compensation	noun	
+B2	distante	distante	distant	adjective	
+B2	obvio	obvio	obvious	adjective	
+B2	cinturon	cinturón	belt	noun	
+B2	puesta	puesta	setting / laying	noun	
+B2	expedicion	expedición	expedition	noun	
+B2	racional	racional	rational	adjective	
+B2	panel	panel	panel	noun	
+B2	emperador	emperador	emperor	noun	
+B2	herir	herir	to hurt / wound	verb	
+B2	mando	mando	command / remote control	noun	
+B2	plantilla	plantilla	staff / template	noun	
+B2	licenciar	licenciar	to graduate / discharge	verb	
+B2	charla	charla	talk / chat	noun	
+B2	vocacion	vocación	vocation	noun	
+B2	alargar	alargar	to lengthen / extend	verb	
+B2	oposicion	oposición	opposition / civil-service exam	noun	
+B2	novedad	novedad	novelty / news	noun	
+B2	atardecer	atardecer	dusk / sunset	noun	
+B2	castigo	castigo	punishment	noun	
+B2	relevante	relevante	relevant	adjective	
+B2	difusion	difusión	spread / broadcast	noun	
+B2	caldo	caldo	broth	noun	
+B2	perjudicar	perjudicar	to harm	verb	
+B2	rechazo	rechazo	rejection	noun	
+B2	tabla	tabla	table / board	noun	
+B2	derrota	derrota	defeat	noun	
+B2	caida	caída	fall	noun	
+B2	estimulo	estímulo	stimulus	noun	
+B2	geometrico	geométrico	geometric	adjective	
+B2	mitologia	mitología	mythology	noun	
+B2	premiar	premiar	to reward	verb	
+B2	acariciar	acariciar	to caress / stroke	verb	
+B2	advertencia	advertencia	warning	noun	
+B2	encargado	encargado	person in charge	noun	
+B2	enganchar	enganchar	to hook / get hooked	verb	
+B2	interminable	interminable	endless	adjective	
+B2	burlar	burlar	to evade / mock	verb	
+B2	fallecer	fallecer	to pass away	verb	
+B2	figurar	figurar	to appear / figure	verb	
+B2	estanteria	estantería	shelves	noun	
+B2	ubicar	ubicar	to locate / place	verb	
+B2	disponibilidad	disponibilidad	availability	noun	
+B2	convivencia	convivencia	coexistence	noun	
+B2	redactor	redactor	writer / editor	noun	
+B2	perla	perla	pearl	noun	
+B2	frenar	frenar	to brake / stop	verb	
+B2	potencia	potencia	power	noun	
+B2	cinematografico	cinematográfico	film	adjective	
+B2	agradecimiento	agradecimiento	gratitude	noun	
+B2	procurar	procurar	to try / endeavour	verb	
+B2	posar	posar	to pose / rest	verb	
+B2	generalizar	generalizar	to generalize	verb	
+B2	prejuicio	prejuicio	prejudice	noun	
+B2	exigencia	exigencia	demand / requirement	noun	
+B2	importacion	importación	import	noun	
+B2	seguridad-social	seguridad social	social security	noun	
+B2	atun	atún	tuna	noun	
+B2	balon	balón	ball	noun	
+B2	pedalear	pedalear	to pedal	verb	
+B2	favorable	favorable	favourable	adjective	
+B2	elite	élite	elite	noun	
+B2	alertar	alertar	to alert	verb	
+B2	lata	lata	can / tin	noun	
+B2	provecho	provecho	benefit / profit	noun	
+B2	averia	avería	breakdown	noun	
+B2	ingenio	ingenio	wit / ingenuity	noun	
+B2	maquinaria	maquinaria	machinery	noun	
+B2	debajo	debajo	underneath / below	adverb	
+B2	master	máster	master's degree	noun	
+B2	apostar	apostar	to bet	verb	
+B2	preciar	preciar	to value / take pride	verb	
+B2	cerro	cerro	hill	noun	
+B2	fantasia	fantasía	fantasy	noun	
+B2	lema	lema	motto	noun	
+B2	acido	ácido	acid	noun	
+B2	recogida	recogida	collection / pick-up	noun	
+B2	sena	seña	sign / gesture	noun	
+B2	cueva	cueva	cave	noun	
+B2	titulacion	titulación	degree / qualification	noun	
+B2	ciego	ciego	blind	adjective	
+B2	ingenieria	ingeniería	engineering	noun	
+B2	naturalidad	naturalidad	naturalness	noun	
+B2	humedad	humedad	humidity / damp	noun	
+B2	vacante	vacante	vacancy	noun	
+B2	jet	jet	jet	noun	
+B2	precisar	precisar	to specify / need	verb	
+B2	mejilla	mejilla	cheek	noun	
+B2	autoritario	autoritario	authoritarian	adjective	
+B2	liderazgo	liderazgo	leadership	noun	
+B2	remontar	remontar	to overcome / go back up	verb	
+B2	castigar	castigar	to punish	verb	
+B2	desconfianza	desconfianza	distrust	noun	
+B2	ludico	lúdico	playful / recreational	adjective	
+B2	desafio	desafío	challenge	noun	
+B2	decisivo	decisivo	decisive	adjective	
+B2	privilegiar	privilegiar	to privilege / favour	verb	
+B2	afrontar	afrontar	to face / confront	verb	
+B2	ambiental	ambiental	environmental	adjective	
+B2	reposar	reposar	to rest	verb	
+B2	concertar	concertar	to arrange / agree	verb	
+B2	imaginario	imaginario	imaginary	adjective	
+B2	crucero	crucero	cruise	noun	
+B2	realizacion	realización	carrying out / production	noun	
+B2	posada	posada	inn	noun	
+B2	emprendedor	emprendedor	enterprising	adjective	
+B2	caotico	caótico	chaotic	adjective	
+B2	constatar	constatar	to verify / note	verb	
+B2	pedido	pedido	order	noun	
+B2	asesor	asesor	adviser	noun	
+B2	tierno	tierno	tender	adjective	
+B2	imprenta	imprenta	printing house	noun	
+B2	manutencion	manutención	maintenance / upkeep	noun	
+B2	motivacion	motivación	motivation	noun	
+B2	efectuar	efectuar	to carry out	verb	
+B2	todo-lo-contrario	todo lo contrario	quite the opposite	phrase	
+B2	afecto	afecto	affection	noun	
+B2	manual	manual	manual	adjective	
+B2	editor	editor	editor / publisher	noun	
+B2	utilizacion	utilización	use	noun	
+B2	ocupacion	ocupación	occupation	noun	
+B2	renovable	renovable	renewable	adjective	
+B2	mediar	mediar	to mediate	verb	
+B2	vital	vital	vital	adjective	
+B2	tropa	tropa	troop	noun	
+B2	certificado	certificado	certificate	noun	
+B2	inconfundible	inconfundible	unmistakable	adjective	
+B2	futbolista	futbolista	football player	noun	
+B2	cobertura	cobertura	coverage	noun	
+B2	adjuntar	adjuntar	to attach	verb	
+B2	datar	datar	to date (from)	verb	
+B2	atento	atento	attentive	adjective	
+B2	flota	flota	fleet	noun	
+B2	extinguir	extinguir	to extinguish	verb	
+B2	adorno	adorno	decoration	noun	
+B2	coro	coro	choir	noun	
+B2	depositar	depositar	to deposit	verb	
+B2	adicto	adicto	addicted	adjective	
+B2	castillo	castillo	castle	noun	
+B2	zanahoria	zanahoria	carrot	noun	
+B2	originar	originar	to cause / originate	verb	
+B2	amoroso	amoroso	loving	adjective	
+B2	semanal	semanal	weekly	adjective	
+B2	helar	helar	to freeze	verb	
+B2	modalidad	modalidad	type / mode	noun	
+B2	entretenimiento	entretenimiento	entertainment	noun	
+B2	reconstruir	reconstruir	to rebuild	verb	
+B2	electromagnetico	electromagnético	electromagnetic	adjective	
+B2	concretar	concretar	to specify / finalize	verb	
+B2	microondas	microondas	microwave	noun	
+B2	auditorio	auditorio	auditorium	noun	
+B2	inclinar	inclinar	to tilt / lean	verb	
+B2	textil	textil	textile	adjective	
+B2	seducir	seducir	to seduce	verb	
+B2	exportador	exportador	exporter	noun	
+B2	rutina	rutina	routine	noun	
+B2	cortina	cortina	curtain	noun	
+B2	resistente	resistente	resistant	adjective	
+B2	transcurrir	transcurrir	to elapse / go by	verb	
+B2	longitud	longitud	length	noun	
+B2	grifo	grifo	tap	noun	
+B2	porque-noun	porqué	reason / why	noun	
+B2	marinero	marinero	sailor	noun	
+B2	tacto	tacto	touch / tact	noun	
+B2	patin	patín	skate	noun	
+B2	mobiliario	mobiliario	furniture	noun	
+B2	sociologo	sociólogo	sociologist	noun	
+B2	lanzamiento	lanzamiento	launch / throw	noun	
+B2	inquieto	inquieto	restless	adjective	
+B2	sobrar	sobrar	to be left over / be too many	verb	
+B2	filtro	filtro	filter	noun	
+B2	delicia	delicia	delight	noun	
+B2	bancario	bancario	banking	adjective	
+B2	cercania	cercanía	closeness	noun	
+B2	frustracion	frustración	frustration	noun	
+B2	mantenimiento	mantenimiento	maintenance	noun	
+B2	inspiracion	inspiración	inspiration	noun	
+B2	frustrar	frustrar	to frustrate	verb	
+B2	hispanico	hispánico	Hispanic	adjective	
+B2	cucharadita	cucharadita	teaspoon	noun	
+B2	injusto	injusto	unfair	adjective	
+B2	enfriar	enfriar	to cool	verb	
+B2	juzgar	juzgar	to judge	verb	
+B2	peine	peine	comb	noun	
+B2	tarifa	tarifa	rate / fare	noun	
+B2	giro	giro	turn / twist	noun	
+B2	morar	morar	to dwell	verb	
+B2	pizarra	pizarra	blackboard	noun	
+B2	desordenar	desordenar	to mess up	verb	
+B2	emigrar	emigrar	to emigrate	verb	
+B2	complicidad	complicidad	complicity	noun	
+B2	animacion	animación	animation	noun	
+B2	asombro	asombro	amazement	noun	
+B2	alergico	alérgico	allergic	adjective	
+B2	vikingo	vikingo	Viking	noun	
+B2	barbilla	barbilla	chin	noun	
+B2	anaranjado	anaranjado	orange (colour)	adjective	
+B2	sujeto	sujeto	subject / fastened	adjective	
+B2	acercamiento	acercamiento	approach	noun	
+B2	decepcionar	decepcionar	to disappoint	verb	
+B2	autopista	autopista	motorway	noun	
+B2	peaje	peaje	toll	noun	
+B2	fabricante	fabricante	manufacturer	noun	
+B2	curva	curva	curve / bend	noun	
+B2	aristocrata	aristócrata	aristocrat	noun	
+B2	hemisferio	hemisferio	hemisphere	noun	
+B2	indiscriminado	indiscriminado	indiscriminate	adjective	
+B2	cesta	cesta	basket	noun	
+B2	diversion	diversión	fun	noun	
+B2	olvido	olvido	oblivion / forgetting	noun	
+B2	complemento	complemento	complement / accessory	noun	
+B2	clinico	clínico	clinical	adjective	
+B2	salarial	salarial	salary	adjective	
+B2	productividad	productividad	productivity	noun	
+B2	cuota	cuota	fee / quota	noun	
+B2	oracion	oración	sentence / prayer	noun	
+B2	remitir	remitir	to refer / send	verb	
+B2	marear	marear	to make dizzy	verb	
+B2	escoba	escoba	broom	noun	
+B2	consultorio	consultorio	doctor's office / clinic	noun	
+B2	hija	hija	daughter	noun	
+B2	pulsar	pulsar	to press / tap	verb	
+B2	cierre	cierre	closing / closure	noun	
+B2	judia	judía	green bean	noun	
+B2	ranking	ranking	ranking	noun	
+B2	referente	referente	reference point / relating to	noun	
+B2	averiguar	averiguar	to find out	verb	
+B2	acaso	acaso	perhaps / by chance	adverb	
+B2	interpersonal	interpersonal	interpersonal	adjective	
+B2	alpinismo	alpinismo	mountaineering	noun	
+B2	panorama	panorama	outlook / panorama	noun	
+B2	medieval	medieval	medieval	adjective	
+B2	picadillo	picadillo	minced meat / hash	noun	
+B2	admitir	admitir	to admit / accept	verb	
+B2	disculpa	disculpa	apology / excuse	noun	
+B2	someter	someter	to subject / submit	verb	
+B2	subterraneo	subterráneo	underground	adjective	
+B2	cursillo	cursillo	short course	noun	
+B2	cancelar	cancelar	to cancel	verb	
+B2	aburrimiento	aburrimiento	boredom	noun	
+B2	escalar	escalar	to climb / scale	verb	
+B2	consolidar	consolidar	to consolidate	verb	
+B2	votar	votar	to vote	verb	
+B2	perfeccionar	perfeccionar	to perfect / improve	verb	
+B2	originalidad	originalidad	originality	noun	
+B2	sostener	sostener	to hold / support / sustain	verb	
+B2	intermedio	intermedio	intermediate	adjective	
+B2	encargo	encargo	order / errand	noun	
+B2	calabaza	calabaza	pumpkin / squash	noun	
+B2	deteriorar	deteriorar	to deteriorate / damage	verb	
+B2	moral	moral	moral	adjective	
+B2	embarcacion	embarcación	boat / vessel	noun	
+B2	tasca	tasca	tavern / pub	noun	
+B2	idiota	idiota	idiot	adjective	
+B2	galardon	galardón	award / prize	noun	
+B2	contestador	contestador	answering machine	noun	
+B2	machacar	machacar	to crush / pound	verb	
+B2	racismo	racismo	racism	noun	
+B2	bautizar	bautizar	to baptize / christen	verb	
+B2	ensuciar	ensuciar	to dirty / soil	verb	
+B2	cigarro	cigarro	cigar / cigarette	noun	
+B2	expulsar	expulsar	to expel / kick out	verb	
+B2	loteria	lotería	lottery	noun	
+B2	consola	consola	console	noun	
+B2	programacion	programación	programming / scheduling	noun	
+B2	envio	envío	shipment / sending	noun	
+B2	evocar	evocar	to evoke	verb	
+B2	revolver	revolver	to stir / rummage	verb	
+B2	prestigioso	prestigioso	prestigious	adjective	
+B2	gobernar	gobernar	to govern	verb	
+B2	pasa	pasa	raisin	noun	
+B2	celoso	celoso	jealous	adjective	
+B2	agricultor	agricultor	farmer	noun	
+B2	gaditano	gaditano	from Cádiz	adjective	
+B2	colar	colar	to strain / sneak in	verb	
+B2	gorro	gorro	cap / hat	noun	
+B2	anticipar	anticipar	to anticipate / bring forward	verb	
+B2	revolucionar	revolucionar	to revolutionize	verb	
+B2	carbon	carbón	coal / charcoal	noun	
+B2	merced	merced	favor / mercy	noun	
+B2	aguja	aguja	needle	noun	
+B2	desnudar	desnudar	to undress	verb	
+B2	montaje	montaje	assembly / editing	noun	
+B2	hilo	hilo	thread	noun	
+B2	recta	recta	straight line	noun	
+B2	indefinido	indefinido	indefinite	adjective	
+B2	caluroso	caluroso	hot / warm	adjective	
+B2	traficante	traficante	dealer / trafficker	noun	
+B2	magia	magia	magic	noun	
+B2	finanzas	finanzas	finances	noun	
+B2	obsesionar	obsesionar	to obsess	verb	
+B2	parado	parado	unemployed person	noun	
+B2	fundador	fundador	founder	noun	
+B2	restriccion	restricción	restriction	noun	
+B2	residir	residir	to reside	verb	
+B2	facturar	facturar	to invoice / bill	verb	
+B2	pesquero	pesquero	fishing	adjective	
+B2	arco	arco	arch / bow	noun	
+B2	doctorado	doctorado	doctorate / PhD	noun	
+B2	reforzar	reforzar	to reinforce	verb	
+B2	asociacion-colegial	asociación colegial	professional association	noun	
+B2	seductor	seductor	seductive	adjective	
+B2	soltar	soltar	to let go / release	verb	
+B2	eolico	eólico	wind (energy)	adjective	
+B2	chiringuito	chiringuito	beach bar	noun	
+B2	atletico	atlético	athletic	adjective	
+B2	exitoso	exitoso	successful	adjective	
+B2	proyeccion	proyección	projection	noun	
+B2	medioambiental	medioambiental	environmental	adjective	
+B2	majo	majo	nice / lovely	adjective	
+B2	popularidad	popularidad	popularity	noun	
+B2	guindilla	guindilla	chili pepper	noun	
+B2	tira	tira	strip	noun	
+B2	comite	comité	committee	noun	
+B2	estrellar	estrellar	to crash / smash	verb	
+B2	atico	ático	penthouse	noun	
+B2	cuadrar	cuadrar	to add up / fit	verb	
+B2	triunfante	triunfante	triumphant	adjective	
+B2	tablero	tablero	board	noun	
+B2	protestante	protestante	Protestant	adjective	
+B2	guisante	guisante	pea	noun	
+B2	buque	buque	ship / vessel	noun	
+B2	modernizar	modernizar	to modernize	verb	
+B2	trayectoria	trayectoria	career / trajectory	noun	
+B2	lexico	léxico	lexicon / vocabulary	noun	
+B2	extraescolar	extraescolar	extracurricular	adjective	
+B2	piloto	piloto	pilot	noun	
+B2	claustro	claustro	cloister / faculty	noun	
+B2	cubista	cubista	cubist	adjective	
+B2	ridiculo	ridículo	ridiculous	adjective	
+B2	establecimiento	establecimiento	establishment	noun	
+B2	fregar	fregar	to scrub / wash dishes	verb	
+B2	creyente	creyente	believer	noun	
+B2	cineasta	cineasta	filmmaker	noun	
+B2	rambla	rambla	boulevard / dry riverbed	noun	
+B2	ruego	ruego	plea / request	noun	
+B2	suspirar	suspirar	to sigh	verb	
+B2	cigarrillo	cigarrillo	cigarette	noun	
+B2	colonizador	colonizador	colonizer	noun	
+B2	obesidad	obesidad	obesity	noun	
+B2	residencial	residencial	residential	adjective	
+B2	charco	charco	puddle	noun	
+B2	inodoro	inodoro	toilet	noun	
+B2	maravillar	maravillar	to amaze	verb	
+B2	infinito	infinito	infinite	adjective	
+B2	centenario	centenario	centenary / hundred-year-old	adjective	
+B2	blog	blog	blog	noun	
+B2	presentador	presentador	presenter / host	noun	
+B2	leccion	lección	lesson	noun	
+B2	quieto	quieto	still / motionless	adjective	
+B2	castano	castaño	brown / chestnut	adjective	
+B2	antelacion	antelación	advance notice	noun	
+B2	baston	bastón	walking stick / cane	noun	
+B2	acertar	acertar	to get right / guess right	verb	
+B2	llano	llano	flat / plain	adjective	
+B2	susurrar	susurrar	to whisper	verb	
+B2	carniceria	carnicería	butcher shop	noun	
+B2	estar-de-moda	estar de moda	to be in fashion	phrase	
+B2	empatar	empatar	to draw / tie	verb	
+B2	rubia	rubia	blonde	noun	
+B2	expatriado	expatriado	expatriate	noun	
+B2	electoral	electoral	electoral	adjective	
+B2	estudioso	estudioso	studious	adjective	
+B2	colono	colono	settler	noun	
+B2	mansion	mansión	mansion	noun	
+B2	subvencion	subvención	subsidy / grant	noun	
+B2	coordinador	coordinador	coordinator	noun	
+B2	relativo	relativo	relative / related	adjective	
+B2	tropezar	tropezar	to trip / stumble	verb	
+B2	yuca	yuca	cassava	noun	
+B2	delincuente	delincuente	criminal / offender	noun	
+B2	ganador	ganador	winner	noun	
+B2	cicatriz	cicatriz	scar	noun	
+B2	madrugada	madrugada	early morning	noun	
+B2	constructor	constructor	builder	noun	
+B2	bailaor	bailaor	flamenco dancer	noun	
+B2	grabacion	grabación	recording	noun	
+B2	subjuntivo	subjuntivo	subjunctive	noun	
+B2	patologia	patología	pathology	noun	
+B2	afroamericano	afroamericano	African American	noun	
+B2	nordico	nórdico	Nordic	adjective	
+B2	estafar	estafar	to swindle / con	verb	
+B2	paralizar	paralizar	to paralyze	verb	
+B2	pedagogo	pedagogo	educator / pedagogue	noun	
+B2	carecer	carecer	to lack	verb	
+B2	leve	leve	slight / minor	adjective	
+B2	manga	manga	sleeve	noun	
+B2	acueducto	acueducto	aqueduct	noun	
+B2	devoto	devoto	devout	adjective	
+B2	temperamento	temperamento	temperament	noun	
+B2	flexionar	flexionar	to bend / flex	verb	
+B2	asalariado	asalariado	employee / wage earner	noun	
+C1	mosca	mosca	fly	noun	
+C1	deuda	deuda	debt	noun	
+C1	matricula	matrícula	enrollment / license plate	noun	
+C1	murcielago	murciélago	bat	noun	
+C1	delito	delito	crime / offense	noun	
+C1	elaboracion	elaboración	preparation / production	noun	
+C1	emocional	emocional	emotional	adjective	
+C1	era	era	era / age	noun	
+C1	gallo	gallo	rooster	noun	
+C1	oido	oído	ear / hearing	noun	
+C1	experimento	experimento	experiment	noun	
+C1	delicado	delicado	delicate	adjective	
+C1	detectar	detectar	to detect	verb	
+C1	juez	juez	judge	noun	
+C1	cirugia	cirugía	surgery	noun	
+C1	cooperativa	cooperativa	cooperative	noun	
+C1	locura	locura	madness	noun	
+C1	celo	celo	zeal / heat (animals)	noun	
+C1	alergia	alergia	allergy	noun	
+C1	relatar	relatar	to recount / narrate	verb	
+C1	cortesia	cortesía	courtesy	noun	
+C1	perdida	pérdida	loss	noun	
+C1	liberal	liberal	liberal	adjective	
+C1	equivaler	equivaler	to be equivalent	verb	
+C1	padrino	padrino	godfather / best man	noun	
+C1	renta	renta	income / rent	noun	
+C1	variable	variable	variable	adjective	
+C1	condenar	condenar	to condemn / sentence	verb	
+C1	abanico	abanico	fan	noun	
+C1	angustia	angustia	anguish	noun	
+C1	contradiccion	contradicción	contradiction	noun	
+C1	almendra	almendra	almond	noun	
+C1	vocal	vocal	vowel	noun	
+C1	renovar	renovar	to renew	verb	
+C1	complementario	complementario	complementary	adjective	
+C1	reflexion	reflexión	reflection	noun	
+C1	navaja	navaja	pocketknife / razor	noun	
+C1	ahogar	ahogar	to drown / choke	verb	
+C1	sexual	sexual	sexual	adjective	
+C1	sacerdote	sacerdote	priest	noun	
+C1	indemnizacion	indemnización	compensation	noun	
+C1	potencial	potencial	potential	noun	
+C1	singular	singular	singular / unique	adjective	
+C1	estallar	estallar	to explode / burst	verb	
+C1	sensibilidad	sensibilidad	sensitivity	noun	
+C1	adolescencia	adolescencia	adolescence	noun	
+C1	mosquito	mosquito	mosquito	noun	
+C1	prision	prisión	prison	noun	
+C1	denuncia	denuncia	complaint / report	noun	
+C1	constar	constar	to be recorded / consist of	verb	
+C1	optimismo	optimismo	optimism	noun	
+C1	golpear	golpear	to hit / strike	verb	
+C1	competitivo	competitivo	competitive	adjective	
+C1	zoo	zoo	zoo	noun	
+C1	deposito	depósito	deposit / tank	noun	
+C1	modificar	modificar	to modify	verb	
+C1	confuso	confuso	confusing / confused	adjective	
+C1	masivo	masivo	massive / mass	adjective	
+C1	ausencia	ausencia	absence	noun	
+C1	televisivo	televisivo	television (adj.)	adjective	
+C1	marina	marina	navy / marina	noun	
+C1	intervencion	intervención	intervention	noun	
+C1	perspectiva	perspectiva	perspective	noun	
+C1	foca	foca	seal	noun	
+C1	disciplina	disciplina	discipline	noun	
+C1	rebajar	rebajar	to lower / reduce	verb	
+C1	revelacion	revelación	revelation	noun	
+C1	beneficiar	beneficiar	to benefit	verb	
+C1	episodio	episodio	episode	noun	
+C1	operar	operar	to operate	verb	
+C1	igualdad	igualdad	equality	noun	
+C1	celula	célula	cell	noun	
+C1	compuesto	compuesto	compound	noun	
+C1	fotografiar	fotografiar	to photograph	verb	
+C1	propiciar	propiciar	to foster / bring about	verb	
+C1	arruga	arruga	wrinkle	noun	
+C1	esencia	esencia	essence	noun	
+C1	documentacion	documentación	documentation	noun	
+C1	caramelo	caramelo	candy	noun	
+C1	vicio	vicio	vice / bad habit	noun	
+C1	estadio	estadio	stadium	noun	
+C1	empenar	empeñar	to pawn / insist	verb	
+C1	paterno	paterno	paternal	adjective	
+C1	radical	radical	radical	adjective	
+C1	decena	decena	ten / about ten	noun	
+C1	creciente	creciente	growing	adjective	
+C1	agravar	agravar	to worsen	verb	
+C1	bachillerato	bachillerato	high school / sixth form	noun	
+C1	calculo	cálculo	calculation	noun	
+C1	brecha	brecha	gap / breach	noun	
+C1	tribunal	tribunal	court	noun	
+C1	cuestionar	cuestionar	to question	verb	
+C1	desempenar	desempeñar	to perform / carry out	verb	
+C1	finalizar	finalizar	to finish	verb	
+C1	lesion	lesión	injury	noun	
+C1	sufrimiento	sufrimiento	suffering	noun	
+C1	espiritual	espiritual	spiritual	adjective	
+C1	biologia	biología	biology	noun	
+C1	hipotesis	hipótesis	hypothesis	noun	
+C1	trazo	trazo	stroke / line	noun	
+C1	desplazamiento	desplazamiento	movement / displacement	noun	
+C1	desempleo	desempleo	unemployment	noun	
+C1	contabilidad	contabilidad	accounting	noun	
+C1	abundante	abundante	abundant	adjective	
+C1	simpatia	simpatía	charm / sympathy	noun	
+C1	racion	ración	portion / serving	noun	
+C1	acero	acero	steel	noun	
+C1	iberoamericano	iberoamericano	Ibero-American	adjective	
+C1	logica	lógica	logic	noun	
+C1	caracol	caracol	snail	noun	
+C1	cesar	cesar	to cease / stop	verb	
+C1	argumentar	argumentar	to argue	verb	
+C1	normativa	normativa	regulations / rules	noun	
+C1	burbuja	burbuja	bubble	noun	
+C1	dosis	dosis	dose	noun	
+C1	expulsion	expulsión	expulsion	noun	
+C1	apto	apto	suitable / fit	adjective	
+C1	malentendido	malentendido	misunderstanding	noun	
+C1	audiencia	audiencia	audience / hearing	noun	
+C1	lince	lince	lynx	noun	
+C1	flotar	flotar	to float	verb	
+C1	pase	pase	pass	noun	
+C1	modernidad	modernidad	modernity	noun	
+C1	teletrabajo	teletrabajo	remote work	noun	
+C1	agresion	agresión	aggression / attack	noun	
+C1	varon	varón	male / man	noun	
+C1	peculiar	peculiar	peculiar	adjective	
+C1	expectativa	expectativa	expectation	noun	
+C1	apoderar	apoderar	to empower / authorize	verb	
+C1	lamentar	lamentar	to regret / lament	verb	
+C1	visual	visual	visual	adjective	
+C1	fertil	fértil	fertile	adjective	
+C1	notable	notable	notable	adjective	
+C1	restauracion	restauración	restoration / catering	noun	
+C1	bienal	bienal	biennial	noun	
+C1	danza-folclorica	danza folclórica	folk dance	noun	
+C1	marinar	marinar	to marinate	verb	
+C1	predecir	predecir	to predict	verb	
+C1	rabo	rabo	tail	noun	
+C1	prestamo	préstamo	loan	noun	
+C1	proveniente	proveniente	coming from	adjective	
+C1	cooperacion	cooperación	cooperation	noun	
+C1	acentuar	acentuar	to accentuate / stress	verb	
+C1	clasificar	clasificar	to classify	verb	
+C1	resistencia	resistencia	resistance	noun	
+C1	azar	azar	chance / luck	noun	
+C1	instinto	instinto	instinct	noun	
+C1	hueco	hueco	gap / hollow	noun	
+C1	forzar	forzar	to force	verb	
+C1	movilidad	movilidad	mobility	noun	
+C1	prestacion	prestación	benefit / service	noun	
+C1	asentar	asentar	to settle / establish	verb	
+C1	presidir	presidir	to preside over	verb	
+C1	drama	drama	drama	noun	
+C1	contable	contable	accounting (adj.)	adjective	
+C1	distraer	distraer	to distract	verb	
+C1	multiplicar	multiplicar	to multiply	verb	
+C1	trepar	trepar	to climb	verb	
+C1	fotocopia	fotocopia	photocopy	noun	
+C1	ruptura	ruptura	break / breakup	noun	
+C1	introvertido	introvertido	introverted	adjective	
+C1	traductor	traductor	translator	noun	
+C1	barrera	barrera	barrier	noun	
+C1	encajar	encajar	to fit	verb	
+C1	sobrepasar	sobrepasar	to exceed	verb	
+C1	perseguir	perseguir	to chase / pursue	verb	
+C1	ocasionar	ocasionar	to cause	verb	
+C1	conllevar	conllevar	to entail	verb	
+C1	coma	coma	comma / coma	noun	
+C1	oveja	oveja	sheep	noun	
+C1	ignorar	ignorar	to ignore	verb	
+C1	mero	mero	mere	adjective	
+C1	demandar	demandar	to sue / demand	verb	
+C1	implantacion	implantación	implementation / introduction	noun	
+C1	sonoro	sonoro	sound (adj.) / resonant	adjective	
+C1	infidelidad	infidelidad	infidelity	noun	
+C1	eclipse	eclipse	eclipse	noun	
+C1	obedecer	obedecer	to obey	verb	
+C1	eficacia	eficacia	effectiveness	noun	
+C1	banquete	banquete	banquet / feast	noun	
+C1	virtud	virtud	virtue	noun	
+C1	minoria	minoría	minority	noun	
+C1	pacto	pacto	pact / deal	noun	
+C1	abordar	abordar	to tackle / approach	verb	
+C1	suelto	suelto	loose	adjective	
+C1	queja	queja	complaint	noun	
+C1	organo	órgano	organ	noun	
+C1	calificar	calificar	to rate / grade	verb	
+C1	profundidad	profundidad	depth	noun	
+C1	enunciado	enunciado	statement / wording	noun	
+C1	coordinar	coordinar	to coordinate	verb	
+C1	arder	arder	to burn	verb	
+C1	manejo	manejo	handling / use	noun	
+C1	cima	cima	summit / peak	noun	
+C1	presidencia	presidencia	presidency	noun	
+C1	semestre	semestre	semester	noun	
+C1	granada	granada	pomegranate / grenade	noun	
+C1	etico	ético	ethical	adjective	
+C1	sabana	sábana	bed sheet	noun	
+C1	reproducir	reproducir	to reproduce / play	verb	
+C1	dramatico	dramático	dramatic	adjective	
+C1	cria	cría	young animal / breeding	noun	
+C1	alterar	alterar	to alter / upset	verb	
+C1	tonelada	tonelada	ton	noun	
+C1	globalizacion	globalización	globalization	noun	
+C1	maritimo	marítimo	maritime	adjective	
+C1	oscuridad	oscuridad	darkness	noun	
+C1	pertenencia	pertenencia	belonging / membership	noun	
+C1	atentado	atentado	attack / attempt	noun	
+C1	respecto	respecto	regarding / respect	noun	
+C1	judicial	judicial	judicial	adjective	
+C1	inexistente	inexistente	nonexistent	adjective	
+C1	comprension	comprensión	understanding	noun	
+C1	insolito	insólito	unusual	adjective	
+C1	apartado	apartado	section	noun	
+C1	tragar	tragar	to swallow	verb	
+C1	conflictivo	conflictivo	troublesome / conflictive	adjective	
+C1	acomodar	acomodar	to accommodate	verb	
+C1	emborrachar	emborrachar	to get drunk	verb	
+C1	antipatico	antipático	unpleasant / disagreeable	adjective	
+C1	planear	planear	to plan	verb	
+C1	pactar	pactar	to agree / make a deal	verb	
+C1	explotar	explotar	to explode / exploit	verb	
+C1	despido	despido	dismissal / firing	noun	
+C1	apariencia	apariencia	appearance	noun	
+C1	concepcion	concepción	conception	noun	
+C1	extenso	extenso	extensive	adjective	
+C1	etiqueta	etiqueta	label / tag	noun	
+C1	lima	lima	lime	noun	
+C1	destruccion	destrucción	destruction	noun	
+C1	conde	conde	count	noun	
+C1	posterior	posterior	later / subsequent	adjective	
+C1	cemento	cemento	cement	noun	
+C1	foco	foco	spotlight / focus	noun	
+C1	agudo	agudo	sharp / acute	adjective	
+C1	conejo	conejo	rabbit	noun	
+C1	mafia	mafia	mafia	noun	
+C1	ansioso	ansioso	anxious	adjective	
+C1	ole	ole	bravo / olé	phrase	
+C1	codo	codo	elbow	noun	
+C1	evidenciar	evidenciar	to demonstrate / make evident	verb	
+C1	pasivo	pasivo	passive	adjective	
+C1	sigla	sigla	acronym	noun	
+C1	frecuentar	frecuentar	to frequent	verb	
+C1	experimental	experimental	experimental	adjective	
+C1	cuerno	cuerno	horn	noun	
+C1	presumir	presumir	to show off / presume	verb	
+C1	presionar	presionar	to pressure / press	verb	
+C1	remar	remar	to row	verb	
+C1	nuez	nuez	walnut / nut	noun	
+C1	maquillaje	maquillaje	makeup	noun	
+C1	explotacion	explotación	exploitation / operation	noun	
+C1	catalogo	catálogo	catalog	noun	
+C1	lagarto	lagarto	lizard	noun	
+C1	inyeccion	inyección	injection	noun	
+C1	nata	nata	cream	noun	
+C1	tentacion	tentación	temptation	noun	
+C1	peca	peca	freckle	noun	
+C1	insulto	insulto	insult	noun	
+C1	penicilina	penicilina	penicillin	noun	
+C1	fisica	física	physics	noun	
+C1	exilio	exilio	exile	noun	
+C1	vapor	vapor	steam / vapor	noun	
+C1	toser	toser	to cough	verb	
+C1	transicion	transición	transition	noun	
+C1	financiar	financiar	to finance	verb	
+C1	enhorabuena	enhorabuena	congratulations	phrase	
+C1	provincial	provincial	provincial	adjective	
+C1	excepcion	excepción	exception	noun	
+C1	irregular	irregular	irregular	adjective	
+C1	integral	integral	comprehensive / whole	adjective	
+C1	orgullo	orgullo	pride	noun	
+C1	humo	humo	smoke	noun	
+C1	examinar	examinar	to examine	verb	
+C1	tertulia	tertulia	discussion group / social gathering	noun	
+C1	aspirar	aspirar	to aspire / inhale	verb	
+C1	controversia	controversia	controversy	noun	
+C1	determinante	determinante	decisive	adjective	
+C1	travieso	travieso	mischievous	adjective	
+C1	nave	nave	ship / warehouse	noun	
+C1	sistematico	sistemático	systematic	adjective	
+C1	mosaico	mosaico	mosaic	noun	
+C1	independizar	independizar	to become independent	verb	
+C1	hosteleria	hostelería	hospitality industry	noun	
+C1	iniciacion	iniciación	initiation	noun	
+C1	barbacoa	barbacoa	barbecue	noun	
+C1	rellenar	rellenar	to fill in / stuff	verb	
+C1	pasteleria	pastelería	pastry shop	noun	
+C1	viceversa	viceversa	vice versa	adverb	
+C1	justificar	justificar	to justify	verb	
+C1	reptil	reptil	reptile	noun	
+C1	mayoritario	mayoritario	majority (adj.)	adjective	
+C1	heredar	heredar	to inherit	verb	
+C1	talon	talón	heel	noun	
+C1	intacto	intacto	intact	adjective	
+C1	agrupar	agrupar	to group	verb	
+C1	instintivo	instintivo	instinctive	adjective	
+C1	aceptacion	aceptación	acceptance	noun	
+C1	dependencia	dependencia	dependence	noun	
+C1	pronunciacion	pronunciación	pronunciation	noun	
+C1	antioxidante	antioxidante	antioxidant	adjective	
+C1	vinculo	vínculo	link / bond	noun	
+C1	ballet	ballet	ballet	noun	
+C1	complice	cómplice	accomplice	noun	
+C1	quebrar	quebrar	to break / go bankrupt	verb	
+C1	observatorio	observatorio	observatory	noun	
+C1	continuidad	continuidad	continuity	noun	
+C1	carencia	carencia	lack / shortage	noun	
+C1	placido	plácido	placid / calm	adjective	
+C1	normalidad	normalidad	normality	noun	
+C1	impulso	impulso	impulse / boost	noun	
+C1	inmueble	inmueble	property / building	noun	
+C1	autorizar	autorizar	to authorize	verb	
+C1	solear	solear	to sun	verb	
+C1	rutinario	rutinario	routine	adjective	
+C1	extrovertido	extrovertido	extroverted	adjective	
+C1	portar	portar	to carry	verb	
+C1	problematico	problemático	problematic	adjective	
+C1	utilidad	utilidad	usefulness / utility	noun	
+C1	restar	restar	to subtract	verb	
+C1	egipcio	egipcio	Egyptian	adjective	
+C1	fusionar	fusionar	to merge	verb	
+C1	ballena	ballena	whale	noun	
+C1	denotar	denotar	to denote	verb	
+C1	amabilidad	amabilidad	kindness	noun	
+C1	rondar	rondar	to prowl / hang around	verb	
+C1	procedimiento	procedimiento	procedure	noun	
+C1	zorro	zorro	fox	noun	
+C1	semaforo	semáforo	traffic light	noun	
+C1	ambicion	ambición	ambition	noun	
+C1	ascender	ascender	to rise / be promoted	verb	
+C1	olimpiada	olimpiada	Olympics	noun	
+C1	existente	existente	existing	adjective	
+C1	desbordar	desbordar	to overflow	verb	
+C1	aliento	aliento	breath	noun	
+C1	instantaneo	instantáneo	instant	adjective	
+C1	lazo	lazo	bow / tie	noun	
+C1	tragico	trágico	tragic	adjective	
+C1	enfasis	énfasis	emphasis	noun	
+C1	escandalo	escándalo	scandal	noun	
+C1	exigente	exigente	demanding	adjective	
+C1	reproduccion	reproducción	reproduction	noun	
+C1	remunerar	remunerar	to pay / remunerate	verb	
+C1	equipar	equipar	to equip	verb	
+C1	urbanistico	urbanístico	urban planning (adj.)	adjective	
+C1	escoces	escocés	Scottish	adjective	
+C1	acreditar	acreditar	to accredit / prove	verb	
+C1	vertigo	vértigo	vertigo / dizziness	noun	
+C1	suceso	suceso	event / incident	noun	
+C1	clavo	clavo	nail	noun	
+C1	guardian	guardián	guardian	noun	
+C1	diferir	diferir	to differ / postpone	verb	
+C1	confeccionar	confeccionar	to make / prepare	verb	
+C1	dinamica	dinámica	dynamics	noun	
+C1	convencion	convención	convention	noun	
+C1	arrojar	arrojar	to throw / hurl	verb	
+C1	bautizo	bautizo	baptism / christening	noun	
+C1	mortal	mortal	mortal / deadly	adjective	
+C1	caprichoso	caprichoso	capricious / whimsical	adjective	
+C1	coronar	coronar	to crown	verb	
+C1	peregrinacion	peregrinación	pilgrimage	noun	
+C1	captar	captar	to capture / grasp	verb	
+C1	cristianismo	cristianismo	Christianity	noun	
+C1	multiple	múltiple	multiple	adjective	
+C1	compositor	compositor	composer	noun	
+C1	caudillo	caudillo	leader / warlord	noun	
+C1	adquisicion	adquisición	acquisition	noun	
+C1	asco	asco	disgust	noun	
+C1	perteneciente	perteneciente	belonging	adjective	
+C1	sidra	sidra	cider	noun	
+C1	especificar	especificar	to specify	verb	
+C1	excelencia	excelencia	excellence	noun	
+C1	masticar	masticar	to chew	verb	
+C1	humilde	humilde	humble	adjective	
+C1	sublevar	sublevar	to rise up / incite to revolt	verb	
+C1	domino	dominó	dominoes	noun	
+C1	detestar	detestar	to detest	verb	
+C1	ciclista	ciclista	cyclist	noun	
+C1	sospecha	sospecha	suspicion	noun	
+C1	temor	temor	fear	noun	
+C1	recetar	recetar	to prescribe	verb	
+C1	envasar	envasar	to package / can	verb	
+C1	entranable	entrañable	endearing / dear	adjective	
+C1	cocodrilo	cocodrilo	crocodile	noun	
+C1	tardo	tardo	slow / late	adjective	
+C1	dictador	dictador	dictator	noun	
+C1	poetisa	poetisa	poetess	noun	
+C1	veterinario	veterinario	vet / veterinarian	noun	
+C1	economista	economista	economist	noun	
+C1	asesorar	asesorar	to advise	verb	
+C1	doloroso	doloroso	painful	adjective	
+C1	amasar	amasar	to knead	verb	
+C1	florecer	florecer	to bloom / flourish	verb	
+C1	indignar	indignar	to outrage	verb	
+C1	franquismo	franquismo	Francoism	noun	
+C1	islamico	islámico	Islamic	adjective	
+C1	voseo	voseo	voseo (use of vos)	noun	
+C1	notario	notario	notary	noun	
+C1	sauna	sauna	sauna	noun	
+C1	radiacion	radiación	radiation	noun	
+C1	prolongar	prolongar	to prolong	verb	
+C1	exceder	exceder	to exceed	verb	
+C1	alabar	alabar	to praise	verb	
+C1	formulario	formulario	form	noun	
+C1	autorretrato	autorretrato	self-portrait	noun	
+C1	irresponsable	irresponsable	irresponsible	noun	
+C1	rascar	rascar	to scratch	verb	
+C1	onda	onda	wave	noun	
+C1	agregar	agregar	to add	verb	
+C1	librar	librar	to free / spare	verb	
+C1	eliminacion	eliminación	elimination	noun	
+C1	probabilidad	probabilidad	probability	noun	
+C1	infierno	infierno	hell	noun	
+C1	mecanismo	mecanismo	mechanism	noun	
+C1	tematica	temática	theme / subject matter	noun	
+C1	melodia	melodía	melody	noun	
+C1	reemplazar	reemplazar	to replace	verb	
+C1	sociologico	sociológico	sociological	adjective	
+C1	recortar	recortar	to cut / trim	verb	
+C1	alucinar	alucinar	to hallucinate / be amazed	verb	
+C1	romance	romance	romance / ballad	noun	
+C1	prometido	prometido	fiancé / engaged	noun	
+C1	paga	paga	pay / allowance	noun	
+C1	indiscreto	indiscreto	indiscreet	adjective	
+C1	entrevistador	entrevistador	interviewer	noun	
+C1	consecutivo	consecutivo	consecutive	adjective	
+C1	adrenalina	adrenalina	adrenaline	noun	
+C1	bilingue	bilingüe	bilingual	adjective	
+C1	dibujante	dibujante	illustrator / cartoonist	noun	
+C1	transparencia	transparencia	transparency	noun	
+C1	localizacion	localización	location	noun	
+C1	asignar	asignar	to assign	verb	
+C1	aprovechamiento	aprovechamiento	use / exploitation	noun	
+C1	aprobacion	aprobación	approval	noun	
+C1	abundar	abundar	to abound	verb	
+C1	reivindicar	reivindicar	to claim / demand	verb	
+C1	historiador	historiador	historian	noun	
+C1	ampliacion	ampliación	expansion / extension	noun	
+C1	bandoneon	bandoneón	bandoneon	noun	
+C1	calcetin	calcetín	sock	noun	
+C1	filial	filial	subsidiary	noun	
+C1	teorico	teórico	theoretical	adjective	
+C1	esquema	esquema	outline / diagram	noun	
+C1	clientela	clientela	clientele	noun	
+C1	paranormal	paranormal	paranormal	adjective	
+C1	estricto	estricto	strict	adjective	
+C1	torcer	torcer	to twist	verb	
+C1	principiante	principiante	beginner	noun	
+C1	virus	virus	virus	noun	
+C1	trago	trago	drink / swig	noun	
+C1	legado	legado	legacy	noun	
+C1	resaltar	resaltar	to highlight / stand out	verb	
+C1	aspiracion	aspiración	aspiration	noun	
+C1	protagonismo	protagonismo	prominence / leading role	noun	
+C1	precaucion	precaución	caution	noun	
+C1	exhibir	exhibir	to exhibit / display	verb	
+C1	celeste	celeste	sky-blue / heavenly	adjective	
+C1	accesible	accesible	accessible	adjective	
+C1	etnia	etnia	ethnic group	noun	
+C1	sobresaliente	sobresaliente	outstanding	adjective	
+C1	interactivo	interactivo	interactive	adjective	
+C1	conac	coñac	cognac	noun	
+C1	interactuar	interactuar	to interact	verb	
+C1	ladera	ladera	hillside	noun	
+C1	estandar	estándar	standard	noun	
+C1	visigodo	visigodo	Visigothic	adjective	
+C1	restante	restante	remaining	adjective	
+C1	totalidad	totalidad	entirety	noun	
+C1	ceder	ceder	to give way / yield	verb	
+C1	debatir	debatir	to debate	verb	
+C1	imputar	imputar	to charge / attribute	verb	
+C1	acusacion	acusación	accusation	noun	
+C1	progenitor	progenitor	parent	noun	
+C1	extra	extra	extra	adjective	
+C1	prediccion	predicción	prediction	noun	
+C1	novedoso	novedoso	novel / new	adjective	
+C1	mentar	mentar	to mention	verb	
+C1	escandinavo	escandinavo	Scandinavian	adjective	
+C1	escasez	escasez	shortage	noun	
+C1	fanatico	fanático	fanatic	noun	
+C1	euforia	euforia	euphoria	noun	
+C1	sabio	sabio	wise person / sage	noun	
+C1	llanto	llanto	crying / weeping	noun	
+C1	bromear	bromear	to joke	verb	
+C1	marroqui	marroquí	Moroccan	adjective	
+C1	sustentar	sustentar	to support / sustain	verb	
+C1	ovni	ovni	UFO	noun	
+C1	patronal	patronal	employers' / employer (adj.)	adjective	
+C1	consejero	consejero	adviser / councillor	noun	
+C1	envoltorio	envoltorio	wrapper	noun	
+C1	cometa	cometa	kite / comet	noun	
+C1	modificacion	modificación	modification	noun	
+C1	farmaco	fármaco	drug / medication	noun	
+C1	fraude	fraude	fraud	noun	
+C1	abuso	abuso	abuse	noun	
+C1	sindical	sindical	union (adj.)	adjective	
+C1	indiferente	indiferente	indifferent	adjective	
+C1	adjunto	adjunto	attached / assistant	adjective	
+C1	auxiliar	auxiliar	assistant / auxiliary	noun	
+C1	maltratar	maltratar	to mistreat	verb	
+C1	mediador	mediador	mediator	noun	
+C1	armadillo	armadillo	armadillo	noun	
+C1	alcaldia	alcaldía	mayor's office	noun	
+C1	cruel	cruel	cruel	adjective	
+C1	gala	gala	gala	noun	
+C1	tercero	tercero	third	noun	
+C1	encabezar	encabezar	to head / lead	verb	
+C1	lamentable	lamentable	regrettable / unfortunate	adjective	
+C1	hotelero	hotelero	hotel (adj.)	adjective	
+C1	hebreo	hebreo	Hebrew	adjective	
+C1	perjuicio	perjuicio	harm / damage	noun	

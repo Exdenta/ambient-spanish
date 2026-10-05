@@ -1,0 +1,15 @@
+The vocabulary data in this directory (lexicon.tsv, excluded.tsv) is derived
+from ELELex, part of the CEFRLex project (CENTAL, Université catholique de
+Louvain): https://cental.uclouvain.be/cefrlex/elelex/
+
+ELELex is licensed under the Creative Commons Attribution-NonCommercial-
+ShareAlike 4.0 International License, and so is this derived data:
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Changes from ELELex: lemmas filtered to content words, assigned a single CEFR
+level from per-level document counts, merged with this project's curated
+curriculum and a hand-picked A0 set, and given English glosses and
+parts of speech written for this project.
+
+The A0 list (a0.txt) and the rest of this repository's code are under the MIT
+licence in the repository root.
