@@ -9,6 +9,10 @@ Learn Spanish by reading your normal AI-assistant replies. The assistant swaps a
 The build is listo. Let me buscar the failing test and evitar (to avoid) the old cache.
 ```
 
+![A Claude Code reply with known Spanish words underlined; hovering "cerrar" shows "cerrar = to close" above the prompt](docs/hover-demo.gif)
+
+<sub>Known words are underlined by the optional [hover mod](#hover-translations-claude-code); hover one to see its English. [MP4](docs/hover-demo.mp4)</sub>
+
 | Tier | What it is | How it appears |
 | --- | --- | --- |
 | `known` | words unlocked so far (your level's words at the start, growing over time) | bare Spanish, no gloss |
