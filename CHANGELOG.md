@@ -12,7 +12,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - `/ambient-spanish-setup` guided setup for Claude Code, and `scripts/install.py` for linking the skills into Claude Code or Codex, the hover mod, and the run-every-reply rule, installed together in one step (`--scope local` keeps the rule to one project).
 - `ambient-spanish-vocab` skill for placement checks and vocabulary changes.
 - `ambient-spanish-hover` Claude Code mod: underlines vocabulary words in replies and shows the English in a row above the prompt on hover.
-- The mod redraws headings, quotes, links, rules and code lines so they stay hoverable.
+- The mod only redraws paragraphs that contain a vocabulary word (headings, quotes, links, bold, italics and strikethrough included). Paragraphs without one, fenced code (with its language, so it is highlighted) and tables are drawn by Claude Code itself, so replies keep their usual look.
 - README, license and CI workflow.
 
 ### Changed

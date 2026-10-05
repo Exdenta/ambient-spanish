@@ -1,9 +1,16 @@
 import type { Register } from 'claude-code'
 
 type Word = { id: string; es: string; en: string }
-type Piece = { text: string; bold?: boolean; code?: boolean; dim?: boolean; word?: Word }
+type Piece = { text: string; bold?: boolean; italic?: boolean; strike?: boolean; code?: boolean; dim?: boolean; word?: Word }
 type Line = { indent: number; chunks: Piece[][]; isRule?: boolean; codeText?: string }
-type Block = { kind: 'lines'; lines: Line[] } | { kind: 'engine'; raw: string }
+// Blocks without a vocabulary word, and fenced code, go to the engine's own drawing so they
+// look exactly like an ordinary reply. Only paragraphs holding a word are redrawn by the mod.
+type Block =
+  | { kind: 'lines'; lines: Line[] }
+  | { kind: 'engine'; raw: string }
+  | { kind: 'markdown'; raw: string }
+  | { kind: 'code'; source: string; language?: string }
+  | { kind: 'spacer' }
 type Index = { exact: Map<string, Word>; stems: { stem: string; endings: string[]; word: Word }[] }
 
 // Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
@@ -17,11 +24,14 @@ const DRAW_BULLET = false
 // Table rows cannot be reproduced; they go through the engine's own drawing, block by block.
 const TABLE_ROW = /^\s*\|/
 const FENCE_LINE = /^\s*```/
+const FENCE_LANGUAGE = /^\s*```\s*([\w+#.-]+)/
+// The engine's Code and Markdown elements take at most this many characters.
+const MAX_NATIVE = 10000
 const HEADING = /^#{1,6}\s+/
 const QUOTE = /^>\s?/
 const RULE_LINE = /^\s*(---|___)\s*$/
 const RULE_WIDTH = 40
-const INLINE_SEGMENT = /(`[^`]*`|\*\*[^*]+\*\*|\[[^\]]*\]\([^)]*\))/
+const INLINE_SEGMENT = /(`[^`]*`|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|~~[^~]+~~|\[[^\]]*\]\([^)]*\))/
 const LINK = /^\[([^\]]*)\]\(([^)]*)\)$/
 
 // Vocabulary forms that are also ordinary English words.
@@ -78,7 +88,7 @@ function lookup(index: Index, token: string): Word | undefined {
 }
 
 // Splits a plain run around the Spanish words it holds.
-function pieceRun(index: Index, text: string, style: { bold?: boolean }): Piece[] {
+function pieceRun(index: Index, text: string, style: { bold?: boolean; italic?: boolean; strike?: boolean }): Piece[] {
   const pieces: Piece[] = []
   let last = 0
   for (const m of text.matchAll(/[\p{L}\p{M}]+/gu)) {
@@ -111,13 +121,23 @@ function parseLine(index: Index, raw: string): Line {
     const link = LINK.exec(seg)
     const isCode = !link && seg.startsWith('`') && seg.endsWith('`') && seg.length > 1
     const isBold = !link && seg.startsWith('**') && seg.endsWith('**') && seg.length > 4
-    const body = link ? link[1] : isCode ? seg.slice(1, -1) : isBold ? seg.slice(2, -2) : seg
+    const isStrike = !link && seg.startsWith('~~') && seg.endsWith('~~') && seg.length > 4
+    const isItalic = !link && !isBold && !isCode && seg.startsWith('*') && seg.endsWith('*') && seg.length > 2
+    const body = link
+      ? link[1]
+      : isCode
+        ? seg.slice(1, -1)
+        : isBold || isStrike
+          ? seg.slice(2, -2)
+          : isItalic
+            ? seg.slice(1, -1)
+            : seg
 
     for (const part of body.split(/(\s+)/)) {
       if (!part) continue
       if (/^\s+$/.test(part)) close()
       else if (isCode) chunk.push({ text: part, code: true })
-      else chunk.push(...pieceRun(index, part, { bold: isBold || isHeading }))
+      else chunk.push(...pieceRun(index, part, { bold: isBold || isHeading, italic: isItalic, strike: isStrike }))
     }
     if (link) chunk.push({ text: `(${link[2]})`, dim: true })
   }
@@ -125,31 +145,54 @@ function parseLine(index: Index, raw: string): Line {
   return { indent, chunks }
 }
 
-// Tables and nothing else go to the engine; code lines stay unmatched so `buscar` in a command is not underlined.
+// Fenced code and paragraphs without a vocabulary word are drawn by the engine; tables too.
+// Code lines stay unmatched so `buscar` in a command is not underlined.
 function splitBlocks(index: Index, text: string): Block[] {
   const blocks: Block[] = []
-  let inFence = false
-  const linesBlock = (): Line[] => {
-    const last = blocks[blocks.length - 1]
-    if (last?.kind === 'lines') return last.lines
-    const lines: Line[] = []
-    blocks.push({ kind: 'lines', lines })
-    return lines
+  let paragraph: string[] = []
+  let fence: { language?: string; rows: string[] } | null = null
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return
+    const lines = paragraph.map(row => parseLine(index, row))
+    const hasWord = lines.some(l => wordsOf(l.chunks).length)
+    blocks.push(
+      hasWord || paragraph.join('\n').length > MAX_NATIVE
+        ? { kind: 'lines', lines }
+        : { kind: 'markdown', raw: paragraph.join('\n') },
+    )
+    paragraph = []
+  }
+  const flushFence = () => {
+    if (!fence) return
+    blocks.push({ kind: 'code', source: fence.rows.join('\n'), language: fence.language })
+    fence = null
   }
 
   for (const row of text.split('\n')) {
     if (FENCE_LINE.test(row)) {
-      inFence = !inFence
-    } else if (inFence) {
-      linesBlock().push({ indent: 0, chunks: [], codeText: row })
+      if (fence) {
+        flushFence()
+      } else {
+        flushParagraph()
+        fence = { language: FENCE_LANGUAGE.exec(row)?.[1], rows: [] }
+      }
+    } else if (fence) {
+      fence.rows.push(row)
     } else if (TABLE_ROW.test(row)) {
+      flushParagraph()
       const last = blocks[blocks.length - 1]
       if (last?.kind === 'engine') last.raw += `\n${row}`
       else blocks.push({ kind: 'engine', raw: row })
+    } else if (!row.trim()) {
+      flushParagraph()
+      blocks.push({ kind: 'spacer' })
     } else {
-      linesBlock().push(parseLine(index, row))
+      paragraph.push(row)
     }
   }
+  flushParagraph()
+  flushFence()
   return blocks
 }
 
@@ -250,8 +293,14 @@ export const register: Register = on => {
     const engineNodes: any[] = []
     for (const b of blocks) engineNodes.push(b.kind === 'engine' ? await drawByEngine(next, e, b.raw) : null)
 
-    const { Box, Text } = $.ui.resolve(e)
-    const style = (p: Piece) => ({ bold: p.bold, dimColor: p.dim, color: p.code ? 'yellow' : undefined })
+    const { Box, Text, Markdown, Code } = $.ui.resolve(e)
+    const style = (p: Piece) => ({
+      bold: p.bold,
+      italic: p.italic,
+      strikethrough: p.strike,
+      dimColor: p.dim,
+      color: p.code ? 'yellow' : undefined,
+    })
 
     const drawPiece = (p: Piece) =>
       p.word ? (
@@ -278,10 +327,22 @@ export const register: Register = on => {
       )
 
     // A null node means the engine call failed; the raw rows still show.
-    const drawBlock = (block: Block, i: number) =>
-      block.kind === 'lines'
-        ? block.lines.map(drawLine)
-        : (engineNodes[i] ?? block.raw.split('\n').map(row => <Text>{row}</Text>))
+    const drawBlock = (block: Block, i: number) => {
+      switch (block.kind) {
+        case 'lines':
+          return block.lines.map(drawLine)
+        case 'markdown':
+          return <Markdown text={block.raw} />
+        case 'code':
+          return block.source.length > MAX_NATIVE
+            ? block.source.split('\n').map(row => <Text>{row || ' '}</Text>)
+            : <Code source={block.source} language={block.language} />
+        case 'spacer':
+          return <Text> </Text>
+        default:
+          return engineNodes[i] ?? block.raw.split('\n').map(row => <Text>{row}</Text>)
+      }
+    }
 
     return (
       <Box flexDirection="row">

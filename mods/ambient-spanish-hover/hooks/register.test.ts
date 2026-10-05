@@ -34,7 +34,8 @@ test('a horizontal rule does not stop the words around it from being hover targe
   const drawn = JSON.stringify(await message.drawn())
   expect(drawn).toContain('es-buscar')
   expect(drawn).toContain('es-dato')
-  expect(drawn).toContain('────')
+  // A paragraph without a vocabulary word, a rule included, is drawn natively.
+  expect(drawn).toContain('"type":"Markdown"')
 })
 
 const mountBand = ($: any) =>
@@ -61,6 +62,31 @@ test('code lines are drawn as-is and never matched', async ($, on) => {
   const drawn = JSON.stringify(await message.drawn())
   expect(drawn.split('es-buscar').length - 1).toBe(1)
   expect(drawn).toContain('buscar datos')
+  expect(drawn).toContain('"type":"Code"')
+})
+
+test('a fence keeps its language so the engine highlights it', async ($, on) => {
+  stubEngine(on)
+  const message = await mountMessage($, 'Then buscar:\n```python\nprint(1)\n```')
+  const drawn = JSON.stringify(await message.drawn())
+  expect(drawn).toContain('"language":"python"')
+  expect(drawn).toContain('print(1)')
+})
+
+test('italics and strikethrough are kept in redrawn paragraphs', async ($, on) => {
+  stubEngine(on)
+  const message = await mountMessage($, 'I will buscar *quietly* and ~~never~~ stop.')
+  const drawn = JSON.stringify(await message.drawn())
+  expect(drawn).toContain('"italic":true')
+  expect(drawn).toContain('"strikethrough":true')
+})
+
+test('a paragraph with no vocabulary word is drawn by the engine, not redrawn', async ($, on) => {
+  stubEngine(on)
+  const message = await mountMessage($, 'I will buscar it.\n\n- plain **English** item\n- another one')
+  const drawn = JSON.stringify(await message.drawn())
+  expect(drawn).toContain('"type":"Markdown"')
+  expect(drawn).toContain('plain **English** item')
 })
 
 test('headings, quotes and links are drawn by the mod with their words hoverable', async ($, on) => {
