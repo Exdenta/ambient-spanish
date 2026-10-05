@@ -1,0 +1,12 @@
+{
+  "name": "ambient-spanish",
+  "owner": { "name": "Exdenta" },
+  "description": "Claude Code mods for the ambient-spanish skill.",
+  "plugins": [
+    {
+      "name": "ambient-spanish-hover",
+      "source": "./mods/ambient-spanish-hover",
+      "description": "Hover a Spanish word in a reply to see its English in the band above the prompt."
+    }
+  ]
+}
