@@ -401,12 +401,50 @@ class ConfigurationTests(CliTestCase):
         first = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         self.assertEqual(2, first["words_per_week"])
         self.assertEqual(7, first["cadence_days"])
-        self.assertEqual(["t00", "t01"], self.vocabulary_ids())
+        # The vocabulary does not shrink when the pace drops: the baseline absorbs it.
+        self.assertEqual(["t00", "t01", "t02"], self.vocabulary_ids())
         context = self.run_cli("context", "--now", "2026-08-29T10:00:00+02:00")
         self.assertEqual(2, context["batch_index"])
-        self.assertEqual(
-            ["t00", "t01", "t02", "t03", "t04", "t05"], self.vocabulary_ids()
+        self.assertEqual([f"t{index:02d}" for index in range(7)], self.vocabulary_ids())
+
+    def test_configure_words_per_week_keeps_the_vocabulary_size(self) -> None:
+        self.init("--baseline-known", "2")
+        before = self.run_cli("context", "--now", "2026-08-22T10:00:00+02:00")
+        self.assertEqual(8, before["vocabulary_count"])
+        for pace, expected in (("1", 8), ("6", 8), ("12", 12)):
+            self.run_cli(
+                "configure", "--words-per-week", pace, "--now", "2026-08-22T10:30:00+02:00"
+            )
+            after = self.run_cli("context", "--now", "2026-08-22T11:00:00+02:00")
+            self.assertEqual(expected, after["vocabulary_count"], pace)
+            self.assertEqual(0, after["batch_index"])
+            config = json.loads(self.state.read_text(encoding="utf-8"))["config"]
+            self.assertEqual("2026-08-22", config["start_date"])
+
+    def test_configure_between_context_and_record_does_not_reject_the_record(self) -> None:
+        self.init("--baseline-known", "2")
+        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        decision = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
+            "pending_decisions"
+        ][context["decision_id"]]
+        self.assertEqual(5, decision["vocab_size"])
+        self.run_cli("configure", "--words-per-week", "1", "--now", "2026-08-15T10:01:00+02:00")
+        self.run_cli("configure", "--baseline-known", "0", "--now", "2026-08-15T10:02:00+02:00")
+        self.run_cli(
+            "configure", "--timezone", "America/Los_Angeles", "--now", "2026-08-15T10:03:00+02:00"
         )
+        recorded = self.run_cli(
+            "record", "--decision", context["decision_id"], "--used", "t04",
+            "--now", "2026-08-15T10:05:00+02:00",
+        )
+        self.assertEqual(["t04"], recorded["recorded"]["used"])
+        # ...but the permitted set is still the one issued, not a larger one.
+        other = self.run_cli("context", "--now", "2026-08-15T10:06:00+02:00")
+        failure = self.run_cli(
+            "record", "--decision", other["decision_id"], "--used", "t05",
+            "--now", "2026-08-15T10:07:00+02:00", ok=False,
+        )
+        self.assertIn("not part of the reserved active set", failure["error"])
 
     def test_configure_baseline_known_shifts_the_vocabulary_boundary(self) -> None:
         self.init()
@@ -611,7 +649,10 @@ class MigrationTests(CliTestCase):
         source = self.v2_state()
         self.write_state(source)
         status = self.run_cli("status", "--now", "2026-08-15T10:00:00+02:00")
-        self.assertEqual(3, status["baseline_known_count"])
+        # 3 used terms + a batch of 10 overshoots the 12-term fixture; the v6
+        # rebase keeps the clamped size (12) as baseline + one batch.
+        self.assertEqual(12, status["vocabulary_count"])
+        self.assertEqual(2, status["baseline_known_count"])
         self.assertEqual("2026-08-15", status["start_date"])
         counts = {term["id"]: term["use_count"] for term in status["used_terms"]}
         self.assertEqual({"t00": 12, "t01": 5, "t02": 2}, counts)
@@ -814,8 +855,21 @@ class VocabularyFileTests(CliTestCase):
         decision = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
             "pending_decisions"
         ][context["decision_id"]]
-        self.assertEqual({"scope", "created_at"}, set(decision))
+        self.assertEqual({"scope", "created_at", "vocab_size"}, set(decision))
         self.assertEqual("known_all", decision["scope"])
+        self.assertEqual(9, decision["vocab_size"])
+
+    def test_a_scoped_decision_without_vocab_size_is_still_honoured(self) -> None:
+        self.init()
+        state = json.loads(self.state.read_text(encoding="utf-8"))
+        state["progress"]["pending_decisions"] = {
+            "d_old": {"scope": "known_all", "created_at": "2026-08-15T10:00:00+02:00"}
+        }
+        self.write_state(state)
+        recorded = self.run_cli(
+            "record", "--decision", "d_old", "--used", "t02", "--now", "2026-08-15T10:05:00+02:00"
+        )
+        self.assertEqual(["t02"], recorded["recorded"]["used"])
 
     def test_an_old_term_ids_decision_is_still_honoured(self) -> None:
         self.init()
@@ -834,6 +888,84 @@ class VocabularyFileTests(CliTestCase):
             "2026-08-15T10:05:00+02:00",
         )
         self.assertEqual(["t01"], recorded["recorded"]["used"])
+
+
+class RecordResolutionTests(CliTestCase):
+    """`record --used` takes Spanish words as `ambient-lookup` prints them, or ids."""
+
+    TERMS = [
+        ("hola", "hola"),
+        ("adios", "adiós"),
+        ("porque", "porque"),
+        ("campana", "campaña"),  # the id `campana` is the word campaña
+        ("cancion", "canción"),
+        ("campana-bell", "campana"),
+        ("papa-father", "papá"),
+        ("papa-potato", "papa"),
+        ("porque-noun", "porque"),  # homograph, outside the 8-term vocabulary
+    ]
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.curriculum.write_text(
+            json.dumps(
+                [
+                    {"id": term_id, "spanish": spanish, "english": term_id,
+                     "kind": "noun", "usage": "u"}
+                    for term_id, spanish in self.TERMS
+                ]
+            ),
+            encoding="utf-8",
+        )
+        self.init("--words-per-week", "8")
+
+    def used(self, words: str, ok: bool = True) -> dict:
+        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        return self.run_cli(
+            "record", "--decision", context["decision_id"], "--used", words,
+            "--now", "2026-08-15T10:05:00+02:00", ok=ok,
+        )
+
+    def test_punctuation_and_case_are_ignored(self) -> None:
+        recorded = self.used("Hola!,¿adiós?")
+        self.assertEqual(["hola", "adios"], recorded["recorded"]["used"])
+
+    def test_a_spanish_word_beats_an_id_of_the_same_spelling(self) -> None:
+        recorded = self.used("campana")
+        self.assertEqual(["campana-bell"], recorded["recorded"]["used"])
+
+    def test_an_id_still_resolves_when_no_spanish_word_matches(self) -> None:
+        recorded = self.used("papa-father")
+        self.assertEqual(["papa-father"], recorded["recorded"]["used"])
+
+    def test_accent_folding_resolves_a_single_match(self) -> None:
+        self.assertEqual(["cancion"], self.used("cancion")["recorded"]["used"])
+
+    def test_accent_folding_refuses_an_ambiguous_match(self) -> None:
+        failure = self.used("pápa", ok=False)  # folds to both papá and papa
+        self.assertIn("Unknown curriculum terms: pápa", failure["error"])
+
+    def test_a_homograph_keeps_only_the_permitted_entries(self) -> None:
+        self.assertEqual(["porque"], self.used("porque")["recorded"]["used"])
+
+    def test_a_homograph_with_no_permitted_entry_is_an_error(self) -> None:
+        # Shrink the decision's vocabulary to before either porque entry.
+        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        state = json.loads(self.state.read_text(encoding="utf-8"))
+        state["progress"]["pending_decisions"][context["decision_id"]]["vocab_size"] = 2
+        self.write_state(state)
+        failure = self.run_cli(
+            "record", "--decision", context["decision_id"], "--used", "porque",
+            "--now", "2026-08-15T10:05:00+02:00", ok=False,
+        )
+        self.assertIn("not part of the reserved active set", failure["error"])
+
+    def test_the_help_text_names_spanish_words(self) -> None:
+        help_text = subprocess.run(
+            [sys.executable, str(SCRIPT), "record", "--help"],
+            text=True, capture_output=True, check=True,
+        ).stdout
+        self.assertIn("Spanish words", help_text)
 
 
 class V6MigrationTests(CliTestCase):
@@ -885,7 +1017,42 @@ class V6MigrationTests(CliTestCase):
             [context["decision_id"]], list(migrated["progress"]["pending_decisions"])
         )
         self.assertEqual(7, migrated["progress"]["terms"]["t00"]["use_count"])
-        self.assertEqual(3, migrated["config"]["batch_size"])
+        # 3 words per 3 days is 7 per week; the floor at baseline 0 is accepted.
+        self.assertEqual(7, migrated["config"]["batch_size"])
+        self.assertEqual(7, migrated["config"]["cadence_days"])
+
+    def test_v5_migration_rebases_pacing_so_the_vocabulary_size_is_unchanged(self) -> None:
+        curriculum = [
+            {"id": f"w{index:03d}", "spanish": f"voz{index:03d}", "english": f"v{index}",
+             "kind": "noun", "usage": "u"}
+            for index in range(200)
+        ]
+        self.curriculum.write_text(json.dumps(curriculum), encoding="utf-8")
+        source = self.v5_state()
+        source["config"].update(baseline_known_count=50, cadence_days=3, batch_size=3)
+        source["progress"]["terms"] = {}
+        source["progress"]["last_exposure_at"] = None
+        source["progress"]["pending_decisions"] = {}
+        source["progress"]["offers"] = {}
+        self.write_state(source)
+        # Batch index 3 on 2026-08-24: 50 + 4 * 3 = 62 terms.
+        context = self.run_cli("context", "--now", "2026-08-24T11:00:00+02:00")
+        self.assertEqual(62, context["vocabulary_count"])
+        config = json.loads(self.state.read_text(encoding="utf-8"))["config"]
+        self.assertEqual(7, config["batch_size"])
+        self.assertEqual(7, config["cadence_days"])
+        self.assertEqual(55, config["baseline_known_count"])
+        self.assertEqual("2026-08-24", config["start_date"])
+        self.assertEqual("2026-08-31", context["next_batch_date"])
+
+    def test_v5_migration_keeps_a_future_start_date_locked(self) -> None:
+        source = self.v5_state()
+        source["config"]["start_date"] = "2026-09-01"
+        source["progress"].update(terms={}, last_exposure_at=None, pending_decisions={}, offers={})
+        self.write_state(source)
+        context = self.run_cli("status", "--now", "2026-08-16T11:00:00+02:00")
+        self.assertEqual(0, context["vocabulary_count"])
+        self.assertEqual("2026-09-01", context["start_date"])
 
     def test_v5_original_is_preserved_as_a_backup(self) -> None:
         source = self.v5_state()
@@ -893,6 +1060,14 @@ class V6MigrationTests(CliTestCase):
         self.run_cli("status", "--now", "2026-08-16T11:00:00+02:00")
         backup = self.state.with_name(f"{self.state.name}.schema-v5.backup")
         self.assertEqual(source, json.loads(backup.read_text(encoding="utf-8")))
+
+    def test_a_conflicting_backup_says_how_to_resolve_it(self) -> None:
+        self.write_state(self.v5_state())
+        backup = self.state.with_name(f"{self.state.name}.schema-v5.backup")
+        backup.write_text('{"something": "else"}', encoding="utf-8")
+        failure = self.run_cli("status", "--now", "2026-08-16T11:00:00+02:00", ok=False)
+        self.assertIn("already exists with different content", failure["error"])
+        self.assertIn("move it aside", failure["error"])
 
     def test_v4_migrates_through_v5_to_v6(self) -> None:
         source = self.v5_state()

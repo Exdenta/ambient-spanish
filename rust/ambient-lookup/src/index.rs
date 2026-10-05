@@ -14,6 +14,9 @@ pub struct Index {
     pub entries: Vec<Entry>,
     /// Normalised English key (stemmed words joined by a space) to entries.
     pub map: HashMap<String, Vec<usize>>,
+    /// Normalised key to (entry, raw lowercase key), for the inflection guard.
+    pub forms: HashMap<String, Vec<(usize, String)>>,
+    irregular: HashMap<&'static str, &'static str>,
     /// Words in the longest key, which bounds the phrase search.
     pub max_words: usize,
     stemmer: Stemmer,
@@ -22,8 +25,11 @@ pub struct Index {
 /// Words that carry English grammar, not content. Substituting them would turn
 /// the sentence into Spanish, so a single one of them never matches on its own.
 const STOP: &[&str] = &[
-    "be", "do", "will", "would", "should", "could", "may", "might", "must", "shall", "to", "the",
-    "a", "an",
+    "it", "i", "we", "you", "they", "he", "she", "me", "him", "her", "us", "them", "my", "your",
+    "his", "its", "our", "their", "this", "that", "these", "those", "the", "a", "an", "to",
+    "be", "am", "is", "are", "was", "were", "been", "being", "do", "does", "did", "done", "doing",
+    "have", "has", "had", "having", "can", "could", "will", "would", "shall", "should", "may",
+    "might", "must", "of", "in", "on", "at", "for", "with", "from", "by", "as", "up", "not",
 ];
 
 const IRREGULAR: &[(&str, &str)] = &[
@@ -58,10 +64,11 @@ pub fn is_stop(word: &str) -> bool {
 
 impl Index {
     pub fn parse(raw: &str) -> Index {
-        let irregular: HashMap<&str, &str> = IRREGULAR.iter().copied().collect();
         let mut index = Index {
             entries: Vec::new(),
             map: HashMap::new(),
+            forms: HashMap::new(),
+            irregular: IRREGULAR.iter().copied().collect(),
             max_words: 1,
             stemmer: Stemmer::create(Algorithm::English),
         };
@@ -93,11 +100,12 @@ impl Index {
                 }
                 let normalised = words
                     .iter()
-                    .map(|w| index.normalise(w, &irregular))
+                    .map(|w| index.norm(w))
                     .collect::<Vec<_>>()
                     .join(" ");
                 if seen.insert(normalised.clone()) {
                     index.max_words = index.max_words.max(words.len());
+                    index.forms.entry(normalised.clone()).or_default().push((at, key.clone()));
                     index.map.entry(normalised).or_default().push(at);
                 }
             }
@@ -105,16 +113,55 @@ impl Index {
         index
     }
 
-    fn normalise(&self, word: &str, irregular: &HashMap<&str, &str>) -> String {
+    /// Lowercase word with irregular forms mapped to their base.
+    pub fn base(&self, word: &str) -> String {
         let lower = word.to_lowercase();
-        let base = irregular.get(lower.as_str()).copied().unwrap_or(&lower);
-        self.stemmer.stem(base).into_owned()
+        match self.irregular.get(lower.as_str()) {
+            Some(b) => (*b).to_string(),
+            None => lower,
+        }
     }
 
     /// Normalised form of one surface word, as used for lookups.
     pub fn norm(&self, word: &str) -> String {
-        let irregular: HashMap<&str, &str> = IRREGULAR.iter().copied().collect();
-        self.normalise(word, &irregular)
+        self.stemmer.stem(&self.base(word)).into_owned()
+    }
+
+    /// Whether `surface` is the key word itself, a plain inflection of it, or
+    /// an irregular form of it.
+    pub fn word_ok(&self, surface: &str, key: &str) -> bool {
+        let surface = surface.to_lowercase();
+        if surface == key || self.irregular.get(surface.as_str()) == Some(&key) {
+            return true;
+        }
+        for suf in ["s", "es", "ed", "d", "ing", "ies", "ied"] {
+            let Some(stem) = surface.strip_suffix(suf) else { continue };
+            if stem.is_empty() {
+                continue;
+            }
+            if stem == key || format!("{stem}e") == key {
+                return true;
+            }
+            if let Some(k) = key.strip_suffix('y') {
+                if stem == k {
+                    return true;
+                }
+            }
+            let mut ch = stem.chars().rev();
+            if let (Some(a), Some(b)) = (ch.next(), ch.next()) {
+                if a == b && stem[..stem.len() - a.len_utf8()] == *key {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    /// Word-by-word `word_ok` for a phrase key.
+    pub fn key_ok(&self, surfaces: &[&str], key: &str) -> bool {
+        let words: Vec<&str> = key.split(' ').collect();
+        words.len() == surfaces.len()
+            && words.iter().zip(surfaces).all(|(k, s)| self.word_ok(s, k))
     }
 }
 
@@ -160,5 +207,19 @@ mod tests {
         assert_eq!(english_keys("to be (essential)", "verb"), ["be"]);
         assert_eq!(english_keys("OK / fine", "phrase"), ["ok", "fine"]);
         assert_eq!(english_keys("rock (music)", "noun"), ["rock"]);
+    }
+
+    #[test]
+    fn inflection_guard() {
+        let ix = Index::parse("");
+        assert!(ix.word_ok("windows", "window"));
+        assert!(ix.word_ok("stopped", "stop"));
+        assert!(ix.word_ok("running", "run"));
+        assert!(ix.word_ok("making", "make"));
+        assert!(ix.word_ok("carries", "carry"));
+        assert!(ix.word_ok("saw", "see"));
+        assert!(!ix.word_ok("openers", "open"));
+        assert!(!ix.word_ok("openness", "open"));
+        assert!(!ix.word_ok("seen", "saw"));
     }
 }

@@ -308,11 +308,39 @@ class VocabHistoryTests(VocabTestCase):
         result = self.run_cli(
             "vocab", "--keep-known", "--add-known", added, "--now", "2026-10-12T09:00:00+02:00"
         )
-        # A week in, the first two batches (coche/beber/rápido, plazo/lograr/fiable)
-        # have joined the vocabulary; keep-known carries them into the known set.
-        self.assertEqual(12, result["known_count"])
-        self.assertEqual("matiz", self.personal_curriculum()[11]["spanish"])
-        self.assertEqual(["a medida que", "asequible", "umbral"], self.spanish(result["new_this_week"]))
+        # A week in, the first batch (coche/beber/rápido) has joined the vocabulary
+        # and the second (plazo/lograr/fiable) is current; keep-known carries over
+        # the first and `matiz`, and the current batch is re-added by the rebuild.
+        self.assertEqual(9, result["known_count"])
+        self.assertEqual("matiz", self.personal_curriculum()[8]["spanish"])
+        self.assertEqual(["plazo", "lograr", "fiable"], self.spanish(result["new_this_week"]))
+
+    def test_repeated_keep_known_rebuilds_do_not_grow_the_vocabulary(self) -> None:
+        self.run_cli("vocab", "--level", "A1", "--words-per-week", "3")
+        for _ in range(3):
+            self.run_cli("vocab", "--keep-known", "--now", "2026-10-12T09:00:00+02:00")
+            context = self.run_cli("context", "--now", "2026-10-12T10:00:00+02:00")
+            self.assertEqual(11, context["vocabulary_count"])
+        manifest = (self.root / "vocabulary.txt").read_text(encoding="utf-8")
+        self.assertIn("# ambient-spanish vocabulary — 11 terms", manifest)
+
+    def test_keep_known_with_a_future_start_date_unlocks_nothing_early(self) -> None:
+        self.run_cli("init", "--start-date", "2026-11-01", "--words-per-week", "3")
+        self.run_cli("vocab", "--level", "A1", "--now", "2026-10-05T09:00:00+02:00")
+        self.assertEqual("2026-11-01", self.read_state()["config"]["start_date"])
+        self.run_cli("vocab", "--keep-known", "--now", "2026-10-06T09:00:00+02:00")
+        state = self.read_state()
+        self.assertEqual("2026-11-01", state["config"]["start_date"])
+        self.assertEqual(5, state["config"]["baseline_known_count"])
+        status = self.run_cli("status", "--now", "2026-10-06T10:00:00+02:00")
+        self.assertEqual(0, status["vocabulary_count"])
+
+    def test_vocabulary_file_holds_the_live_vocabulary(self) -> None:
+        result = self.run_cli("vocab", "--level", "A1", "--words-per-week", "3")
+        self.assertEqual(8, result["known_manifest"]["count"])
+        lines = (self.root / "vocabulary.txt").read_text(encoding="utf-8").splitlines()
+        self.assertEqual("# ambient-spanish vocabulary — 8 terms", lines[0])
+        self.assertEqual(8, len([line for line in lines if " | " in line]))
 
     def test_a_used_word_the_new_vocabulary_drops_stays_known(self) -> None:
         added = self.word_list("add.txt", "molar | to be cool | verb\n")

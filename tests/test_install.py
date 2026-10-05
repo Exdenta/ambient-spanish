@@ -116,6 +116,51 @@ class InstallTests(unittest.TestCase):
         self.assertFalse(self.claude_md.exists())
 
 
+    def test_an_isolated_install_never_touches_the_hover_plugin(self) -> None:
+        bin_dir = self.home / "bin"
+        bin_dir.mkdir()
+        marker = self.home / "claude-was-run"
+        fake = bin_dir / "claude"
+        fake.write_text(f"#!/bin/sh\ntouch {marker}\n", encoding="utf-8")
+        fake.chmod(0o755)
+        self.env = {"PATH": str(bin_dir), "AMBIENT_SPANISH_SKIP_BUILD": "1"}
+        report = self.run_install("--claude")
+        hover = report["steps"][-1]
+        self.assertEqual("install hover mod", hover["step"])
+        self.assertEqual("skipped", hover["result"])
+        self.assertFalse(marker.exists())
+
+    def rule_file(self, text: str) -> Path:
+        self.claude_md.parent.mkdir(parents=True, exist_ok=True)
+        self.claude_md.write_text(text, encoding="utf-8")
+        return self.claude_md
+
+    def test_damaged_rule_markers_fail_and_leave_the_file_alone(self) -> None:
+        for text in (
+            "mine\n<!-- ambient-spanish:end -->\n<!-- ambient-spanish:begin -->\n",
+            "mine\n<!-- ambient-spanish:begin -->\nhalf a block\n",
+            "mine\n<!-- ambient-spanish:end -->\n",
+        ):
+            path = self.rule_file(text)
+            for flags in ((), ("--remove-rule",)):
+                report = self.run_install("--claude", *flags, ok=False)
+                rule = [step for step in report["steps"] if "rule" in step["step"]][0]
+                self.assertEqual("failed", rule["result"], text)
+                self.assertIn("marker", rule["output"])
+                self.assertEqual(text, path.read_text(encoding="utf-8"))
+
+    def test_removing_the_only_content_deletes_the_file(self) -> None:
+        self.run_install("--claude")
+        self.assertTrue(self.claude_md.exists())
+        self.run_install("--claude", "--remove-rule")
+        self.assertFalse(self.claude_md.exists())
+
+    def test_rule_writes_leave_no_temp_files(self) -> None:
+        self.run_install("--claude")
+        self.assertEqual(["CLAUDE.md"], sorted(p.name for p in self.claude_md.parent.glob("CLAUDE*")))
+        self.assertEqual([], [p.name for p in self.claude_md.parent.glob(".CLAUDE.md.*")])
+
+
 class BuildLookupTests(unittest.TestCase):
     """The step that builds the Rust `ambient-lookup` binary, with cargo faked out."""
 
@@ -200,6 +245,23 @@ class BuildLookupTests(unittest.TestCase):
         self.make_binary(newer=False)
         with mock.patch("shutil.which", return_value="/usr/bin/cargo"):
             self.assertEqual("would build", self.install.build_lookup(dry_run=True)["result"])
+
+    def test_a_newer_cargo_lock_triggers_a_rebuild(self) -> None:
+        binary = self.make_binary(newer=True)
+        lock = self.crate / "Cargo.lock"
+        lock.write_text("", encoding="utf-8")
+        stamp = binary.stat().st_mtime + 10
+        os.utime(lock, (stamp, stamp))
+        with mock.patch("shutil.which", return_value="/usr/bin/cargo"):
+            self.assertEqual("would build", self.install.build_lookup(dry_run=True)["result"])
+
+    def test_skip_without_a_binary_warns_that_context_will_fail(self) -> None:
+        os.environ["AMBIENT_SPANISH_SKIP_BUILD"] = "1"
+        step = self.install.build_lookup(dry_run=False)
+        self.assertEqual("skipped", step["result"])
+        self.assertIn("context", step["note"])
+        self.make_binary(newer=True)
+        self.assertNotIn("note", self.install.build_lookup(dry_run=False))
 
     def test_remove_rule_does_not_build(self) -> None:
         env = {"PATH": "/nonexistent"}

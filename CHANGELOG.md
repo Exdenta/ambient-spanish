@@ -11,15 +11,14 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - `ambient_state.py levels` lists the packs. `ambient_state.py vocab` builds a personal curriculum from a level, Anki or plain word lists, words to drop, and words to learn first, keeping usage history.
 - `/ambient-spanish-setup` guided setup for Claude Code, and `scripts/install.py` for linking the skills into Claude Code or Codex, the hover mod, and the run-every-reply rule, installed together in one step (`--scope local` keeps the rule to one project).
 - `ambient-spanish-vocab` skill for placement checks and vocabulary changes.
-- `ambient-spanish-hover` Claude Code mod: underlines known Spanish words in replies and shows the English in a row above the prompt on hover.
+- `ambient-spanish-hover` Claude Code mod: underlines vocabulary words in replies and shows the English in a row above the prompt on hover.
 - The mod redraws headings, quotes, links, rules and code lines so they stay hoverable.
 - README, license and CI workflow.
 
 ### Changed
 - Removed the per-reply density cap (`--known-per-reply`) and the manifest the assistant used to read; state schema v6 migrates v5 state automatically. The hover mod now reloads the vocabulary file every 30 seconds, so weekly additions appear without restarting.
 - Removed the "learning" tier and the bracketed English after new words; hover replaces it. `context` and `status` no longer report `learning`, and `init`/`configure` take `--words-per-week` instead of `--cadence-days`/`--batch-size`.
-- Known terms per reply can be capped (`--known-per-reply`) and are served from a manifest file rather than inlined.
-- The curriculum starts with 212 pre-known terms, and every word is checked against an `es-ES` blocklist.
+- The shipped curriculum starts with a pre-known core, and every word is checked against an `es-ES` blocklist.
 - The assistant now sends the full reply as the last message after `record`.
 
 ## Earlier

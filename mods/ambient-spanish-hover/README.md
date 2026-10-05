@@ -19,7 +19,7 @@ Then start a new session, or run `/reload-plugins`.
 | `ui.render` on `AbovePrompt` | one hidden `spanish = english` entry per recent word, revealed by the same hover `scope` |
 | `turn.complete` | redraws the row once the turn is over |
 
-The vocabulary is read from `~/.codex/state/ambient-spanish/vocabulary.txt`, which `ambient_state.py context` rewrites whenever the weekly additions land, whatever the per-reply density cap. Every vocabulary word is underlined; there are no bracketed glosses to skip.
+The vocabulary is read from `~/.codex/state/ambient-spanish/vocabulary.txt`, which `ambient_state.py context` rewrites whenever the weekly additions land (the path follows `AMBIENT_SPANISH_STATE` when it is set). The mod re-reads it every 30 seconds, so new words appear without restarting. Every vocabulary word is underlined; there are no bracketed glosses to skip.
 
 ## Limits
 

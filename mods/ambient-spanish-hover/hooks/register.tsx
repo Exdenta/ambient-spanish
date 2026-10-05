@@ -6,7 +6,7 @@ type Line = { indent: number; chunks: Piece[][]; isRule?: boolean; codeText?: st
 type Block = { kind: 'lines'; lines: Line[] } | { kind: 'engine'; raw: string }
 type Index = { exact: Map<string, Word>; stems: { stem: string; endings: string[]; word: Word }[] }
 
-// Relative to $HOME; the ambient-spanish skill rewrites it when a batch is promoted.
+// Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
 const VOCAB_FILE = '.codex/state/ambient-spanish/vocabulary.txt'
 const MAX_SEEN = 80
 const MAX_PINNED = 8
@@ -167,6 +167,12 @@ const seen = new Map<string, Word>()
 // Words in engine-drawn tables: nothing to hover, so the band lists them as plain text.
 const pinned = new Map<string, Word>()
 
+async function vocabPath($: any): Promise<string> {
+  const home = await $.env.get('HOME')
+  const state: string | undefined = await $.env.get('AMBIENT_SPANISH_STATE')
+  return state ? `${state.replace(/[^/]*$/, '')}vocabulary.txt` : `${home}/${VOCAB_FILE}`
+}
+
 function loadIndex($: any): Promise<Index | null> {
   const stale = indexLoad && Date.now() - indexAt > INDEX_REFRESH_MS
   if (stale) {
@@ -174,8 +180,7 @@ function loadIndex($: any): Promise<Index | null> {
     indexAt = Date.now()
     indexLoad = (async () => {
       try {
-        const home = await $.env.get('HOME')
-        const raw: string = await $.fs.read(`${home}/${VOCAB_FILE}`)
+        const raw: string = await $.fs.read(await vocabPath($))
         if (raw === indexRaw) return await previous
         indexRaw = raw
         return buildIndex(raw)
@@ -184,11 +189,12 @@ function loadIndex($: any): Promise<Index | null> {
       }
     })()
   }
+  // A failed first load is retried at most every refresh interval, not on every render.
+  if (!indexLoad && Date.now() - indexAt < INDEX_REFRESH_MS) return Promise.resolve(null)
   indexLoad ??= (async () => {
+    indexAt = Date.now()
     try {
-      const home = await $.env.get('HOME')
-      indexRaw = await $.fs.read(`${home}/${VOCAB_FILE}`)
-      indexAt = Date.now()
+      indexRaw = await $.fs.read(await vocabPath($))
       return buildIndex(indexRaw)
     } catch {
       indexLoad = undefined

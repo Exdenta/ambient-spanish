@@ -15,7 +15,7 @@ description: Build or change the ambient-spanish vocabulary. Covers picking a CE
 | --- | --- |
 | `--level A0..C1` | every lexicon word up to that level is known |
 | `--level none` | start from nothing |
-| `--keep-known` | start from the words known today and keep the current learning order |
+| `--keep-known` | start from the words known today and keep the current queue order |
 | `--add-known FILE` | mark these words known |
 | `--remove-known FILE` | take these out of known; they are learned soon |
 | `--learn-first FILE` | learn these before anything else, in the order given |
@@ -52,7 +52,7 @@ Then run it again.
 
 ## Workflow
 
-1. **Read where they are.** Run `python3 <root>/scripts/ambient_state.py status`. Note `curriculum.source` (`shipped` or `user`), `curriculum.build.level`, `known_count` and `words_per_week`.
+1. **Read where they are.** Run `python3 <root>/scripts/ambient_state.py status`. Note `curriculum.source` (`shipped` or `user`), `curriculum.build` (null for the shipped curriculum), `baseline_known_count`, `vocabulary_count` and `words_per_week`.
 2. **Find out what they want.** Ask only if it isn't already clear. The usual requests:
    - set or change the level;
    - a placement check;
@@ -71,8 +71,7 @@ Then run it again.
    - For topic targets (for example "words for my job" or "travel"), write 20–60 Peninsular Spanish lemmas with glosses. Prefer ones already in the lexicon (`grep` `lexicon.tsv`).
 5. **Preview.** Run the build with `--dry-run`. Show `known_count`, the `new_this_week` words and `next_up`, and confirm.
 6. **Build.** Run the same command without `--dry-run`.
-7. **Density.** With more than about 1,500 known words, the known list the assistant reads once per session gets long (roughly 12 tokens per word). Offer a rotating per-reply sample instead with `configure --known-per-reply 60`, and `configure --known-per-reply all` to undo it. Say which is in force.
-8. **Report.** Give the level, known count, the words added this week (`spanish (english)`), the weekly regime, and the next batch date from `status`.
+7. **Report.** Give the level, known count, the words added this week (`spanish (english)`), the weekly regime, and the next batch date from `status`.
 
 To undo the last build, ask first. Then move `curriculum.json.previous` and `state.json.previous` back over the live files, beside `state.json`.
 

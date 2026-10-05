@@ -93,7 +93,7 @@ python3 <skill-root>/scripts/ambient_state.py levels                      # CEFR
 python3 <skill-root>/scripts/ambient_state.py vocab --level B1 --dry-run  # preview a rebuild
 ```
 
-To set the level, add or remove known words, or choose which words are added next, follow the `ambient-spanish-vocab` skill (`skills/ambient-spanish-vocab/SKILL.md` in this repo). `vocab` writes a personal `curriculum.json` beside the state, which then replaces the shipped curriculum. `status` reports which one is in use under `curriculum`. Use `configure --baseline-known` only with the shipped curriculum, where 321 covers its pre-known block.
+To set the level, add or remove known words, or choose which words are added next, follow the `ambient-spanish-vocab` skill (`skills/ambient-spanish-vocab/SKILL.md` in this repo). `vocab` writes a personal `curriculum.json` beside the state, which then replaces the shipped curriculum. `status` reports which one is in use under `curriculum`. Use `configure --baseline-known` only with the shipped curriculum. See `references/state-contract.md` for how the baseline works.
 
 Do not reset or overwrite state unless the user explicitly requests it. For state semantics and migration rules, read [references/state-contract.md](references/state-contract.md).
 

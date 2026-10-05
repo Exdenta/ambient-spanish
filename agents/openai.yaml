@@ -1,7 +1,7 @@
 interface:
   display_name: "Ambient Spanish"
   short_description: "Time-paced Spanish in everyday chats"
-  default_prompt: "Use $ambient-spanish: swap in the known terms the tool offers for each reply, gloss the current batch in brackets, keep the sentence grammar English, and unlock 3 new words every 3 days."
+  default_prompt: "Use $ambient-spanish: draft each reply in English, send the draft to ambient-lookup, write the final reply with the Spanish vocabulary words it returns (no glosses), keep the sentence grammar English, and add new words weekly."
 
 policy:
   allow_implicit_invocation: true

@@ -20,7 +20,7 @@ ls -la "${AMBIENT_SPANISH_STATE:-$HOME/.codex/state/ambient-spanish/state.json}"
 - **Python older than 3.11:** stop, and tell the user what to install.
 - **The dry run reports a `conflict`:** an earlier install is in the way. If it's a directory, check whether it is a git clone with `git -C <path> remote -v`. Ask before re-running with `--replace`, which moves it to `<name>.old`; nothing is deleted.
 - **A state file exists:** run `python3 $S status`.
-  - If it loads, the learner has progress. Note `curriculum.source`, `known_count` and how many `used_terms` they have.
+  - If it loads, the learner has progress. Note `curriculum.source`, `baseline_known_count`, `vocabulary_count` and how many `used_terms` they have.
   - If it fails with a schema or field error, it was written by an older, incompatible version. Show the error and offer to move it aside to `state.json.legacy-<date>.backup`. Never delete it.
 
 ## 2. Ask
@@ -75,11 +75,7 @@ python3 $S vocab --level <LEVEL> --words-per-week <N> [--keep-known] --dry-run  
 python3 $S vocab --level <LEVEL> --words-per-week <N> [--keep-known]
 ```
 
-**Build my own:** read `skills/ambient-spanish-vocab/SKILL.md` now and follow its workflow from step 2, passing `--words-per-week <N>` on the final `vocab` run. Its placement check, word lists and learning targets all end in a `vocab` run.
-
-**Density:** if `known_count` is over about 1,500 (B1 and up), ask about density:
-- **Every known word, every reply.** This is the default. The assistant reads the word list once per session, at roughly 12 tokens per word.
-- **A rotating sample of 60 per reply.** Lighter, and suggested for B2–C1. Set it with `python3 $S configure --known-per-reply 60`.
+**Build my own:** read `skills/ambient-spanish-vocab/SKILL.md` now and follow its workflow from step 2, passing `--words-per-week <N>` on the final `vocab` run. Its placement check, word lists and targets all end in a `vocab` run.
 
 ## 5. Finish
 

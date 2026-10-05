@@ -101,15 +101,12 @@ Rebuilding keeps your usage history and restarts the weekly cycle from today. It
 ## Settings
 
 ```bash
-python3 scripts/ambient_state.py status                           # known words, current batch, next batch date
+python3 scripts/ambient_state.py status                           # vocabulary size, words per week, next batch date
 python3 scripts/ambient_state.py configure --pause                # or --resume
-python3 scripts/ambient_state.py configure --cadence-days 3 --batch-size 3
-python3 scripts/ambient_state.py configure --known-per-reply 60   # or `all`, the default
+python3 scripts/ambient_state.py configure --words-per-week 10    # 5, 10, 20 or any number
 ```
 
-By default, every known word can appear in every reply. Above about 1,500 known words (B1 and up), `--known-per-reply 60` keeps replies readable by offering a rotating sample instead.
-
-`status` also lists `cold_terms`: words that were offered many times but never fit a reply.
+Every vocabulary word can appear in every reply, wherever it fits the sentence.
 
 Don't edit `state.json` or `curriculum.json` by hand. `ambient_state.py` is the only thing that writes them.
 

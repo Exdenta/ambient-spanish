@@ -2,6 +2,7 @@
 
 use crate::index::{is_stop, Index};
 use serde_json::json;
+use std::collections::HashSet;
 
 pub struct Match {
     pub text: String,
@@ -45,24 +46,24 @@ fn excluded_ranges(text: &str) -> Vec<(usize, usize)> {
 }
 
 fn inline_ranges(line: &str, base: usize, ranges: &mut Vec<(usize, usize)>) {
-    let bytes = line.as_bytes();
     let mut i = 0;
-    while i < bytes.len() {
-        if bytes[i] == b'`' {
-            if let Some(close) = line[i + 1..].find('`') {
+    while i < line.len() {
+        let rest = &line[i..];
+        if rest.starts_with('`') {
+            if let Some(close) = rest[1..].find('`') {
                 ranges.push((base + i, base + i + close + 2));
                 i += close + 2;
                 continue;
             }
-        } else if line[i..].starts_with("http://") || line[i..].starts_with("https://") {
-            let len = line[i..]
+        } else if rest.starts_with("http://") || rest.starts_with("https://") {
+            let len = rest
                 .find(|c: char| c.is_whitespace() || c == ')' || c == '>')
-                .unwrap_or(line.len() - i);
+                .unwrap_or(rest.len());
             ranges.push((base + i, base + i + len));
             i += len;
             continue;
         }
-        i += 1;
+        i += rest.chars().next().map_or(1, char::len_utf8);
     }
 }
 
@@ -72,7 +73,7 @@ fn tokenize(index: &Index, text: &str) -> Vec<Token> {
     let mut start: Option<usize> = None;
     let chars: Vec<(usize, char)> = text.char_indices().collect();
     for (i, &(at, c)) in chars.iter().enumerate() {
-        let inner_apostrophe = c == '\''
+        let inner_apostrophe = (c == '\'' || c == '\u{2019}')
             && start.is_some()
             && chars.get(i + 1).map_or(false, |&(_, n)| n.is_alphabetic());
         let word_char = c.is_alphabetic() || inner_apostrophe;
@@ -102,7 +103,16 @@ fn push_token(
     if excluded.iter().any(|&(a, b)| start >= a && start < b) {
         return;
     }
-    let surface = text[start..end].to_string();
+    let raw = &text[start..end];
+    let mut end = end;
+    let mut surface = raw.replace('\u{2019}', "'");
+    for apos in ["'s", "\u{2019}s", "'S", "\u{2019}S"] {
+        if raw.len() > apos.len() && raw.ends_with(apos) {
+            end -= apos.len();
+            surface = text[start..end].replace('\u{2019}', "'");
+            break;
+        }
+    }
     let norm = index.norm(&surface);
     tokens.push(Token { start, end, surface, norm });
 }
@@ -116,6 +126,8 @@ fn joined(text: &str, left: &Token, right: &Token) -> bool {
 pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
     let tokens = tokenize(index, text);
     let mut found: Vec<Match> = Vec::new();
+    let mut seen_text: HashSet<String> = HashSet::new();
+    let mut seen_sets: HashSet<String> = HashSet::new();
     let mut i = 0;
     while i < tokens.len() {
         let mut advanced = false;
@@ -125,20 +137,37 @@ pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
             if !window.windows(2).all(|pair| joined(text, &pair[0], &pair[1])) {
                 continue;
             }
-            if len == 1 && is_stop(&window[0].surface.to_lowercase()) {
-                continue;
+            if len == 1 {
+                let t = &window[0];
+                let lower = t.surface.to_lowercase();
+                if is_stop(&lower) || is_stop(&index.base(&lower)) || is_stop(&t.norm) {
+                    continue;
+                }
             }
             let key = window.iter().map(|t| t.norm.as_str()).collect::<Vec<_>>().join(" ");
-            if let Some(candidates) = index.map.get(&key) {
-                let span = text[window[0].start..window[len - 1].end].to_string();
-                let lower = span.to_lowercase();
-                if !found.iter().any(|m| m.text.to_lowercase() == lower) {
-                    found.push(Match { text: span, candidates: candidates.clone() });
+            let Some(forms) = index.forms.get(&key) else { continue };
+            let surfaces: Vec<&str> = window.iter().map(|t| t.surface.as_str()).collect();
+            let mut candidates: Vec<usize> = Vec::new();
+            for (at, raw_key) in forms {
+                if index.key_ok(&surfaces, raw_key) && !candidates.contains(at) {
+                    candidates.push(*at);
                 }
-                i += len;
-                advanced = true;
-                break;
             }
+            if candidates.is_empty() {
+                continue;
+            }
+            let span = text[window[0].start..window[len - 1].end].to_string();
+            let set_key = {
+                let mut ids = candidates.clone();
+                ids.sort_unstable();
+                ids.iter().map(|n| n.to_string()).collect::<Vec<_>>().join(",")
+            };
+            if seen_text.insert(span.to_lowercase()) && seen_sets.insert(set_key) {
+                found.push(Match { text: span, candidates });
+            }
+            i += len;
+            advanced = true;
+            break;
         }
         if !advanced {
             i += 1;
@@ -246,5 +275,50 @@ por-lo-tanto | por lo tanto | therefore\n";
         assert!(text.contains("open: abrir\n"));
         assert!(text.contains("window: ventana\n"));
         assert!(!text.contains('#') && !text.contains('('));
+    }
+
+    #[test]
+    fn non_ascii_input_does_not_panic() {
+        assert_eq!(words("it’s the doctor’s car — open the window"), ["open", "window"]);
+        assert_eq!(words("open — window"), ["open", "window"]);
+        assert_eq!(words("café 😀 ñandú open"), ["open"]);
+        assert!(words("`é` and https://é.com/é ok").is_empty());
+    }
+
+    #[test]
+    fn curly_apostrophe_matches_straight() {
+        assert_eq!(words("the window’s frame"), ["window"]);
+        assert_eq!(words("the window's frame"), ["window"]);
+    }
+
+    #[test]
+    fn grammar_words_are_never_matched() {
+        let index = Index::parse("be | ser | to be\nhave | tener | to have\ncan | poder | can\nit | lo | it\nas | como | as\n");
+        // lines above have no kind heading; still parsed
+        for t in ["We use it as is", "I can see that I have a book", "was does has not", "of in on at for with from by up"] {
+            assert!(find_matches(&index, t).is_empty(), "{t}");
+        }
+    }
+
+    #[test]
+    fn stemmer_overreach_is_rejected() {
+        assert!(words("openers and openness").is_empty());
+        let index = Index::parse("## noun\namigo | amigo | friend\nsimpatico | simpático | friendly\nsierra | sierra | saw\n## verb\nver | ver | to see\n");
+        let f = find_matches(&index, "My friends have seen it");
+        let got: Vec<_> = f.iter().map(|m| m.text.as_str()).collect();
+        assert_eq!(got, ["friends", "seen"]);
+        assert_eq!(f[0].candidates.len(), 1);
+        assert_eq!(f[1].candidates.len(), 1);
+    }
+
+    #[test]
+    fn possessive_and_plural_collapse() {
+        assert_eq!(words("window's Windows window"), ["window"]);
+    }
+
+    #[test]
+    fn invalid_utf8_is_lossy() {
+        let s = String::from_utf8_lossy(b"open \xff window").into_owned();
+        assert_eq!(words(&s), ["open", "window"]);
     }
 }

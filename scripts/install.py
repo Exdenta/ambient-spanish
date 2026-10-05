@@ -25,6 +25,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -91,12 +92,47 @@ def link_skill(name: str, source: Path, skills_dir: Path, *, replace: bool, dry_
     return {**step, "result": "linked"}
 
 
+def _write_atomically(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = tempfile.NamedTemporaryFile(
+        "w", encoding="utf-8", dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False
+    )
+    temp = Path(handle.name)
+    try:
+        with handle:
+            handle.write(text)
+        if path.exists():
+            shutil.copymode(path, temp)
+        os.replace(temp, path)
+    finally:
+        if temp.exists():
+            temp.unlink()
+
+
 def set_rule(path: Path, block: str | None, *, dry_run: bool) -> dict[str, Any]:
-    """Insert, refresh, or (with `block=None`) remove the marked rule block."""
+    """Insert, refresh, or (with `block=None`) remove the marked rule block.
+
+    Damaged markers (an end before its begin, or a begin with no end) are
+    reported as `failed` and the file is left alone. A file that removal leaves
+    empty is deleted, since this installer was the only thing in it.
+    """
     step = {"step": "remove rule" if block is None else "add rule", "path": str(path)}
     text = path.read_text(encoding="utf-8") if path.exists() else ""
     begin, end = text.find(RULE_BEGIN), text.find(RULE_END)
-    if begin != -1 and end != -1:
+    if (begin == -1) != (end == -1) or (begin != -1 and end < begin):
+        problem = (
+            "the begin marker has no end marker"
+            if begin != -1 and end == -1
+            else "the end marker has no begin marker"
+            if begin == -1
+            else "the end marker comes before the begin marker"
+        )
+        return {
+            **step,
+            "result": "failed",
+            "output": f"{path}: {problem}; fix or delete the ambient-spanish block by hand and re-run",
+        }
+    if begin != -1:
         before, after = text[:begin].rstrip("\n"), text[end + len(RULE_END) :].lstrip("\n")
         if block is not None and text[begin : end + len(RULE_END)] == block:
             return {**step, "result": "unchanged"}
@@ -109,13 +145,22 @@ def set_rule(path: Path, block: str | None, *, dry_run: bool) -> dict[str, Any]:
         updated = (text.rstrip("\n") + "\n\n" if text.strip() else "") + block + "\n"
         result = "added"
     if not dry_run:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(updated, encoding="utf-8")
+        if not updated.strip():
+            path.unlink(missing_ok=True)
+        else:
+            _write_atomically(path, updated)
     return {**step, "result": result}
 
 
-def install_hover(*, dry_run: bool) -> dict[str, Any]:
+def install_hover(*, dry_run: bool, isolated: bool = False) -> dict[str, Any]:
     step = {"step": "install hover mod", "plugin": HOVER_PLUGIN}
+    if isolated:
+        # The plugin lands in the real Claude config whatever `--home` says.
+        return {
+            **step,
+            "result": "skipped",
+            "reason": f"--home or {SKIP_BUILD_ENV}=1 means an isolated install",
+        }
     claude = shutil.which("claude")
     if claude is None:
         return {**step, "result": "skipped", "reason": "the claude CLI is not on PATH"}
@@ -146,7 +191,11 @@ def _lookup_is_current() -> bool:
     if not LOOKUP_BIN.is_file():
         return False
     built = LOOKUP_BIN.stat().st_mtime
-    sources = [LOOKUP_CRATE / "Cargo.toml", *(LOOKUP_CRATE / "src").rglob("*")]
+    sources = [
+        LOOKUP_CRATE / "Cargo.toml",
+        LOOKUP_CRATE / "Cargo.lock",
+        *(LOOKUP_CRATE / "src").rglob("*"),
+    ]
     return all(path.stat().st_mtime <= built for path in sources if path.is_file())
 
 
@@ -154,7 +203,10 @@ def build_lookup(*, dry_run: bool) -> dict[str, Any]:
     """Build the `ambient-lookup` binary the agent pipes each draft through."""
     step = {"step": "build ambient-lookup", "path": str(LOOKUP_BIN)}
     if os.environ.get(SKIP_BUILD_ENV) == "1":
-        return {**step, "result": "skipped", "reason": f"{SKIP_BUILD_ENV}=1"}
+        skipped = {**step, "result": "skipped", "reason": f"{SKIP_BUILD_ENV}=1"}
+        if not LOOKUP_BIN.is_file():
+            skipped["note"] = "no binary is built yet, so `ambient_state.py context` will fail until it is"
+        return skipped
     if _lookup_is_current():
         return {**step, "result": "unchanged"}
     cargo = shutil.which("cargo")
@@ -213,7 +265,8 @@ def main(argv: list[str] | None = None) -> int:
     if not args.remove_rule:
         steps.append(build_lookup(dry_run=args.dry_run))
     if "claude" in tools and not args.remove_rule:
-        steps.append({"tool": "claude", **install_hover(dry_run=args.dry_run)})
+        isolated = bool(args.home) or os.environ.get(SKIP_BUILD_ENV) == "1"
+        steps.append({"tool": "claude", **install_hover(dry_run=args.dry_run, isolated=isolated)})
 
     ok = all(step["result"] not in ("conflict", "failed") for step in steps)
     print(json.dumps({"ok": ok, "dry_run": args.dry_run, "steps": steps}, indent=2))

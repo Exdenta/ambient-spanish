@@ -56,19 +56,22 @@ fn run() -> Result<(), String> {
     let raw = std::fs::read_to_string(&args.vocab)
         .map_err(|e| format!("cannot read {}: {e}", args.vocab.display()))?;
     let index = index::Index::parse(&raw);
-
-    let mut draft = String::new();
-    match &args.file {
-        Some(path) => {
-            draft = std::fs::read_to_string(path)
-                .map_err(|e| format!("cannot read {}: {e}", path.display()))?
-        }
-        None => {
-            std::io::stdin()
-                .read_to_string(&mut draft)
-                .map_err(|e| format!("cannot read stdin: {e}"))?;
-        }
+    if index.entries.is_empty() {
+        eprintln!("warning: no vocabulary entries found in {}", args.vocab.display());
     }
+
+    let bytes = match &args.file {
+        Some(path) => std::fs::read(path)
+            .map_err(|e| format!("cannot read {}: {e}", path.display()))?,
+        None => {
+            let mut buf = Vec::new();
+            std::io::stdin()
+                .read_to_end(&mut buf)
+                .map_err(|e| format!("cannot read stdin: {e}"))?;
+            buf
+        }
+    };
+    let draft = String::from_utf8_lossy(&bytes).into_owned();
 
     let matches = scan::find_matches(&index, &draft);
     let out = if args.json {

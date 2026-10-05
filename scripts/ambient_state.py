@@ -405,7 +405,7 @@ def _compose_vocabulary(
 ) -> dict[str, Any]:
     """Order a personal curriculum: everything known first, then the queue of words to add.
 
-    Known: the kept known tier, the level packs up to `level`, and `add_known`,
+    Known: the kept known words, the level packs up to `level`, and `add_known`,
     minus anything removed or queued to learn. Queue: `learn_first` in the
     order given, then the removed words, the kept queue, and every remaining
     lexicon word, easiest level first. Each Spanish form appears once.
@@ -548,8 +548,11 @@ def _validate_legacy_state(
     *,
     version: int,
 ) -> dict[str, Any]:
-    """Validate a schema v1 or v2 document. Used only on the migration path."""
-    if version not in LEGACY_SCHEMA_VERSIONS:
+    """Validate a schema v1 or v2 document. Used only on the migration path.
+
+    Later legacy versions (v3 to v5) are validated by `_validate_state`.
+    """
+    if version not in (1, 2):
         raise StateError(f"No legacy validator exists for state schema_version {version}")
     if not isinstance(state, dict):
         raise StateError("State root must be an object")
@@ -712,7 +715,8 @@ def _validate_state(
     v4 adds the required `config.known_per_reply` budget; v5 lets that budget be
     null (no cap), adds `progress.offers`, and allows a decision to reserve the
     whole vocabulary by scope instead of listing every id; v6 drops the budget
-    and the offers, since the agent now looks words up instead of sampling.
+    and the offers, since the agent now looks words up instead of sampling, and
+    a scoped decision may record the `vocab_size` it was issued under.
     v3 to v5 are accepted only on the migration path. Unknown versions fail
     closed.
     """
@@ -848,12 +852,26 @@ def _validate_state(
             raise StateError("Pending decision ids must be non-empty strings")
         if not isinstance(decision, dict):
             raise StateError(f"Pending decision {decision_id} must be an object")
-        scoped = version >= 5 and set(decision) == {"scope", "created_at"}
+        scoped_keys = {"scope", "created_at"}
+        if version >= 6:
+            scoped_keys = scoped_keys | ({"vocab_size"} & set(decision))
+        scoped = version >= 5 and set(decision) == scoped_keys
         if not scoped and set(decision) != {"term_ids", "created_at"}:
             raise StateError(f"Pending decision {decision_id} has invalid fields")
         if scoped:
             if decision["scope"] != "known_all":
                 raise StateError(f"Pending decision {decision_id} has an unknown scope")
+            if "vocab_size" in decision:
+                vocab_size = decision["vocab_size"]
+                if (
+                    type(vocab_size) is not int
+                    or vocab_size < 0
+                    or vocab_size > len(curriculum)
+                ):
+                    raise StateError(
+                        f"Pending decision {decision_id} vocab_size must be an integer "
+                        "within the curriculum"
+                    )
         else:
             term_ids = decision["term_ids"]
             if not isinstance(term_ids, list) or not term_ids:
@@ -869,7 +887,7 @@ def _validate_state(
             raise StateError(f"Pending decision {decision_id} requires created_at")
         _parse_timestamp(decision["created_at"], config["timezone"], field="created_at")
 
-    # Usage history is observational under v3: tiers come from the calendar, so
+    # Usage history is observational since v3: the vocabulary comes from the calendar, so
     # terms need not form a curriculum prefix. The exposure timestamp is still
     # pinned to the newest use so a rolled-back clock is detectable.
     if terms and exposure_value is None:
@@ -915,6 +933,7 @@ def _migrate_v2_state(
     config = migrated["config"]
     config.pop("exposure_percent", None)
     config["batch_size"] = DEFAULT_BATCH_SIZE
+    config["cadence_days"] = DEFAULT_CADENCE_DAYS
     config["baseline_known_count"] = len(migrated["progress"]["terms"])
     config["start_date"] = now.astimezone(_timezone(config["timezone"])).date().isoformat()
     progress = migrated["progress"]
@@ -963,21 +982,34 @@ def _migrate_v4_state(
 
 
 def _migrate_v5_state(
-    state: dict[str, Any], curriculum: list[dict[str, str]]
+    state: dict[str, Any], curriculum: list[dict[str, str]], now: datetime
 ) -> dict[str, Any]:
-    """Drop the per-reply density cap and offer history.
+    """Drop the per-reply density cap and offer history; move to weekly pacing.
 
     The agent now looks words up in the whole vocabulary with `ambient-lookup`
     instead of receiving a sample, so `known_per_reply` and `offers` have no
     reader. Pending decisions are cleared: each was issued under the old scope
     rules and a reply in flight simply records nothing.
+
+    Pacing becomes weekly: cadence 7 days and `round(batch_size * 7 / cadence)`
+    words per week. The pacing is rebased so today's vocabulary size does not
+    change (see `_rebase_pacing`).
     """
     _validate_state(state, curriculum, version=5)
     migrated = json.loads(json.dumps(state))
     migrated["schema_version"] = SCHEMA_VERSION
-    migrated["config"].pop("known_per_reply", None)
+    config = migrated["config"]
+    config.pop("known_per_reply", None)
     migrated["progress"].pop("offers", None)
     migrated["progress"]["pending_decisions"] = {}
+    old_batch, old_cadence = config["batch_size"], config["cadence_days"]
+    today = now.astimezone(_timezone(config["timezone"])).date()
+    _rebase_pacing(
+        migrated,
+        len(curriculum),
+        today,
+        batch_size=max(1, round(old_batch * DEFAULT_CADENCE_DAYS / old_cadence)),
+    )
     return _validate_state(migrated, curriculum)
 
 
@@ -988,7 +1020,8 @@ def _preserve_migration_source(
     if backup_path.exists():
         if _read_json(backup_path) != source:
             raise StateError(
-                f"Migration backup already exists with different content: {backup_path}"
+                f"Migration backup already exists with different content: {backup_path}; "
+                "move it aside (rename or delete it) and run the command again"
             )
         return True
     return _atomic_write(backup_path, source)
@@ -1025,7 +1058,7 @@ def _load_or_create_state(
                 staged = _migrate_v3_state(staged, curriculum)
             if source_version <= 4:
                 staged = _migrate_v4_state(staged, curriculum)
-            migrated = _migrate_v5_state(staged, curriculum)
+            migrated = _migrate_v5_state(staged, curriculum, now)
             migrated["updated_at"] = now.isoformat()
             _validate_state(migrated, curriculum)
             backup_durable = _preserve_migration_source(
@@ -1064,7 +1097,28 @@ def _vocabulary_size(state: dict[str, Any], size: int, batch_index: int) -> int:
     return min(size, config["baseline_known_count"] + (batch_index + 1) * config["batch_size"])
 
 
-def _tiers(
+def _rebase_pacing(
+    state: dict[str, Any], curriculum_size: int, today: date, *, batch_size: int
+) -> None:
+    """Switch to weekly pacing at `batch_size` words per week, keeping today's size.
+
+    The vocabulary size as of `today` (computed from the pacing still in `config`)
+    must not change, so the baseline becomes `size - batch_size` (floored at 0,
+    in which case today's vocabulary grows to one batch) and the calendar
+    restarts today so batch 0 is the current one. A start date still in the
+    future stays put: nothing is unlocked yet and nothing should be early.
+    """
+    config = state["config"]
+    batch_index = _batch_index(state, today)
+    current = _vocabulary_size(state, curriculum_size, batch_index)
+    config["batch_size"] = batch_size
+    config["cadence_days"] = DEFAULT_CADENCE_DAYS
+    if batch_index >= 0:
+        config["baseline_known_count"] = max(0, current - batch_size)
+        config["start_date"] = today.isoformat()
+
+
+def _vocabulary(
     state: dict[str, Any], curriculum: list[dict[str, str]], today: date
 ) -> tuple[list[dict[str, str]], int]:
     """Return (vocabulary, batch_index) for a local date.
@@ -1080,9 +1134,8 @@ def _tiers(
 def _manifest_text(known: list[dict[str, str]]) -> str:
     """Grouped `id | spanish | english` listing of the whole vocabulary."""
     lines = [
-        f"# ambient-spanish known vocabulary — {len(known)} terms",
-        "# Substitute these wherever your own prose expresses the",
-        "# meaning. Verbs and nouns first. The sentence's grammar stays English.",
+        f"# ambient-spanish vocabulary — {len(known)} terms",
+        "# Read by the ambient-lookup tool and the hover mod, not by the assistant.",
     ]
     by_kind: dict[str, list[dict[str, str]]] = {}
     for term in known:
@@ -1103,7 +1156,7 @@ def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, 
     """Refresh the vocabulary manifest only when its content changed.
 
     A stable file is worth more than a fresh one here: rewriting it every reply
-    would invalidate the reader's cache of a list that changes every third day.
+    would invalidate the reader's cache of a list that changes once a week.
     """
     path = state_path.parent / MANIFEST_FILENAME
     text = _manifest_text(known)
@@ -1146,65 +1199,65 @@ def _next_batch_date(
     return start + timedelta(days=next_index * config["cadence_days"])
 
 
-def _reserve_decision(state: dict[str, Any], now: datetime) -> str:
-    """Reserve one reply's exposure: any term of the vocabulary of the day issued."""
+def _reserve_decision(state: dict[str, Any], now: datetime, vocab_size: int) -> str:
+    """Reserve one reply's exposure: the first `vocab_size` terms of the curriculum.
+
+    `vocab_size` is the vocabulary of the moment `context` ran, stored so a
+    later `configure` cannot change what the reply was allowed to use.
+    """
     pending = state["progress"]["pending_decisions"]
     timezone_name = state["config"]["timezone"]
-    ages: list[tuple[float, str]] = []
-    for decision_id, decision in pending.items():
-        created_at = _parse_timestamp(
+
+    def created(decision: dict[str, Any]) -> float:
+        return _parse_timestamp(
             decision["created_at"], timezone_name, field="created_at"
-        )
-        age = now.timestamp() - created_at.timestamp()
-        if age > MAX_DECISION_AGE_SECONDS:
-            ages.append((float("inf"), decision_id))
-        else:
-            ages.append((age, decision_id))
-    for age, decision_id in ages:
-        if age == float("inf"):
-            del pending[decision_id]
+        ).timestamp()
+
+    for decision_id in [
+        decision_id
+        for decision_id, decision in pending.items()
+        if now.timestamp() - created(decision) > MAX_DECISION_AGE_SECONDS
+    ]:
+        del pending[decision_id]
 
     # Replies that legitimately used no Spanish leave their reservation behind.
     # Evicting the oldest keeps `context` working instead of failing closed on a
     # queue of never-consumed tokens.
     while len(pending) >= MAX_PENDING_DECISIONS:
-        oldest = max(
-            (
-                (
-                    _parse_timestamp(
-                        decision["created_at"], timezone_name, field="created_at"
-                    ).timestamp(),
-                    decision_id,
-                )
-                for decision_id, decision in pending.items()
-            ),
-            key=lambda row: (-row[0], row[1]),
-        )
-        del pending[oldest[1]]
+        del pending[min(pending, key=lambda decision_id: (created(pending[decision_id]), decision_id))]
 
     decision_id = f"d_{secrets.token_urlsafe(18)}"
     while decision_id in pending:
         decision_id = f"d_{secrets.token_urlsafe(18)}"
-    pending[decision_id] = {"scope": "known_all", "created_at": now.isoformat()}
+    pending[decision_id] = {
+        "scope": "known_all",
+        "created_at": now.isoformat(),
+        "vocab_size": vocab_size,
+    }
     return decision_id
 
 
 def _permitted_terms(
     state: dict[str, Any], curriculum: list[dict[str, str]], decision: dict[str, Any]
 ) -> set[str]:
-    """Ids a decision permits: the vocabulary of the day it was issued.
+    """Ids a decision permits: the vocabulary at the moment it was issued.
 
-    A decision issued before schema v6 may still carry its own `term_ids` list;
-    that list is honoured as written.
+    A scoped decision stores that vocabulary's size, so the permitted set is the
+    curriculum prefix of that length whatever `configure` changed since. A
+    decision issued before schema v6 may carry its own `term_ids` list, or a
+    scope without a size; the list is honoured as written and a missing size is
+    recomputed from the configuration for the day it was issued.
     """
     if "term_ids" in decision:
         return set(decision["term_ids"])
+    if "vocab_size" in decision:
+        return {term["id"] for term in curriculum[: decision["vocab_size"]]}
     timezone_name = state["config"]["timezone"]
     created_at = _parse_timestamp(
         decision["created_at"], timezone_name, field="created_at"
     )
     issued_on = created_at.astimezone(_timezone(timezone_name)).date()
-    vocabulary, _ = _tiers(state, curriculum, issued_on)
+    vocabulary, _ = _vocabulary(state, curriculum, issued_on)
     return {term["id"] for term in vocabulary}
 
 
@@ -1228,7 +1281,7 @@ def _context(
     progress = state["progress"]
     timezone_name = config["timezone"]
     today = now.date()
-    known, batch_index = _tiers(state, curriculum, today)
+    known, batch_index = _vocabulary(state, curriculum, today)
     last_exposure_timestamp = progress.get("last_exposure_at")
 
     active = True
@@ -1249,8 +1302,6 @@ def _context(
         last_exposure_timestamp, timezone_name, field="last_exposure_at"
     ).timestamp():
         active, reason = False, "clock_before_last_exposure"
-    elif not known:
-        active, reason = False, "curriculum_exhausted"
     elif len(known) >= len(curriculum):
         # Substitution continues; only new words have run out.
         reason = "curriculum_complete"
@@ -1286,8 +1337,43 @@ def _split_ids(raw: str) -> list[str]:
     ids = [chunk.strip() for chunk in raw.split(",")]
     ids = [chunk for chunk in ids if chunk]
     if not ids:
-        raise StateError("--used requires at least one curriculum id or Spanish word")
+        raise StateError("--used requires at least one Spanish word or curriculum id")
     return list(dict.fromkeys(ids))
+
+
+def _resolve_used(
+    tokens: list[str], curriculum: list[dict[str, str]]
+) -> tuple[list[tuple[str, list[str]]], list[str]]:
+    """Candidate curriculum ids for each `--used` token, and the tokens matching nothing.
+
+    A token is the Spanish word as `ambient-lookup` prints it, or an id. In
+    order: the exact Spanish form (case and punctuation ignored, so `Hola!`
+    works), else a curriculum id, else the accent-folded Spanish form when that
+    matches exactly one entry. An exact form may match several entries
+    (homographs); `record` keeps those the decision permits.
+    """
+    by_id = {term["id"]: term for term in curriculum}
+    by_key: dict[str, list[str]] = {}
+    by_accentless: dict[str, list[str]] = {}
+    for term in curriculum:
+        key = _word_key(term["spanish"])
+        by_key.setdefault(key, []).append(term["id"])
+        by_accentless.setdefault(_accentless(key), []).append(term["id"])
+    resolved: list[tuple[str, list[str]]] = []
+    unknown: list[str] = []
+    for token in tokens:
+        key = _word_key(token)
+        if key in by_key:
+            ids = by_key[key]
+        elif token in by_id:
+            ids = [token]
+        elif len(by_accentless.get(_accentless(key), [])) == 1:
+            ids = by_accentless[_accentless(key)]
+        else:
+            unknown.append(token)
+            continue
+        resolved.append((token, ids))
+    return resolved, unknown
 
 
 def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
@@ -1335,13 +1421,13 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
                 raise StateError(
                     "ambient-lookup binary not found: run python3 scripts/install.py"
                 )
-            known, _ = _tiers(state, curriculum, now.date())
+            known, _ = _vocabulary(state, curriculum, now.date())
             # The agent matches its draft against this file through the lookup
             # binary, and the hover mod reads it too, so it holds the whole
             # vocabulary and is rewritten only when that changes.
             manifest = _write_manifest(state_path, known)
             result["lookup"] = {"command": str(binary), "vocabulary": manifest["path"]}
-            result["decision_id"] = _reserve_decision(state, now)
+            result["decision_id"] = _reserve_decision(state, now, len(known))
             state["updated_at"] = now.isoformat()
             _validate_state(state, curriculum)
             durable = _atomic_write(state_path, state)
@@ -1353,21 +1439,8 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
 def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
-    by_id = {term["id"]: term for term in curriculum}
-    # `--used` takes ids or the Spanish words themselves, as `ambient-lookup` prints them.
-    by_spanish: dict[str, list[str]] = {}
-    for term in curriculum:
-        by_spanish.setdefault(_accentless(term["spanish"]).lower(), []).append(term["id"])
-    used: list[str] = []
-    unknown: list[str] = []
-    for word in _split_ids(args.used):
-        if word in by_id:
-            matched = [word]
-        else:
-            matched = by_spanish.get(_accentless(word).lower(), [])
-        if not matched:
-            unknown.append(word)
-        used.extend(term_id for term_id in matched if term_id not in used)
+    tokens = _split_ids(args.used)
+    candidates, unknown = _resolve_used(tokens, curriculum)
     if unknown:
         raise StateError(f"Unknown curriculum terms: {', '.join(sorted(unknown))}")
 
@@ -1378,10 +1451,19 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
         if decision is None:
             raise StateError("Unknown, expired, or already-used exposure decision")
         permitted = _permitted_terms(state, curriculum, decision)
-        outside = sorted(term_id for term_id in used if term_id not in permitted)
+        # A Spanish form shared by several entries (porque, él/el) counts as the
+        # entries the decision permits; it is an error only if none are.
+        used: list[str] = []
+        outside: list[str] = []
+        for token, ids in candidates:
+            allowed = [term_id for term_id in ids if term_id in permitted]
+            if not allowed:
+                outside.extend(ids)
+            used.extend(term_id for term_id in allowed if term_id not in used)
         if outside:
             raise StateError(
-                f"Terms were not part of the reserved active set: {', '.join(outside)}"
+                "Terms were not part of the reserved active set: "
+                f"{', '.join(sorted(set(outside)))}"
             )
         created_at = _parse_timestamp(
             decision["created_at"], state["config"]["timezone"], field="created_at"
@@ -1474,9 +1556,24 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
         state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         config = state["config"]
         changes: dict[str, Any] = {}
+        if args.timezone is not None:
+            _timezone(args.timezone)
+            config["timezone"] = args.timezone
+            changes["timezone"] = args.timezone
+            now = _parse_now(args.now, args.timezone)
         if args.words_per_week is not None:
-            config["batch_size"] = _words_per_week(args.words_per_week)
-            config["cadence_days"] = DEFAULT_CADENCE_DAYS
+            # An explicit --baseline-known sets the size itself; otherwise keep
+            # today's vocabulary size unchanged across the new pace.
+            if args.baseline_known is None:
+                _rebase_pacing(
+                    state,
+                    len(curriculum),
+                    now.date(),
+                    batch_size=_words_per_week(args.words_per_week),
+                )
+            else:
+                config["batch_size"] = _words_per_week(args.words_per_week)
+                config["cadence_days"] = DEFAULT_CADENCE_DAYS
             changes["words_per_week"] = args.words_per_week
         if args.baseline_known is not None:
             if args.baseline_known < 0:
@@ -1488,11 +1585,6 @@ def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
         if args.dialect is not None:
             config["dialect"] = args.dialect
             changes["dialect"] = args.dialect
-        if args.timezone is not None:
-            _timezone(args.timezone)
-            config["timezone"] = args.timezone
-            changes["timezone"] = args.timezone
-            now = _parse_now(args.now, args.timezone)
         if args.pause:
             config["paused"] = True
             changes["paused"] = True
@@ -1576,12 +1668,21 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
         if state_path.exists():
             state, now, _ = _load_or_create_state(state_path, current, now_value=args.now)
             config = state["config"]
-            batch_index = max(_batch_index(state, now.date()), 0)
-            unlocked = _vocabulary_size(state, len(current), batch_index)
+            batch_index = _batch_index(state, now.date())
             if args.keep_known:
-                keep_known = current[:unlocked]
-                keep_queue = current[unlocked:]
+                # Known = baseline plus the batches before the current one. The
+                # rebuild restarts the calendar today, so batch 0 re-adds the
+                # current batch and the vocabulary size stays the same.
+                known_count = min(
+                    len(current),
+                    config["baseline_known_count"]
+                    + max(batch_index, 0) * config["batch_size"],
+                )
+                keep_known = current[:known_count]
+                keep_queue = current[known_count:]
+            future_start = batch_index < 0
         else:
+            future_start = False
             now = _parse_now(args.now, DEFAULT_TIMEZONE)
             state = _new_state(
                 now,
@@ -1649,7 +1750,8 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             config["batch_size"] = _words_per_week(args.words_per_week)
             config["cadence_days"] = DEFAULT_CADENCE_DAYS
         config["baseline_known_count"] = len(known)
-        config["start_date"] = now.date().isoformat()
+        if not future_start:  # a start date still ahead keeps batch 0 locked
+            config["start_date"] = now.date().isoformat()
         state["updated_at"] = now.isoformat()
         _validate_state(state, curriculum)
 
@@ -1697,7 +1799,8 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             },
         ) and durable
         durable = _atomic_write(state_path, state) and durable
-        result["known_manifest"] = _write_manifest(state_path, curriculum[: len(known)])
+        live, _ = _vocabulary(state, curriculum, now.date())
+        result["known_manifest"] = _write_manifest(state_path, live)
     result["write_durability"] = "confirmed" if durable else "uncertain"
     return result
 
@@ -1740,7 +1843,10 @@ def _parser() -> argparse.ArgumentParser:
     record = subparsers.add_parser("record", help="Record the terms actually used")
     _add_common(record)
     record.add_argument(
-        "--used", required=True, help="Comma-separated curriculum ids actually used"
+        "--used",
+        required=True,
+        help="Comma-separated Spanish words actually used, as ambient-lookup prints them "
+        "(or curriculum ids)",
     )
     record.add_argument("--decision", required=True)
     record.set_defaults(handler=_cmd_record)
