@@ -24,7 +24,7 @@ The vocabulary is read from `~/.codex/state/ambient-spanish/vocabulary.txt`, whi
 ## Limits
 
 - Hover needs a terminal that reports the pointer; the fullscreen layout is the documented case.
-- Replies with code fences, tables, headings, blockquotes or markdown links keep the engine's drawing and get no hover.
+- Headings, blockquotes, links, rules and code lines are redrawn by the mod (code is never matched). Tables go to the engine block by block, so their words get no hover; the row above the prompt lists them as plain text instead.
 - Each word is drawn as its own element (a `Text` nested in a `Text` cannot be hovered), so long paragraphs can wrap slightly differently.
 - Verbs are matched by stem plus a fixed ending list, and `ENGLISH_HOMOGRAPHS` in `hooks/register.tsx` skips words that are also English (`color`, `red`, `pan`, ...). Irregular forms are missed.
 
