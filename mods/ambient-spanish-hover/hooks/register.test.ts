@@ -6,8 +6,8 @@ const VOCAB = '## verb (1)\nbuscar | buscar | to look for\n## noun (1)\ndato | d
 const mountMessage = ($: any, text: string) =>
   $.ui.mount({ plugin, surface: 'terminal', component: 'AssistantMessage', props: { text, isFirstOfReply: true } })
 
-function stubEngine(on: any) {
-  on('env.get', () => ({ value: '/home/test' }))
+function stubEngine(on: any, entrypoint = 'cli') {
+  on('env.get', (_$: any, e: any) => ({ value: e.name === 'CLAUDE_CODE_ENTRYPOINT' ? entrypoint : '/home/test' }))
   on('fs.read', () => ({ value: VOCAB }))
   on('ui.render', () => ({ type: 'Text', props: {}, children: ['engine'] }))
 }
@@ -113,4 +113,10 @@ test('in a list only the items holding a word are redrawn', async ($, on) => {
   expect(drawn).toContain('plain **English** item')
   expect(drawn).toContain('another one')
   expect(drawn.split('"type":"Markdown"').length - 1).toBe(2)
+})
+
+test('outside the CLI the engine draws everything', async ($, on) => {
+  stubEngine(on, 'claude-desktop')
+  const message = await mountMessage($, 'I will buscar the file.')
+  expect(JSON.stringify(await message.drawn())).not.toContain('es-buscar')
 })

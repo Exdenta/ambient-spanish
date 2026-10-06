@@ -239,6 +239,11 @@ async function vocabPath($: any): Promise<string> {
   return state ? `${state.replace(/[^/]*$/, '')}vocabulary.txt` : `${home}/${VOCAB_FILE}`
 }
 
+// Hover only works in the terminal CLI; the desktop app and IDE extensions set another entrypoint.
+let isCli: Promise<boolean> | undefined
+const onCli = ($: any): Promise<boolean> =>
+  (isCli ??= Promise.resolve($.env.get('CLAUDE_CODE_ENTRYPOINT')).then(v => v === 'cli', () => false))
+
 function loadIndex($: any): Promise<Index | null> {
   const stale = indexLoad && Date.now() - indexAt > INDEX_REFRESH_MS
   if (stale) {
@@ -298,6 +303,7 @@ async function drawByEngine(next: any, e: any, raw: string): Promise<any> {
 
 export const register: Register = on => {
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
+    if (!(await onCli($))) return next(e)
     const index = await loadIndex($)
     if (!index) return next(e)
 
