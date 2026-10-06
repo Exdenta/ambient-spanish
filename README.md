@@ -57,7 +57,21 @@ The skills are linked, not copied, so keep the clone where it is. Re-running the
 
 ### Update and uninstall
 
-To update, run `git pull` in the clone. Your progress lives in `~/.codex/state/ambient-spanish/`, outside the clone, so updates never reset it.
+To update:
+
+```bash
+cd ~/ambient-spanish && git pull
+python3 scripts/install.py --claude    # the flags you installed with; rebuilds ambient-lookup if it changed
+```
+
+Then run `/reload-plugins` or start a new session. The skills and the hover mod are read straight from the clone, so nothing else needs updating. If you installed the hover mod from GitHub instead (`claude plugin marketplace add Exdenta/ambient-spanish`), update it with:
+
+```bash
+claude plugin marketplace update ambient-spanish
+claude plugin update ambient-spanish-hover@ambient-spanish
+```
+
+Your progress lives in `~/.codex/state/ambient-spanish/`, outside the clone, so updates never reset it.
 
 To uninstall:
 

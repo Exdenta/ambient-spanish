@@ -11,6 +11,15 @@ claude plugin install ambient-spanish-hover@ambient-spanish
 
 Then start a new session, or run `/reload-plugins`.
 
+## Update
+
+Added from a local clone, Claude Code reads the mod straight from the clone: `git pull`, then `/reload-plugins`. Added from GitHub, it runs a cached copy:
+
+```bash
+claude plugin marketplace update ambient-spanish
+claude plugin update ambient-spanish-hover@ambient-spanish
+```
+
 ## How it works
 
 | Piece | Job |

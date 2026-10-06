@@ -33,6 +33,10 @@ For the hover mod, see [its README](mods/ambient-spanish-hover/README.md#develop
 
 The tests check that every curriculum entry is in the lexicon under the same id, that no blocklisted or excluded word is in it, and that no Spanish form appears twice.
 
+## Changing the hover mod
+
+Bump `version` in `mods/ambient-spanish-hover/.claude-plugin/plugin.json` with every change to the mod's `hooks/`, and record it in `tests/hover_mod_fingerprint.json` (the failing test prints the line to paste). A GitHub install runs a cached copy, and `claude plugin update` only replaces it when the version changes. A local clone needs no bump, because Claude Code reads the mod from the folder.
+
 ## Changing state handling
 
 `scripts/ambient_state.py` is the only writer of `state.json`. If you change the schema, update `references/state-contract.md` and add a test for migrating an older file.
