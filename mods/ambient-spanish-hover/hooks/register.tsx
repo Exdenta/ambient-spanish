@@ -11,7 +11,7 @@ type Block =
   | { kind: 'markdown'; raw: string }
   | { kind: 'code'; source: string; language?: string }
   | { kind: 'spacer' }
-type Index = { exact: Map<string, Word>; stems: { stem: string; endings: string[]; word: Word }[] }
+type Index = { exact: Map<string, Word>; english: Set<string> }
 
 // Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
 const VOCAB_FILE = '.codex/state/ambient-spanish/vocabulary.txt'
@@ -38,14 +38,85 @@ const LINK = /^\[([^\]]*)\]\(([^)]*)\)$/
 // Vocabulary forms that are also ordinary English words.
 const ENGLISH_HOMOGRAPHS = new Set(['color', 'final', 'red', 'pan', 'pie', 'sol', 'solo', 'mes', 'mal', 'ser', 'dar', 'ver', 'ir', 'mano', 'media', 'dos', 'cara', 'mesa', 'plaza', 'tapa', 'copia'])
 
-const AR_ENDINGS = ['a', 'as', 'amos', 'ais', 'an', 'o', 'e', 'es', 'en', 'ado', 'ada', 'ados', 'adas', 'ando', 'aron', 'aba', 'aban']
-const ER_IR_ENDINGS = ['e', 'es', 'emos', 'en', 'o', 'a', 'as', 'an', 'amos', 'ido', 'ida', 'idos', 'idas', 'iendo', 'io', 'ia', 'ian', 'ieron', 'imos', 'is']
+// Common English function words; a token in this set is never underlined.
+const ENGLISH_FUNCTION_WORDS = `the a an this that these those my your his her its our their me you him us them i he she we they it
+is are was were be been being am do does did done have has had having will would can could shall should may might must
+and or but nor so yet if than then as because while although though
+in on at by for with from to of into onto over under about after before between through during up down out off
+not no yes all any some each every both either neither other another such only own same too very just also
+what which who whom whose when where why how there here now more most much many few less than`.split(/\s+/)
 
-const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+// English words that a generated or exact Spanish form spells, found by checking the
+// full A0–C1 lexicon against an English dictionary, and no gloss already covers.
+const ENGLISH_LOOKALIKES = `accede actual aisle amen anterior arena ate cargo carbon carton cartel cede circular
+coda coma combustible concede conductor conserve constructor construe corporal criteria critique culpable
+curriculum curse diversion dole dote dude echo eleven fallen fatal favorable filial fin gene gratis impede
+impute incline integral inversion labor lance lee lesion librarian maxima median minima mania manifesto mire
+mole motive motor natal pare patron posterior postal potable principal probe procure progenitor regimen regular
+remover repose reunion revolver rogue rumor salve salvo sensible sole sonar surge talon tan temporal timbre toss
+tress tribunal valor via vocal`.split(/\s+/)
+
+const STRIP_ACCENTS = /[̀-ͯ]/g
+// Keeps n-tilde as its own letter ("una" is not "una with a tilde"), like _accentless in ambient_state.py.
+const normalize = (s: string) =>
+  s.toLowerCase().normalize('NFC').split('ñ').map(part => part.normalize('NFD').replace(STRIP_ACCENTS, '')).join('ñ')
+
+function addEnglish(set: Set<string>, w: string) {
+  set.add(w)
+  // Inflecting "to" or a possessive's "s" would hide Spanish tos and sed.
+  if (w.length < 3) return
+  set.add(w + 's')
+  set.add(w + 'es')
+  set.add(w + 'ed')
+  set.add(w + 'd')
+  set.add(w + 'ing')
+  if (w.endsWith('e')) set.add(w.slice(0, -1) + 'ing')
+  if (w.endsWith('y')) {
+    set.add(w.slice(0, -1) + 'ies')
+    set.add(w.slice(0, -1) + 'ied')
+  }
+}
+
+const AR = { pres: ['o', 'as', 'a', 'amos', 'ais', 'an'], pret: ['e', 'aste', 'o', 'amos', 'asteis', 'aron'], imp: ['aba', 'abas', 'aba', 'abamos', 'abais', 'aban'], subj: ['e', 'es', 'e', 'emos', 'eis', 'en'], ger: 'ando', part: 'ad' }
+const ER = { pres: ['o', 'es', 'e', 'emos', 'eis', 'en'], pret: ['i', 'iste', 'io', 'imos', 'isteis', 'ieron'], imp: ['ia', 'ias', 'ia', 'iamos', 'iais', 'ian'], subj: ['a', 'as', 'a', 'amos', 'ais', 'an'], ger: 'iendo', part: 'id' }
+const IR = { ...ER, pres: ['o', 'es', 'e', 'imos', 'is', 'en'] }
+const FUTURE = ['e', 'as', 'a', 'emos', 'eis', 'an']
+const CONDITIONAL = ['ia', 'ias', 'ia', 'iamos', 'iais', 'ian']
+
+// Regular forms of a verb, accents already stripped (the same way tokens are normalized).
+function verbForms(inf: string): string[] {
+  const kind = inf.slice(-2)
+  const stem = inf.slice(0, -2)
+  if (stem.length < 2 || !['ar', 'er', 'ir'].includes(kind)) return []
+  const set = kind === 'ar' ? AR : kind === 'er' ? ER : IR
+  // Spelling that keeps the sound before e (-ar) or before a/o (-ger, -gir).
+  let soft = stem
+  if (kind === 'ar') {
+    if (stem.endsWith('c')) soft = stem.slice(0, -1) + 'qu'
+    else if (stem.endsWith('g')) soft = stem + 'u'
+    else if (stem.endsWith('z')) soft = stem.slice(0, -1) + 'c'
+  }
+  const hard = kind !== 'ar' && stem.endsWith('g') ? stem.slice(0, -1) + 'j' : stem
+  const out: string[] = []
+  const add = (base: string, endings: string[]) => { for (const e of endings) out.push(base + e) }
+  const front = kind === 'ar' ? soft : stem // before e in -ar, otherwise the plain stem
+  add(hard, [set.pres[0]])
+  add(stem, set.pres.slice(1))
+  out.push(front + set.pret[0])
+  add(stem, set.pret.slice(1))
+  add(stem, set.imp)
+  add(inf, FUTURE)
+  add(inf, CONDITIONAL)
+  add(kind === 'ar' ? soft : hard, set.subj)
+  out.push(stem + set.ger)
+  for (const e of ['o', 'a', 'os', 'as']) out.push(stem + set.part + e)
+  return out
+}
 
 function buildIndex(raw: string): Index {
   const exact = new Map<string, Word>()
-  const stems: Index['stems'] = []
+  const english = new Set<string>([...ENGLISH_FUNCTION_WORDS, ...ENGLISH_LOOKALIKES, ...ENGLISH_HOMOGRAPHS])
+  const derived: [string, Word][] = []
   let pos = ''
 
   for (const line of raw.split('\n')) {
@@ -58,34 +129,36 @@ function buildIndex(raw: string): Index {
     const [id, es, en] = line.split(' | ').map(s => s.trim())
     if (!id || !es || !en || es.includes(' ')) continue
 
+    for (const w of en.toLowerCase().split(/[^a-z]+/)) if (w) addEnglish(english, w)
+
     const n = normalize(es)
     if (ENGLISH_HOMOGRAPHS.has(n)) continue
     const word: Word = { id, es, en }
     exact.set(n, word)
 
     if (pos === 'verb') {
-      if (n.length - 2 >= 3) {
-        stems.push({ stem: n.slice(0, -2), endings: n.endsWith('ar') ? AR_ENDINGS : ER_IR_ENDINGS, word })
-      }
+      const reflexive = /(ar|er|ir)se$/.test(n)
+      const inf = reflexive ? n.slice(0, -2) : n
+      if (reflexive) derived.push([inf, word])
+      for (const form of verbForms(inf)) derived.push([form, word])
       continue
     }
-    for (const form of [n + 's', n + 'es']) if (!exact.has(form)) exact.set(form, word)
+    if (pos !== 'noun' && pos !== 'adjective') continue
+    const forms = [n + 's', n + 'es']
     if (n.endsWith('o')) {
       const base = n.slice(0, -1)
-      for (const form of [base + 'a', base + 'as', base + 'os']) if (!exact.has(form)) exact.set(form, word)
+      forms.push(base + 'a', base + 'as', base + 'os')
     }
+    for (const form of forms) derived.push([form, word])
   }
-  return { exact, stems }
+  // An exact vocabulary form always beats a generated one.
+  for (const [form, word] of derived) if (!exact.has(form)) exact.set(form, word)
+  return { exact, english }
 }
 
 function lookup(index: Index, token: string): Word | undefined {
   const n = normalize(token)
-  const hit = index.exact.get(n)
-  if (hit) return hit
-  for (const { stem, endings, word } of index.stems) {
-    if (n.startsWith(stem) && endings.includes(n.slice(stem.length))) return word
-  }
-  return undefined
+  return index.english.has(n) ? undefined : index.exact.get(n)
 }
 
 // Splits a plain run around the Spanish words it holds.
