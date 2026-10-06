@@ -117,10 +117,12 @@ fn push_token(
     tokens.push(Token { start, end, surface, norm });
 }
 
-/// Only whitespace or a hyphen may sit between the words of one phrase.
+/// Only spaces or tabs on one line, or a bare hyphen, may sit between the
+/// words of one phrase. A line break, list marker, quote marker or spaced
+/// dash ends the phrase.
 fn joined(text: &str, left: &Token, right: &Token) -> bool {
-    text[left.end..right.start].chars().all(|c| c.is_whitespace() || c == '-')
-        && !text[left.end..right.start].contains("\n\n")
+    let gap = &text[left.end..right.start];
+    gap == "-" || (!gap.is_empty() && gap.chars().all(|c| c == ' ' || c == '\t' || c == '\u{a0}'))
 }
 
 pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
@@ -148,8 +150,8 @@ pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
             let Some(forms) = index.forms.get(&key) else { continue };
             let surfaces: Vec<&str> = window.iter().map(|t| t.surface.as_str()).collect();
             let mut candidates: Vec<usize> = Vec::new();
-            for (at, raw_key) in forms {
-                if index.key_ok(&surfaces, raw_key) && !candidates.contains(at) {
+            for (at, form) in forms {
+                if index.key_ok(&surfaces, form) && !candidates.contains(at) {
                     candidates.push(*at);
                 }
             }
@@ -314,6 +316,133 @@ por-lo-tanto | por lo tanto | therefore\n";
     #[test]
     fn possessive_and_plural_collapse() {
         assert_eq!(words("window's Windows window"), ["window"]);
+    }
+
+    const BIG: &str = "## verb (8)\n\
+cerrar | cerrar | to close\n\
+ir | ir | to go\n\
+estudiar | estudiar | to study\n\
+salir | salir | to leave / go out\n\
+dejar | dejar | to leave / to let\n\
+ascender | ascender | to rise / be promoted\n\
+girar | girar | to turn\n\
+soportar | soportar | to bear / stand\n\
+## noun (7)\n\
+casa | casa | house\n\
+ciudad | ciudad | city\n\
+caja | caja | box\n\
+oso | oso | bear\n\
+subida | subida | rise / climb\n\
+rosa | rosa | rose\n\
+izquierda | izquierda | left\n\
+## adjective (2)\n\
+izquierdo | izquierdo | left\n\
+bueno | bueno | good\n\
+## adverb (2)\n\
+incluso | incluso | even\n\
+abajo | abajo | down\n\
+## connector (1)\n\
+por-lo-tanto | por lo tanto | therefore\n\
+## phrase (5)\n\
+buenos-dias | buenos días | good morning\n\
+tener-en-cuenta | tener en cuenta | to bear in mind\n\
+ponerse-al-dia | ponerse al día | to catch up\n\
+al-final | al final | in the long run\n\
+estar-al-tanto | estar al tanto | to be up to date / aware\n";
+
+    fn big(text: &str) -> Vec<(String, Vec<String>)> {
+        let index = Index::parse(BIG);
+        find_matches(&index, text)
+            .into_iter()
+            .map(|m| {
+                let sp = m.candidates.iter().map(|&a| index.entries[a].spanish.clone()).collect();
+                (m.text, sp)
+            })
+            .collect()
+    }
+
+    fn big_words(text: &str) -> Vec<String> {
+        big(text).into_iter().map(|(t, _)| t).collect()
+    }
+
+    fn spanish_of(text: &str, word: &str) -> Vec<String> {
+        big(text).into_iter().find(|(t, _)| t == word).map(|(_, s)| s).unwrap_or_default()
+    }
+
+    #[test]
+    fn phrases_never_cross_lines_or_markers() {
+        assert_eq!(big_words("good morning"), ["good morning"]);
+        assert_eq!(big_words("good  \t morning"), ["good  \t morning"]);
+        assert_eq!(big_words("- good\n- morning\n"), ["good"]);
+        assert_eq!(big_words("good\nmorning"), ["good"]);
+        assert_eq!(big_words("good\r\nmorning"), ["good"]);
+        assert_eq!(big_words("good\r\n\r\nmorning"), ["good"]);
+        assert_eq!(big_words("good\n\nmorning"), ["good"]);
+        assert_eq!(big_words("* good\n* morning"), ["good"]);
+        assert_eq!(big_words("good - morning"), ["good"]);
+        assert_eq!(big_words("1. good\n2. morning"), ["good"]);
+        let index = Index::parse(BIG);
+        for t in ["- good\n- morning\n", "good\r\n\r\nmorning", "to bear\nin mind"] {
+            for m in find_matches(&index, t) {
+                assert!(!m.text.contains('\n') && !m.text.contains('\r'), "{t:?}");
+            }
+            assert!(!render_text(&index, &find_matches(&index, t)).trim_end().contains("\n\n"));
+        }
+    }
+
+    #[test]
+    fn phrases_starting_with_to_match_with_and_without_it() {
+        assert_eq!(big_words("Bear in mind that it works"), ["Bear in mind"]);
+        assert_eq!(spanish_of("Bear in mind that it works", "Bear in mind"), ["tener en cuenta"]);
+        assert_eq!(big_words("We want to bear in mind that"), ["to bear in mind"]);
+        assert_eq!(big_words("She bears in mind that"), ["bears in mind"]);
+        assert_eq!(big_words("We caught up yesterday"), ["caught up"]);
+        assert_eq!(big_words("We will catch up"), ["catch up"]);
+        assert_eq!(big_words("I am catching up"), ["catching up"]);
+        assert_eq!(big_words("It is up to date"), ["is up to date"]);
+        assert_eq!(big_words("Try to be up to date"), ["to be up to date"]);
+        // the head inflects, the rest does not
+        assert!(big_words("caught ups").is_empty());
+        // a lone verb still matches its own entry
+        assert_eq!(big_words("The bear sleeps"), ["bear"]);
+    }
+
+    #[test]
+    fn inflection_follows_the_entry_kind() {
+        // false positives that must disappear
+        assert!(big_words("this evening").is_empty());
+        assert!(big_words("some boxing").is_empty());
+        assert!(big_words("ups and downs").is_empty());
+        assert!(big_words("the roses").iter().all(|w| w == "roses"));
+        assert!(!spanish_of("A rose is red", "rose").contains(&"subida".to_string()));
+        // "rose" never reaches the noun rise (subida), only the noun and verb senses
+        assert_eq!(spanish_of("It rose", "rose"), ["ascender", "rosa"]);
+        // correct matches that stay
+        assert_eq!(spanish_of("it closes", "closes"), ["cerrar"]);
+        assert_eq!(spanish_of("it closed", "closed"), ["cerrar"]);
+        assert_eq!(spanish_of("it is closing", "closing"), ["cerrar"]);
+        assert_eq!(spanish_of("two houses", "houses"), ["casa"]);
+        assert_eq!(spanish_of("big cities", "cities"), ["ciudad"]);
+        assert_eq!(spanish_of("she went home", "went"), ["ir"]);
+        assert_eq!(spanish_of("it has gone", "gone"), ["ir"]);
+        assert_eq!(spanish_of("studying", "studying"), ["estudiar"]);
+        assert_eq!(spanish_of("studied", "studied"), ["estudiar"]);
+        assert_eq!(spanish_of("the boxes", "boxes"), ["caja"]);
+        assert_eq!(spanish_of("go down", "down"), ["abajo"]);
+        assert_eq!(spanish_of("even so", "even"), ["incluso"]);
+    }
+
+    #[test]
+    fn an_ambiguous_word_keeps_every_sense() {
+        // "left" is the adjective or the past of leave; the reply's writer picks
+        let got = spanish_of("turn left", "left");
+        assert_eq!(got, ["salir", "dejar", "izquierda", "izquierdo"]);
+        assert!(big_words("turn left").contains(&"turn".to_string()));
+        // other irregular verb forms keep working when nothing spells them
+        assert_eq!(spanish_of("she went", "went"), ["ir"]);
+        // and the verb's own forms still reach leave
+        assert_eq!(spanish_of("it leaves", "leaves"), ["salir", "dejar"]);
+        assert_eq!(spanish_of("people leaving", "leaving"), ["salir", "dejar"]);
     }
 
     #[test]
