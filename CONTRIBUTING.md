@@ -12,7 +12,7 @@ cd ambient-spanish
 python3 -m unittest discover -s tests -v
 ```
 
-CI runs the same command on Python 3.11 and 3.13.
+CI runs the same command on Python 3.11 and 3.13, `cargo clippy -- -D warnings` and `cargo test` for the lookup tool, and `claude plugin validate` and `claude plugin test` for the hover mod.
 
 For the hover mod, see [its README](mods/ambient-spanish-hover/README.md#develop).
 
