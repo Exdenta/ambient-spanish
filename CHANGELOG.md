@@ -20,6 +20,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - Removed the "learning" tier and the bracketed English after new words; hover replaces it. `context` and `status` no longer report `learning`, and `init`/`configure` take `--words-per-week` instead of `--cadence-days`/`--batch-size`.
 - The shipped curriculum starts with a pre-known core, and every word is checked against an `es-ES` blocklist.
 - The assistant now sends the full reply as the last message after `record`.
+- Spanish appears only in the Claude Code terminal CLI, where the hover mod can show translations. With `CLAUDE_CODE_ENTRYPOINT` set to anything other than `cli` (the desktop app, IDE extensions), `context` returns `active: false` with reason `non_cli_client`. Codex leaves the variable unset and is unaffected.
 
 ## Earlier
 

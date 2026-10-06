@@ -35,6 +35,7 @@ DEFAULT_BATCH_SIZE = 10  # new words per week
 LEGACY_V4_KNOWN_PER_REPLY = 18  # v4 required a cap; only the migration path needs it.
 MANIFEST_FILENAME = "vocabulary.txt"
 LOOKUP_BIN_ENV = "AMBIENT_LOOKUP_BIN"
+ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LOOKUP_BIN = REPO_ROOT / "rust" / "ambient-lookup" / "target" / "release" / "ambient-lookup"
 MANIFEST_KIND_ORDER = ("verb", "noun", "adjective", "adverb", "phrase", "connector")
@@ -1286,8 +1287,13 @@ def _context(
 
     active = True
     reason = "active"
+    entrypoint = os.environ.get(ENTRYPOINT_ENV)
     if config["paused"]:
         active, reason = False, "paused"
+    elif entrypoint not in (None, "", "cli"):
+        # Claude Code sets this to something other than `cli` in the desktop app,
+        # Cowork and IDE extensions; Codex leaves it unset, so it stays active.
+        active, reason = False, "non_cli_client"
     elif batch_index < 0:
         active, reason = False, "before_start_date"
     elif any(

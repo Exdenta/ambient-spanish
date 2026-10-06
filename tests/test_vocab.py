@@ -8,7 +8,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from test_ambient_state import AMBIENT_STATE, NON_PENINSULAR, REAL_CURRICULUM, SCRIPT
+from test_ambient_state import (  # setUpModule hides host variables here too
+    AMBIENT_STATE,
+    NON_PENINSULAR,
+    REAL_CURRICULUM,
+    SCRIPT,
+    setUpModule,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 REAL_LEXICON = ROOT / "references" / "levels" / "lexicon.tsv"

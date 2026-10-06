@@ -106,6 +106,8 @@ python3 scripts/ambient_state.py configure --pause                # or --resume
 python3 scripts/ambient_state.py configure --words-per-week 10    # 5, 10, 20 or any number
 ```
 
+In Claude Code, replies get Spanish only in the terminal CLI. When `CLAUDE_CODE_ENTRYPOINT` is set to anything else (the desktop app, Cowork, IDE extensions), `context` returns `active: false` with reason `non_cli_client`.
+
 Every vocabulary word can appear in every reply, wherever it fits the sentence.
 
 Don't edit `state.json` or `curriculum.json` by hand. `ambient_state.py` is the only thing that writes them.

@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -32,6 +33,23 @@ FIXTURE_CURRICULUM = [
     }
     for index in range(12)
 ]
+
+# Set by the host (Claude Code, a learner's shell) and read by the script. Tests
+# that need one set it themselves.
+HOST_ENVIRONMENT = (
+    "CLAUDE_CODE_ENTRYPOINT",
+    "AMBIENT_SPANISH_STATE",
+    "AMBIENT_SPANISH_CURRICULUM",
+    "AMBIENT_SPANISH_LEXICON",
+)
+
+
+def setUpModule() -> None:
+    patcher = mock.patch.dict(os.environ)
+    patcher.start()
+    unittest.addModuleCleanup(patcher.stop)
+    for name in HOST_ENVIRONMENT:
+        os.environ.pop(name, None)
 
 
 class CliTestCase(unittest.TestCase):
@@ -212,6 +230,17 @@ class TierDerivationTests(CliTestCase):
         self.assertEqual(12, context["vocabulary_count"])
         self.assertEqual("t11", self.vocabulary_ids()[-1])
         self.assertIsNone(context["next_batch_date"])
+
+    def test_non_cli_client_is_inactive(self) -> None:
+        self.init()
+        now = "2026-08-15T10:00:00+02:00"
+        for entrypoint, active in (("claude-desktop", False), ("local-agent", False), ("cli", True), ("", True)):
+            with mock.patch.dict(os.environ, {"CLAUDE_CODE_ENTRYPOINT": entrypoint}):
+                context = self.run_cli("context", "--now", now)
+            self.assertEqual(active, context["active"], entrypoint)
+        with mock.patch.dict(os.environ):
+            os.environ.pop("CLAUDE_CODE_ENTRYPOINT", None)
+            self.assertTrue(self.run_cli("context", "--now", now)["active"])
 
     def test_paused_state_is_inactive(self) -> None:
         self.init()
