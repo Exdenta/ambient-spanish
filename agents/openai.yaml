@@ -1,7 +1,7 @@
 interface:
   display_name: "Ambient Spanish"
   short_description: "Time-paced Spanish in everyday chats"
-  default_prompt: "Use $ambient-spanish: draft each reply in English, send the draft to ambient-lookup, write the final reply with the Spanish vocabulary words it returns (no glosses), keep the sentence grammar English, and add new words weekly."
+  default_prompt: "Use $ambient-spanish: draft each reply in English, pipe the draft to ambient_state.py lookup, write the final reply with the Spanish vocabulary words it returns (no glosses), keep the sentence grammar English, and add new words weekly."
 
 policy:
   allow_implicit_invocation: true

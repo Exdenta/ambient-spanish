@@ -120,7 +120,7 @@ python3 scripts/ambient_state.py configure --pause                # or --resume
 python3 scripts/ambient_state.py configure --words-per-week 10    # 5, 10, 20 or any number
 ```
 
-In Claude Code, replies get Spanish only in the terminal CLI. When `CLAUDE_CODE_ENTRYPOINT` is set to anything else (the desktop app, Cowork, IDE extensions), `context` returns `active: false` with reason `non_cli_client`.
+In Claude Code, replies get Spanish only in the terminal CLI. When `CLAUDE_CODE_ENTRYPOINT` is set to anything else (the desktop app, Cowork, IDE extensions), `lookup` returns `active: false` with reason `non_cli_client`.
 
 Every vocabulary word can appear in every reply, wherever it fits the sentence.
 
@@ -135,10 +135,9 @@ Hover needs a terminal that reports the mouse pointer. See the [mod's README](mo
 ## How it works
 
 For each reply, the assistant:
-1. runs `ambient_state.py context` once;
-2. drafts the reply in English and pipes the draft to `ambient-lookup`, a Rust tool that returns the words and phrases that have a Spanish equivalent in your vocabulary, so the assistant never loads the word list;
-3. writes the final reply with those words;
-4. runs `record` with the words it actually used.
+1. drafts the reply in English and pipes the draft to `ambient_state.py lookup`, which checks that Spanish is on and runs `ambient-lookup`, a Rust tool that returns the words and phrases that have a Spanish equivalent in your vocabulary, so the assistant never loads the word list;
+2. writes the final reply with those words;
+3. runs `record` with the words it actually used.
 
 Which words are in your vocabulary depends only on the date:
 
@@ -153,7 +152,7 @@ Change the pace later with `ambient_state.py configure --words-per-week N`.
 | --- | --- |
 | `SKILL.md` | the instructions the assistant follows on every reply |
 | `rust/ambient-lookup/` | the lookup tool: reads `vocabulary.txt` and finds the vocabulary words in a draft, in under a millisecond |
-| `scripts/ambient_state.py` | the only writer of state: `context`, `record`, `status`, `configure`, `levels`, `vocab` |
+| `scripts/ambient_state.py` | the only writer of state: `lookup`, `context`, `record`, `status`, `configure`, `levels`, `vocab` |
 | `references/curriculum.json` | the default word list, used until you run `vocab` |
 | `references/levels/lexicon.tsv` | about 4,500 words graded A0–C1, which `vocab` builds your list from |
 | `references/state-contract.md` | state schema and migration rules, for maintainers |

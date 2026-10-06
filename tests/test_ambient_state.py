@@ -65,7 +65,7 @@ class CliTestCase(unittest.TestCase):
         self.lookup_bin.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
         self.lookup_bin.chmod(0o755)
 
-    def run_raw(self, *args: str) -> subprocess.CompletedProcess:
+    def run_raw(self, *args: str, input: str | None = None) -> subprocess.CompletedProcess:
         command = [
             sys.executable,
             str(SCRIPT),
@@ -79,11 +79,11 @@ class CliTestCase(unittest.TestCase):
         environment["AMBIENT_SPANISH_ALLOW_TIME_OVERRIDE"] = "1"
         environment["AMBIENT_LOOKUP_BIN"] = str(self.lookup_bin)
         return subprocess.run(
-            command, text=True, capture_output=True, check=False, env=environment
+            command, text=True, capture_output=True, check=False, env=environment, input=input
         )
 
-    def run_cli(self, *args: str, ok: bool = True) -> dict:
-        result = self.run_raw(*args)
+    def run_cli(self, *args: str, ok: bool = True, input: str | None = None) -> dict:
+        result = self.run_raw(*args, input=input)
         command = [str(SCRIPT), *args]
         if ok and result.returncode != 0:
             self.fail(
@@ -866,6 +866,53 @@ class LookupContextTests(CliTestCase):
             )
             self.assertNotEqual(0, failure.returncode)
             self.assertIn("--known-per-reply", failure.stderr)
+
+
+class LookupCommandTests(CliTestCase):
+    """`lookup` runs `context` and the lookup binary in one call."""
+
+    NOW = "2026-08-15T10:00:00+02:00"
+
+    def use_binary(self, script: str) -> None:
+        self.lookup_bin.write_text(f"#!/bin/sh\n{script}\n", encoding="utf-8")
+
+    def test_the_draft_goes_to_the_binary_with_the_vocabulary_file(self) -> None:
+        self.init()
+        # Echo the arguments, then the draft, as the matches.
+        self.use_binary('echo "$1 $2"\ncat')
+        result = self.run_cli("lookup", "--now", self.NOW, input="open the window\n\nnow\n")
+        self.assertTrue(result["active"])
+        self.assertEqual("active", result["reason"])
+        vocabulary = self.state.parent.resolve() / "vocabulary.txt"
+        self.assertEqual(
+            [f"--vocab {vocabulary}", "open the window", "now"], result["matches"]
+        )
+        self.assertTrue(vocabulary.exists())
+
+    def test_an_inactive_lookup_returns_no_matches_and_needs_no_binary(self) -> None:
+        self.init()
+        self.run_cli("configure", "--pause", "--now", "2026-08-15T09:30:00+02:00")
+        self.lookup_bin.unlink()
+        result = self.run_cli("lookup", "--now", self.NOW, input="open the window")
+        self.assertEqual({"active": False, "reason": "paused", "matches": []}, result)
+
+    def test_an_empty_draft_does_not_run_the_binary(self) -> None:
+        self.init()
+        self.use_binary("exit 1")
+        result = self.run_cli("lookup", "--now", self.NOW, input="  \n")
+        self.assertEqual([], result["matches"])
+
+    def test_a_failing_binary_is_an_error(self) -> None:
+        self.init()
+        self.use_binary("echo broken >&2\nexit 3")
+        failure = self.run_cli("lookup", "--now", self.NOW, input="open", ok=False)
+        self.assertEqual("ambient-lookup failed: broken", failure["error"])
+
+    def test_lookup_leaves_the_state_untouched(self) -> None:
+        self.init()
+        before = self.state.read_bytes()
+        self.run_cli("lookup", "--now", self.NOW, input="open the window")
+        self.assertEqual(before, self.state.read_bytes())
 
 
 class VocabularyFileTests(CliTestCase):

@@ -1,6 +1,6 @@
 ---
 name: ambient-spanish
-description: Persistent opt-in ambient Spanish substitution overlay for ordinary conversations. Use automatically on every user-facing reply after the user enables this skill, and when the user asks about Spanish progress, learned words, exposure, pacing, density, state, pause or resume, dialect, or configuration. Draft the reply in English, send the draft to the `ambient-lookup` tool, which returns the words that have Spanish equivalents in the learner's vocabulary (the assistant never loads the vocabulary itself), and write the final reply with them and no glosses or brackets (the hover mod shows translations), keep the sentence's grammar English rather than translating it, and add new words to the vocabulary weekly from elapsed calendar time, never from message count.
+description: Persistent opt-in ambient Spanish substitution overlay for ordinary conversations. Use automatically on every user-facing reply after the user enables this skill, and when the user asks about Spanish progress, learned words, exposure, pacing, density, state, pause or resume, dialect, or configuration. Draft the reply in English, pipe the draft to `ambient_state.py lookup`, which returns the words that have Spanish equivalents in the learner's vocabulary (the assistant never loads the vocabulary itself), and write the final reply with them and no glosses or brackets (the hover mod shows translations), keep the sentence's grammar English rather than translating it, and add new words to the vocabulary weekly from elapsed calendar time, never from message count.
 ---
 
 # Ambient Spanish
@@ -13,38 +13,32 @@ There is a single vocabulary. Write its Spanish **bare**: no gloss, no brackets,
 
 ## You never see the vocabulary
 
-The vocabulary has thousands of words and is deliberately kept out of your context. Instead you draft the reply in plain English, send the draft to `ambient-lookup`, and it returns only the words and phrases in your draft that have a Spanish equivalent. You then write the final reply using those.
+The vocabulary has thousands of words and is deliberately kept out of your context. Instead you draft the reply in plain English, send the draft to `lookup`, and it returns only the words and phrases in your draft that have a Spanish equivalent. You then write the final reply using those.
 
-The vocabulary grows from the calendar alone. The learner picks a regime — 5, 10 or 20 new words per week, or their own number (`words_per_week` in `context`, default 10) — and that many curriculum words join the vocabulary every 7 days, whether or not the previous ones were ever used. The first `baseline_known_count` curriculum entries are the learner's starting vocabulary, either the shipped curriculum's 321-word everyday core or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
+The vocabulary grows from the calendar alone. The learner picks a regime — 5, 10 or 20 new words per week, or their own number (`words_per_week` in `status`, default 10) — and that many curriculum words join the vocabulary every 7 days, whether or not the previous ones were ever used. The first `baseline_known_count` curriculum entries are the learner's starting vocabulary, either the shipped curriculum's 321-word everyday core or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
 
 ## Runtime workflow
 
-1. Before each user-facing reply, resolve this skill's directory as `<skill-root>` and run exactly once:
+Resolve this skill's directory as `<skill-root>`.
+
+1. Draft the reply in English, as you normally would.
+
+2. When the reply is only code, a command, a path, a table of exact fields or a few words, send it as is: no lookup and no `record`. Otherwise send the prose of the draft (leave out code blocks) to `lookup`, exactly once:
 
    ```bash
-   python3 <skill-root>/scripts/ambient_state.py context
-   ```
-
-   If `context` returns an error, answer normally without ambient Spanish and do not run `record`. If `active` is `false`, write the reply normally.
-
-2. Draft the reply in English, as you normally would.
-
-3. Skip the lookup, and send the draft as is, when the reply is only code, a command, a path, a table of exact fields or a few words. Otherwise send the prose of the draft (leave out code blocks) to the lookup, using the `lookup.command` and `lookup.vocabulary` that `context` returned:
-
-   ```bash
-   <lookup.command> --vocab <lookup.vocabulary> <<'EOF'
+   python3 <skill-root>/scripts/ambient_state.py lookup <<'EOF'
    ...your draft...
    EOF
    ```
 
-   It prints one line per distinct word or phrase of your draft that has Spanish in the vocabulary: `english: spanish | spanish`. These are dictionary forms, there only to confirm the words are in the vocabulary. You adapt them yourself (conjugation, gender, number) and choose the candidate that fits what you meant.
+   If it returns an error, or `active` is `false`, send the draft as is and do not run `record`. Otherwise `matches` holds one line per distinct word or phrase of your draft that has Spanish in the vocabulary: `english: spanish | spanish`. These are dictionary forms, there only to confirm the words are in the vocabulary. You adapt them yourself (conjugation, gender, number) and choose the candidate that fits what you meant.
 
-4. Write the final reply, substituting:
+3. Write the final reply, substituting:
    - Only the words the lookup returned, and only where the sense fits what you meant. Pick the right candidate (`work` the verb is `trabajar`, the noun is `trabajo`) and skip a word whose candidates all miss.
    - Spanish bare, with no gloss or brackets; conjugate and agree it as the English sentence needs.
    - Substitution is **opportunistic, never forced**. Skip any term with no natural slot and never restructure a sentence to fit one. A reply whose only Spanish is connective tissue has under-delivered: content words first.
 
-5. Record the words actually used, as the last tool call before the reply:
+4. Record the words actually used, as the last tool call before the reply:
 
    ```bash
    python3 <skill-root>/scripts/ambient_state.py record --used <spanish1>,<spanish2>,<spanish3>
@@ -52,11 +46,11 @@ The vocabulary grows from the calendar alone. The learner picks a regime — 5, 
 
    `--used` lists the dictionary forms exactly as the lookup printed them (`abrir`, `ventana`). Omit the call if nothing fit. `record` rejects words outside the vocabulary.
 
-6. Send the full reply as the final text message, after `record`. A message that only describes the reply leaves the user with nothing. Never add a sign-off after `record`.
+5. Send the full reply as the final text message, after `record`. A message that only describes the reply leaves the user with nothing. Never add a sign-off after `record`.
 
-7. Treat `ok: true` as recorded. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
+6. Treat `ok: true` as recorded. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
 
-Run `context` once per reply.
+`context` still prints the state of the overlay and the lookup command without running it; use it when troubleshooting.
 
 ## Teaching rules
 
@@ -78,7 +72,7 @@ Run `context` once per reply.
 
 ## State and controls
 
-State defaults to `~/.codex/state/ambient-spanish/state.json` and can be overridden with `AMBIENT_SPANISH_STATE` or `--state`. It is separate from the skill so updates do not erase progress. The vocabulary is written beside it as `vocabulary.txt`, a derived artifact that `ambient-lookup` and the hover mod read; deleting it costs nothing, the next `context` rewrites it. The `ambient-lookup` binary is built from `rust/ambient-lookup` by `scripts/install.py`.
+State defaults to `~/.codex/state/ambient-spanish/state.json` and can be overridden with `AMBIENT_SPANISH_STATE` or `--state`. It is separate from the skill so updates do not erase progress. The vocabulary is written beside it as `vocabulary.txt`, a derived artifact that `ambient-lookup` and the hover mod read; deleting it costs nothing, the next `lookup` rewrites it. The `ambient-lookup` binary is built from `rust/ambient-lookup` by `scripts/install.py`.
 
 Use these commands when the user asks:
 

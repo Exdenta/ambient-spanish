@@ -255,11 +255,11 @@ class BuildLookupTests(unittest.TestCase):
         with mock.patch("shutil.which", return_value="/usr/bin/cargo"):
             self.assertEqual("would build", self.install.build_lookup(dry_run=True)["result"])
 
-    def test_skip_without_a_binary_warns_that_context_will_fail(self) -> None:
+    def test_skip_without_a_binary_warns_that_lookup_will_fail(self) -> None:
         os.environ["AMBIENT_SPANISH_SKIP_BUILD"] = "1"
         step = self.install.build_lookup(dry_run=False)
         self.assertEqual("skipped", step["result"])
-        self.assertIn("context", step["note"])
+        self.assertIn("ambient_state.py lookup", step["note"])
         self.make_binary(newer=True)
         self.assertNotIn("note", self.install.build_lookup(dry_run=False))
 

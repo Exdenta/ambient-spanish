@@ -10,6 +10,7 @@ import os
 import random
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import unicodedata
@@ -34,6 +35,7 @@ DEFAULT_BATCH_SIZE = 10  # new words per week
 LEGACY_V4_KNOWN_PER_REPLY = 18  # v4 required a cap; only the migration path needs it.
 MANIFEST_FILENAME = "vocabulary.txt"
 LOOKUP_BIN_ENV = "AMBIENT_LOOKUP_BIN"
+LOOKUP_TIMEOUT_SECONDS = 30
 ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LOOKUP_BIN = REPO_ROOT / "rust" / "ambient-lookup" / "target" / "release" / "ambient-lookup"
@@ -1379,6 +1381,34 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
     return result
 
 
+def _cmd_lookup(args: argparse.Namespace) -> dict[str, Any]:
+    """`context` and the lookup in one call: the draft on stdin, its matches out.
+
+    Saves the agent a round trip per reply. An inactive context returns no
+    matches, so the agent sends its draft as it is.
+    """
+    draft = "" if sys.stdin.isatty() else sys.stdin.read()
+    context = _cmd_context(args)
+    result = {"active": context["active"], "reason": context["reason"], "matches": []}
+    if context["active"] and draft.strip():
+        lookup = context["lookup"]
+        try:
+            completed = subprocess.run(
+                [lookup["command"], "--vocab", lookup["vocabulary"]],
+                input=draft,
+                capture_output=True,
+                text=True,
+                timeout=LOOKUP_TIMEOUT_SECONDS,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise StateError(f"ambient-lookup failed: {exc}") from exc
+        if completed.returncode != 0:
+            raise StateError(f"ambient-lookup failed: {completed.stderr.strip()}")
+        result["matches"] = [line for line in completed.stdout.splitlines() if line.strip()]
+    return result
+
+
 def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum, baseline = _curriculum_and_baseline(args.curriculum, state_path)
@@ -1771,6 +1801,13 @@ def _parser() -> argparse.ArgumentParser:
     )
     _add_common(context)
     context.set_defaults(handler=_cmd_context)
+
+    lookup = subparsers.add_parser(
+        "lookup",
+        help="Read a draft reply on stdin and print the vocabulary words it can use",
+    )
+    _add_common(lookup)
+    lookup.set_defaults(handler=_cmd_lookup)
 
     record = subparsers.add_parser("record", help="Record the terms actually used")
     _add_common(record)

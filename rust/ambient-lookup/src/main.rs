@@ -2,7 +2,7 @@
 //! phrase that has a Spanish equivalent in the learner's vocabulary, the
 //! candidates the writer may substitute.
 //!
-//! The vocabulary is `vocabulary.txt`, rewritten by `ambient_state.py context`:
+//! The vocabulary is `vocabulary.txt`, rewritten by `ambient_state.py lookup` and `context`:
 //! `id | spanish | english` lines under `## kind (n)` headings. It is parsed on
 //! every call (about 3,000 lines, well under a millisecond), so there is no
 //! index file to keep fresh.

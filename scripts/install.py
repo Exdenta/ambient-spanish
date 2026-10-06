@@ -59,11 +59,10 @@ def rule_block(skill_root: Path) -> str:
             RULE_BEGIN,
             "## Ambient Spanish",
             "",
-            "Before every user-facing reply, follow the `ambient-spanish` skill: run",
-            f"`python3 {skill_root}/scripts/ambient_state.py context` once, pipe your draft",
-            "through the `lookup` command it returns, substitute the matches, then",
-            "`record` the ones you used. Pause with",
-            "`ambient_state.py configure --pause`.",
+            "Before every user-facing reply, follow the `ambient-spanish` skill: pipe your",
+            f"draft to `python3 {skill_root}/scripts/ambient_state.py lookup` once,",
+            "substitute the matches it returns, then `record` the ones you used. Pause",
+            "with `ambient_state.py configure --pause`.",
             RULE_END,
         ]
     )
@@ -205,7 +204,7 @@ def build_lookup(*, dry_run: bool) -> dict[str, Any]:
     if os.environ.get(SKIP_BUILD_ENV) == "1":
         skipped = {**step, "result": "skipped", "reason": f"{SKIP_BUILD_ENV}=1"}
         if not LOOKUP_BIN.is_file():
-            skipped["note"] = "no binary is built yet, so `ambient_state.py context` will fail until it is"
+            skipped["note"] = "no binary is built yet, so `ambient_state.py lookup` will fail until it is"
         return skipped
     if _lookup_is_current():
         return {**step, "result": "unchanged"}

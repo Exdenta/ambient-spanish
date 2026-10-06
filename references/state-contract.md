@@ -58,16 +58,24 @@ Consequences: the first weekly batch joins on `start_date` and a new one every `
 
 ## Lookup and the vocabulary file
 
-The agent does not read the vocabulary. Per reply it pipes its draft to the Rust binary `ambient-lookup`, which returns the English phrases that match with Spanish candidates. `context` therefore returns, instead of any term list:
+The agent does not read the vocabulary. Per reply it pipes its draft to `ambient_state.py lookup`, which runs everything `context` does and then the Rust binary `ambient-lookup` on the draft, and prints:
+
+```
+{"active": <bool>, "reason": <as in context>, "matches": ["english: spanish | spanish", ...]}
+```
+
+An inactive lookup, or an empty draft, returns no matches without running the binary. A binary that exits non-zero, or runs longer than 30 seconds, fails the command with `ambient-lookup failed: <its stderr>`. `lookup` writes the state only when `context` would (creating or migrating it).
+
+`context` returns the same check without running the binary, plus, instead of any term list:
 
 ```
 "lookup": {"command": <abs path of ambient-lookup>, "vocabulary": <abs path of vocabulary.txt>},
 "vocabulary_count": <terms in the vocabulary today>
 ```
 
-The binary resolves from `AMBIENT_LOOKUP_BIN`, then `<repo>/rust/ambient-lookup/target/release/ambient-lookup`. If it does not exist, an active `context` fails with `ambient-lookup binary not found: run python3 scripts/install.py` (which builds it with cargo). An inactive context (paused, before the start date) returns `lookup: null` and needs no binary. `status` never needs it and reports `lookup_binary` (a path or `null`).
+The binary resolves from `AMBIENT_LOOKUP_BIN`, then `<repo>/rust/ambient-lookup/target/release/ambient-lookup`. If it does not exist, an active `context` or `lookup` fails with `ambient-lookup binary not found: run python3 scripts/install.py` (which builds it with cargo). An inactive one (paused, outside the CLI, before the start date) needs no binary, and `context` returns `lookup: null`. `status` never needs it and reports `lookup_binary` (a path or `null`).
 
-`context` still writes the whole vocabulary to `vocabulary.txt` beside the state file, as `id | spanish | english` lines grouped by kind, and the lookup binary reads it. The hover mod reads it too, and that is the only reason it is a file the mod can rely on. It is a derived artifact: deleting it is safe and the next `context` rewrites it. It is rewritten only when its content changes (when a weekly batch lands), so readers can cache it.
+`context` and `lookup` write the whole vocabulary to `vocabulary.txt` beside the state file, as `id | spanish | english` lines grouped by kind, and the lookup binary reads it. The hover mod reads it too, and that is the only reason it is a file the mod can rely on. It is a derived artifact: deleting it is safe and the next `context` or `lookup` rewrites it. It is rewritten only when its content changes (when a weekly batch lands), so readers can cache it.
 
 ## `record --used`
 
