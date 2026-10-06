@@ -16,8 +16,8 @@ struct Token {
     norm: String,
 }
 
-/// Byte ranges that are never prose: fenced code, inline code, URLs and
-/// blockquotes.
+/// Sorted, disjoint byte ranges that are never prose: fenced code, inline
+/// code, URLs, emails, paths, filenames, identifiers and blockquotes.
 fn excluded_ranges(text: &str) -> Vec<(usize, usize)> {
     let mut ranges = Vec::new();
     let mut offset = 0;
@@ -49,45 +49,197 @@ fn inline_ranges(line: &str, base: usize, ranges: &mut Vec<(usize, usize)>) {
     let mut i = 0;
     while i < line.len() {
         let rest = &line[i..];
-        if rest.starts_with('`') {
-            if let Some(close) = rest[1..].find('`') {
-                ranges.push((base + i, base + i + close + 2));
-                i += close + 2;
-                continue;
+        let c = rest.chars().next().unwrap();
+        if c.is_whitespace() {
+            i += c.len_utf8();
+        } else if c == '`' {
+            // A run of n backticks closes at the next run of exactly n on the
+            // line; with no closing run the span ends at the end of the line.
+            let n = rest.bytes().take_while(|&b| b == b'`').count();
+            let mut end = line.len();
+            let mut j = i + n;
+            while j < line.len() {
+                if line.as_bytes()[j] == b'`' {
+                    let run = line[j..].bytes().take_while(|&b| b == b'`').count();
+                    if run == n {
+                        end = j + run;
+                        break;
+                    }
+                    j += run;
+                } else {
+                    j += 1;
+                }
             }
-        } else if rest.starts_with("http://") || rest.starts_with("https://") {
-            let len = rest
-                .find(|c: char| c.is_whitespace() || c == ')' || c == '>')
-                .unwrap_or(rest.len());
-            ranges.push((base + i, base + i + len));
+            ranges.push((base + i, base + end));
+            i = end;
+        } else {
+            let len = rest.find(|c: char| c.is_whitespace() || c == '`').unwrap_or(rest.len());
+            chunk_ranges(&rest[..len], base + i, ranges);
             i += len;
-            continue;
         }
-        i += rest.chars().next().map_or(1, char::len_utf8);
     }
+}
+
+/// A whitespace-delimited chunk: carve out any `scheme://` URL (which ends at
+/// whitespace, `)` or `>`), then judge the pieces around it.
+fn chunk_ranges(chunk: &str, at: usize, ranges: &mut Vec<(usize, usize)>) {
+    let scheme_char = |c: char| c.is_ascii_alphanumeric() || c == '+' || c == '.' || c == '-';
+    let mut piece = 0;
+    let mut search = 0;
+    while let Some(found) = chunk[search..].find("://") {
+        let p = search + found;
+        let sb = chunk[piece..p]
+            .char_indices()
+            .rev()
+            .find(|&(_, c)| !scheme_char(c))
+            .map_or(piece, |(k, c)| piece + k + c.len_utf8());
+        if sb < p {
+            let end = chunk[p..].find([')', '>']).map_or(chunk.len(), |k| p + k);
+            piece_range(&chunk[piece..sb], at + piece, ranges);
+            ranges.push((at + sb, at + end));
+            piece = end;
+            search = end;
+        } else {
+            search = p + 3;
+        }
+    }
+    piece_range(&chunk[piece..], at + piece, ranges);
+}
+
+fn piece_range(piece: &str, at: usize, ranges: &mut Vec<(usize, usize)>) {
+    if !piece.is_empty() && is_code_chunk(piece) {
+        ranges.push((at, at + piece.len()));
+    }
+}
+
+fn is_alnum(c: char) -> bool {
+    c.is_alphanumeric()
+}
+
+/// Whether a chunk (judged without its surrounding punctuation) is a path,
+/// email, URL, filename or code identifier rather than prose.
+fn is_code_chunk(raw: &str) -> bool {
+    let mut t = raw.trim_start_matches(|c| "([{<\"'\u{201c}\u{2018}*".contains(c));
+    t = t.trim_end_matches(|c| ")]}>\"'\u{201d}\u{2019},.;:!?*\u{2026}".contains(c));
+    if let Some(inner) = t.strip_prefix('_').and_then(|x| x.strip_suffix('_')) {
+        if !t.starts_with("__") && !inner.is_empty() && !inner.contains('_') {
+            t = inner;
+        }
+    }
+    let b = t.as_bytes();
+    if b.len() < 2 {
+        return false;
+    }
+    let lower = t.to_ascii_lowercase();
+    if lower.starts_with("www.") || lower.starts_with("mailto:") || lower.contains("://") {
+        return true;
+    }
+    // handles, issue numbers, flags
+    if b[0] == b'@' && t[1..].starts_with(is_alnum) {
+        return true;
+    }
+    if b[0] == b'#' && b[1..].iter().all(u8::is_ascii_digit) {
+        return true;
+    }
+    if t.starts_with("--") && t[2..].starts_with(is_alnum) {
+        return true;
+    }
+    if b[0] == b'-'
+        && b[1].is_ascii_alphanumeric()
+        && b.iter().all(|&c| c.is_ascii_alphanumeric() || b"-=_.:/,".contains(&c))
+    {
+        return true;
+    }
+    if is_email(t) {
+        return true;
+    }
+    // paths
+    if b[0] == b'/' || t.starts_with("./") || t.starts_with("../") || t.starts_with("~/") {
+        return true;
+    }
+    if b.len() >= 3 && b[0].is_ascii_alphabetic() && b[1] == b':' && (b[2] == b'\\' || b[2] == b'/') {
+        return true;
+    }
+    if (1..b.len() - 1).any(|i| b[i] == b'\\') {
+        return true;
+    }
+    if b.iter().filter(|&&c| c == b'/').count() >= 2 {
+        return true;
+    }
+    // filenames and dotted names, but not abbreviations like e.g. or a.m.
+    if t.contains('.') {
+        let parts: Vec<&str> = t.split('.').collect();
+        let abbreviation = parts.iter().all(|p| p.chars().count() == 1 && p.starts_with(char::is_alphabetic));
+        if !abbreviation {
+            let ext = parts[parts.len() - 1];
+            let stem = &t[..t.len() - ext.len() - 1];
+            let stem_ok = stem.chars().next_back().is_some_and(|c| is_alnum(c) || c == '_');
+            let ext_ok = (1..=5).contains(&ext.len())
+                && ext.bytes().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit());
+            if ext_ok && stem_ok {
+                return true;
+            }
+            let dotted = parts.len() >= 2
+                && parts.iter().all(|p| !p.is_empty() && p.chars().all(|c| is_alnum(c) || c == '_' || c == '$'));
+            if dotted {
+                return true;
+            }
+            // hidden files: .gitignore, .env.local
+            if b[0] == b'.' && t[1..].starts_with(is_alnum) {
+                return true;
+            }
+        }
+    }
+    // identifiers: snake_case, CONSTANT_CASE, camelCase, PascalCase, __dunder__
+    if t.starts_with("__") && t[2..].starts_with(is_alnum) {
+        return true;
+    }
+    let mut prev: Option<char> = None;
+    let mut chars = t.chars().peekable();
+    while let Some(c) = chars.next() {
+        if c == '_' {
+            if prev.is_some_and(is_alnum) && chars.peek().copied().is_some_and(is_alnum) {
+                return true;
+            }
+        } else if prev.is_some_and(char::is_lowercase) && c.is_uppercase() {
+            return true;
+        }
+        prev = Some(c);
+    }
+    false
+}
+
+fn is_email(t: &str) -> bool {
+    let Some(at) = t.find('@') else { return false };
+    let (local, domain) = (&t[..at], &t[at + 1..]);
+    !local.is_empty()
+        && local.bytes().all(|c| c.is_ascii_alphanumeric() || b"._%+-".contains(&c))
+        && domain.contains('.')
+        && domain.split('.').all(|p| !p.is_empty() && p.chars().all(|c| is_alnum(c) || c == '-'))
 }
 
 fn tokenize(index: &Index, text: &str) -> Vec<Token> {
     let excluded = excluded_ranges(text);
     let mut tokens = Vec::new();
+    let mut cursor = 0;
     let mut start: Option<usize> = None;
     let chars: Vec<(usize, char)> = text.char_indices().collect();
     for (i, &(at, c)) in chars.iter().enumerate() {
         let inner_apostrophe = (c == '\'' || c == '\u{2019}')
             && start.is_some()
-            && chars.get(i + 1).map_or(false, |&(_, n)| n.is_alphabetic());
+            && chars.get(i + 1).is_some_and(|&(_, n)| n.is_alphabetic());
         let word_char = c.is_alphabetic() || inner_apostrophe;
         match (word_char, start) {
             (true, None) => start = Some(at),
             (false, Some(s)) => {
-                push_token(index, text, s, at, &excluded, &mut tokens);
+                push_token(index, text, s, at, &excluded, &mut cursor, &mut tokens);
                 start = None;
             }
             _ => {}
         }
     }
     if let Some(s) = start {
-        push_token(index, text, s, text.len(), &excluded, &mut tokens);
+        push_token(index, text, s, text.len(), &excluded, &mut cursor, &mut tokens);
     }
     tokens
 }
@@ -98,9 +250,15 @@ fn push_token(
     start: usize,
     end: usize,
     excluded: &[(usize, usize)],
+    cursor: &mut usize,
     tokens: &mut Vec<Token>,
 ) {
-    if excluded.iter().any(|&(a, b)| start >= a && start < b) {
+    // Ranges are sorted and disjoint and tokens arrive in order, so one
+    // cursor walks them in linear time.
+    while *cursor < excluded.len() && excluded[*cursor].1 <= start {
+        *cursor += 1;
+    }
+    if excluded.get(*cursor).is_some_and(|&(a, _)| a <= start) {
         return;
     }
     let raw = &text[start..end];
@@ -443,6 +601,122 @@ estar-al-tanto | estar al tanto | to be up to date / aware\n";
         // and the verb's own forms still reach leave
         assert_eq!(spanish_of("it leaves", "leaves"), ["salir", "dejar"]);
         assert_eq!(spanish_of("people leaving", "leaving"), ["salir", "dejar"]);
+    }
+
+    fn none(texts: &[&str]) {
+        for t in texts {
+            assert!(words(t).is_empty(), "{t:?} -> {:?}", words(t));
+        }
+    }
+
+    #[test]
+    fn urls_are_skipped() {
+        none(&[
+            "see ftp://open.com/window",
+            "file:///open/window",
+            "ssh://open@window.com",
+            "mailto:open@window.com",
+            "visit www.open.com",
+            "(https://open.com/window)",
+            "see https://open.com/window, ok",
+        ]);
+        assert_eq!(words("[open](https://window.com/open) window"), ["open", "window"]);
+    }
+
+    #[test]
+    fn emails_are_skipped() {
+        none(&["write user@open.com", "mail (work@window.org)."]);
+        assert_eq!(words("mail user@open.com about the window"), ["window"]);
+    }
+
+    #[test]
+    fn paths_are_skipped() {
+        none(&[
+            "./open/window.py",
+            "see ../open",
+            "run ~/open",
+            "edit /open now",
+            "C:\\Users\\open\\window.txt",
+            "D:/open",
+            "open\\window",
+            "open/window/work",
+            "src/window.rs",
+            "(src/open.rs)",
+        ]);
+        assert_eq!(words("check ./open/window.py and open it"), ["open"]);
+    }
+
+    #[test]
+    fn single_slash_between_words_is_prose() {
+        assert_eq!(words("open/close"), ["open"]);
+        assert_eq!(words("read/write the window"), ["window"]);
+        assert_eq!(words("work/rock"), ["work", "rock"]);
+    }
+
+    #[test]
+    fn filenames_are_skipped_but_abbreviations_are_not() {
+        none(&["window.py", "see config.json.", "open.rs", "my-window.txt", "edit .window", "the open.h1 file"]);
+        assert_eq!(words("the window."), ["window"]);
+        assert_eq!(words("e.g. open, i.e. window, etc. work"), ["open", "window", "work"]);
+        assert_eq!(words("at 5 p.m. open the window"), ["open", "window"]);
+    }
+
+    #[test]
+    fn identifiers_are_skipped() {
+        none(&[
+            "alpha_open",
+            "OPEN_WINDOW",
+            "__init__",
+            "openWindow",
+            "WindowManager",
+            "iPhone_open",
+            "os.path",
+            "config.window.size",
+            "--open",
+            "-o",
+            "(--window)",
+            "@open",
+            "#123",
+            "fix (#123)",
+        ]);
+        assert_eq!(words("pass --open to the window"), ["window"]);
+        assert_eq!(words("thanks @open for the work"), ["work"]);
+    }
+
+    #[test]
+    fn double_and_unterminated_backticks() {
+        none(&["``open window``", "``open ` window``", "```open window```"]);
+        assert_eq!(words("``open`` window"), ["window"]);
+        assert_eq!(words("open `window"), ["open"]);
+        assert!(words("`open window").is_empty());
+        assert_eq!(words("`open window\nwork"), ["work"]);
+        assert_eq!(words("`open` and `window` work"), ["work"]);
+    }
+
+    #[test]
+    fn punctuated_prose_still_matches() {
+        assert_eq!(words("Open the window, then close it."), ["Open", "window"]);
+        assert_eq!(words("the window's frame"), ["window"]);
+        assert_eq!(words("(open window)"), ["open", "window"]);
+        assert_eq!(words("Open: yes."), ["Open"]);
+        assert_eq!(words("\"open\" and 'window'"), ["open", "window"]);
+        assert_eq!(words("an open-window policy"), ["open", "window"]);
+        assert_eq!(words("the work-in-progress"), ["work"]);
+        assert_eq!(words("open it... window"), ["open", "window"]);
+        assert_eq!(words("**open** _window_"), ["open", "window"]);
+        assert_eq!(words("- open\n- window"), ["open", "window"]);
+        assert_eq!(big_words("Bear in mind, good morning."), ["Bear in mind", "good morning"]);
+        assert_eq!(big_words("good-morning"), ["good-morning"]);
+    }
+
+    #[test]
+    fn exclusion_is_linear() {
+        let line = "`open` ./a/b.py user@x.com window\n";
+        let text = line.repeat(60_000);
+        let started = std::time::Instant::now();
+        let found = words(&text);
+        assert_eq!(found, ["window"]);
+        assert!(started.elapsed().as_secs() < 5);
     }
 
     #[test]
