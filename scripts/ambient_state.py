@@ -9,7 +9,6 @@ import json
 import os
 import random
 import re
-import secrets
 import shutil
 import sys
 import tempfile
@@ -26,8 +25,8 @@ except ImportError:  # pragma: no cover - Unix is the supported Codex runtime.
     fcntl = None
 
 
-SCHEMA_VERSION = 6
-LEGACY_SCHEMA_VERSIONS = (1, 2, 3, 4, 5)
+SCHEMA_VERSION = 7
+LEGACY_SCHEMA_VERSIONS = (1, 2, 3, 4, 5, 6)
 DEFAULT_TIMEZONE = "Europe/Madrid"
 DEFAULT_DIALECT = "es-ES"
 DEFAULT_CADENCE_DAYS = 7  # one week between additions to the vocabulary
@@ -40,8 +39,6 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LOOKUP_BIN = REPO_ROOT / "rust" / "ambient-lookup" / "target" / "release" / "ambient-lookup"
 MANIFEST_KIND_ORDER = ("verb", "noun", "adjective", "adverb", "phrase", "connector")
 DEFAULT_EXPOSURE_PERCENT = 50  # Legacy v2 field, retained only for migration.
-MAX_PENDING_DECISIONS = 128
-MAX_DECISION_AGE_SECONDS = 24 * 60 * 60
 DEFAULT_STATE_PATH = Path.home() / ".codex" / "state" / "ambient-spanish" / "state.json"
 DEFAULT_CURRICULUM_PATH = Path(__file__).resolve().parent.parent / "references" / "curriculum.json"
 DEFAULT_LEXICON_PATH = (
@@ -535,7 +532,6 @@ def _new_state(
         },
         "progress": {
             "last_exposure_at": None,
-            "pending_decisions": {},
             "terms": {},
         },
         "created_at": now.isoformat(),
@@ -551,7 +547,7 @@ def _validate_legacy_state(
 ) -> dict[str, Any]:
     """Validate a schema v1 or v2 document. Used only on the migration path.
 
-    Later legacy versions (v3 to v5) are validated by `_validate_state`.
+    Later legacy versions (v3 to v6) are validated by `_validate_state`.
     """
     if version not in (1, 2):
         raise StateError(f"No legacy validator exists for state schema_version {version}")
@@ -711,17 +707,18 @@ def _validate_legacy_state(
 def _validate_state(
     state: Any, curriculum: list[dict[str, str]], *, version: int = SCHEMA_VERSION
 ) -> dict[str, Any]:
-    """Validate a schema v3 to v6 document.
+    """Validate a schema v3 to v7 document.
 
     v4 adds the required `config.known_per_reply` budget; v5 lets that budget be
     null (no cap), adds `progress.offers`, and allows a decision to reserve the
     whole vocabulary by scope instead of listing every id; v6 drops the budget
     and the offers, since the agent now looks words up instead of sampling, and
-    a scoped decision may record the `vocab_size` it was issued under.
-    v3 to v5 are accepted only on the migration path. Unknown versions fail
+    a scoped decision may record the `vocab_size` it was issued under; v7 drops
+    `progress.pending_decisions`, since `record` checks today's vocabulary.
+    v3 to v6 are accepted only on the migration path. Unknown versions fail
     closed.
     """
-    if version not in (3, 4, 5, SCHEMA_VERSION):
+    if version not in (3, 4, 5, 6, SCHEMA_VERSION):
         raise StateError(f"No validator exists for state schema_version {version}")
     if not isinstance(state, dict):
         raise StateError("State root must be an object")
@@ -781,7 +778,9 @@ def _validate_state(
             raise StateError(f"State requires string {field}")
         _parse_timestamp(state[field], config["timezone"], field=field)
 
-    progress_keys = ["last_exposure_at", "pending_decisions", "terms"]
+    progress_keys = ["last_exposure_at", "terms"]
+    if version <= 6:
+        progress_keys.append("pending_decisions")
     if version == 5:
         progress_keys.append("offers")
     for key in progress_keys:
@@ -845,48 +844,49 @@ def _validate_state(
                 offer_state["last_offered_at"], config["timezone"], field="last_offered_at"
             )
 
-    pending = progress["pending_decisions"]
-    if not isinstance(pending, dict):
-        raise StateError("progress.pending_decisions must be an object")
-    for decision_id, decision in pending.items():
-        if not isinstance(decision_id, str) or not decision_id:
-            raise StateError("Pending decision ids must be non-empty strings")
-        if not isinstance(decision, dict):
-            raise StateError(f"Pending decision {decision_id} must be an object")
-        scoped_keys = {"scope", "created_at"}
-        if version >= 6:
-            scoped_keys = scoped_keys | ({"vocab_size"} & set(decision))
-        scoped = version >= 5 and set(decision) == scoped_keys
-        if not scoped and set(decision) != {"term_ids", "created_at"}:
-            raise StateError(f"Pending decision {decision_id} has invalid fields")
-        if scoped:
-            if decision["scope"] != "known_all":
-                raise StateError(f"Pending decision {decision_id} has an unknown scope")
-            if "vocab_size" in decision:
-                vocab_size = decision["vocab_size"]
-                if (
-                    type(vocab_size) is not int
-                    or vocab_size < 0
-                    or vocab_size > len(curriculum)
-                ):
+    if version <= 6:
+        pending = progress["pending_decisions"]
+        if not isinstance(pending, dict):
+            raise StateError("progress.pending_decisions must be an object")
+        for decision_id, decision in pending.items():
+            if not isinstance(decision_id, str) or not decision_id:
+                raise StateError("Pending decision ids must be non-empty strings")
+            if not isinstance(decision, dict):
+                raise StateError(f"Pending decision {decision_id} must be an object")
+            scoped_keys = {"scope", "created_at"}
+            if version >= 6:
+                scoped_keys = scoped_keys | ({"vocab_size"} & set(decision))
+            scoped = version >= 5 and set(decision) == scoped_keys
+            if not scoped and set(decision) != {"term_ids", "created_at"}:
+                raise StateError(f"Pending decision {decision_id} has invalid fields")
+            if scoped:
+                if decision["scope"] != "known_all":
+                    raise StateError(f"Pending decision {decision_id} has an unknown scope")
+                if "vocab_size" in decision:
+                    vocab_size = decision["vocab_size"]
+                    if (
+                        type(vocab_size) is not int
+                        or vocab_size < 0
+                        or vocab_size > len(curriculum)
+                    ):
+                        raise StateError(
+                            f"Pending decision {decision_id} vocab_size must be an integer "
+                            "within the curriculum"
+                        )
+            else:
+                term_ids = decision["term_ids"]
+                if not isinstance(term_ids, list) or not term_ids:
                     raise StateError(
-                        f"Pending decision {decision_id} vocab_size must be an integer "
-                        "within the curriculum"
+                        f"Pending decision {decision_id} requires a non-empty term_ids list"
                     )
-        else:
-            term_ids = decision["term_ids"]
-            if not isinstance(term_ids, list) or not term_ids:
-                raise StateError(
-                    f"Pending decision {decision_id} requires a non-empty term_ids list"
-                )
-            if len(set(term_ids)) != len(term_ids):
-                raise StateError(f"Pending decision {decision_id} has duplicate term_ids")
-            for term_id in term_ids:
-                if not isinstance(term_id, str) or term_id not in known_ids:
-                    raise StateError(f"Pending decision {decision_id} has unknown term {term_id}")
-        if not isinstance(decision["created_at"], str):
-            raise StateError(f"Pending decision {decision_id} requires created_at")
-        _parse_timestamp(decision["created_at"], config["timezone"], field="created_at")
+                if len(set(term_ids)) != len(term_ids):
+                    raise StateError(f"Pending decision {decision_id} has duplicate term_ids")
+                for term_id in term_ids:
+                    if not isinstance(term_id, str) or term_id not in known_ids:
+                        raise StateError(f"Pending decision {decision_id} has unknown term {term_id}")
+            if not isinstance(decision["created_at"], str):
+                raise StateError(f"Pending decision {decision_id} requires created_at")
+            _parse_timestamp(decision["created_at"], config["timezone"], field="created_at")
 
     # Usage history is observational since v3: the vocabulary comes from the calendar, so
     # terms need not form a curriculum prefix. The exposure timestamp is still
@@ -998,7 +998,7 @@ def _migrate_v5_state(
     """
     _validate_state(state, curriculum, version=5)
     migrated = json.loads(json.dumps(state))
-    migrated["schema_version"] = SCHEMA_VERSION
+    migrated["schema_version"] = 6
     config = migrated["config"]
     config.pop("known_per_reply", None)
     migrated["progress"].pop("offers", None)
@@ -1011,6 +1011,21 @@ def _migrate_v5_state(
         today,
         batch_size=max(1, round(old_batch * DEFAULT_CADENCE_DAYS / old_cadence)),
     )
+    return _validate_state(migrated, curriculum, version=6)
+
+
+def _migrate_v6_state(
+    state: dict[str, Any], curriculum: list[dict[str, str]]
+) -> dict[str, Any]:
+    """Drop `progress.pending_decisions`.
+
+    `record` now checks the used words against today's vocabulary instead of a
+    reservation made by `context`, so nothing reads a decision any more.
+    """
+    _validate_state(state, curriculum, version=6)
+    migrated = json.loads(json.dumps(state))
+    migrated["schema_version"] = 7
+    migrated["progress"].pop("pending_decisions", None)
     return _validate_state(migrated, curriculum)
 
 
@@ -1059,7 +1074,9 @@ def _load_or_create_state(
                 staged = _migrate_v3_state(staged, curriculum)
             if source_version <= 4:
                 staged = _migrate_v4_state(staged, curriculum)
-            migrated = _migrate_v5_state(staged, curriculum, now)
+            if source_version <= 5:
+                staged = _migrate_v5_state(staged, curriculum, now)
+            migrated = _migrate_v6_state(staged, curriculum)
             migrated["updated_at"] = now.isoformat()
             _validate_state(migrated, curriculum)
             backup_durable = _preserve_migration_source(
@@ -1200,78 +1217,6 @@ def _next_batch_date(
     return start + timedelta(days=next_index * config["cadence_days"])
 
 
-def _reserve_decision(state: dict[str, Any], now: datetime, vocab_size: int) -> str:
-    """Reserve one reply's exposure: the first `vocab_size` terms of the curriculum.
-
-    `vocab_size` is the vocabulary of the moment `context` ran, stored so a
-    later `configure` cannot change what the reply was allowed to use.
-    """
-    pending = state["progress"]["pending_decisions"]
-    timezone_name = state["config"]["timezone"]
-
-    def created(decision: dict[str, Any]) -> float:
-        return _parse_timestamp(
-            decision["created_at"], timezone_name, field="created_at"
-        ).timestamp()
-
-    for decision_id in [
-        decision_id
-        for decision_id, decision in pending.items()
-        if now.timestamp() - created(decision) > MAX_DECISION_AGE_SECONDS
-    ]:
-        del pending[decision_id]
-
-    # Replies that legitimately used no Spanish leave their reservation behind.
-    # Evicting the oldest keeps `context` working instead of failing closed on a
-    # queue of never-consumed tokens.
-    while len(pending) >= MAX_PENDING_DECISIONS:
-        del pending[min(pending, key=lambda decision_id: (created(pending[decision_id]), decision_id))]
-
-    decision_id = f"d_{secrets.token_urlsafe(18)}"
-    while decision_id in pending:
-        decision_id = f"d_{secrets.token_urlsafe(18)}"
-    pending[decision_id] = {
-        "scope": "known_all",
-        "created_at": now.isoformat(),
-        "vocab_size": vocab_size,
-    }
-    return decision_id
-
-
-def _permitted_terms(
-    state: dict[str, Any], curriculum: list[dict[str, str]], decision: dict[str, Any]
-) -> set[str]:
-    """Ids a decision permits: the vocabulary at the moment it was issued.
-
-    A scoped decision stores that vocabulary's size, so the permitted set is the
-    curriculum prefix of that length whatever `configure` changed since. A
-    decision issued before schema v6 may carry its own `term_ids` list, or a
-    scope without a size; the list is honoured as written and a missing size is
-    recomputed from the configuration for the day it was issued.
-    """
-    if "term_ids" in decision:
-        return set(decision["term_ids"])
-    if "vocab_size" in decision:
-        return {term["id"] for term in curriculum[: decision["vocab_size"]]}
-    timezone_name = state["config"]["timezone"]
-    created_at = _parse_timestamp(
-        decision["created_at"], timezone_name, field="created_at"
-    )
-    issued_on = created_at.astimezone(_timezone(timezone_name)).date()
-    vocabulary, _ = _vocabulary(state, curriculum, issued_on)
-    return {term["id"] for term in vocabulary}
-
-
-def _combined_durability(initial: str, written: bool) -> str:
-    if initial == "uncertain" or not written:
-        return "uncertain"
-    return "confirmed"
-
-
-def _term_view(term: dict[str, str], term_state: dict[str, Any] | None) -> dict[str, Any]:
-    return {**term, "use_count": int(term_state["use_count"]) if term_state else 0}
-
-
 def _context(
     state: dict[str, Any],
     curriculum: list[dict[str, str]],
@@ -1279,11 +1224,9 @@ def _context(
     state_path: Path,
 ) -> dict[str, Any]:
     config = state["config"]
-    progress = state["progress"]
     timezone_name = config["timezone"]
     today = now.date()
     known, batch_index = _vocabulary(state, curriculum, today)
-    last_exposure_timestamp = progress.get("last_exposure_at")
 
     active = True
     reason = "active"
@@ -1296,18 +1239,6 @@ def _context(
         active, reason = False, "non_cli_client"
     elif batch_index < 0:
         active, reason = False, "before_start_date"
-    elif any(
-        now.timestamp()
-        < _parse_timestamp(
-            decision["created_at"], timezone_name, field="created_at"
-        ).timestamp()
-        for decision in progress["pending_decisions"].values()
-    ):
-        active, reason = False, "clock_before_pending_decision"
-    elif last_exposure_timestamp is not None and now.timestamp() < _parse_timestamp(
-        last_exposure_timestamp, timezone_name, field="last_exposure_at"
-    ).timestamp():
-        active, reason = False, "clock_before_last_exposure"
     elif len(known) >= len(curriculum):
         # Substitution continues; only new words have run out.
         reason = "curriculum_complete"
@@ -1356,7 +1287,7 @@ def _resolve_used(
     order: the exact Spanish form (case and punctuation ignored, so `Hola!`
     works), else a curriculum id, else the accent-folded Spanish form when that
     matches exactly one entry. An exact form may match several entries
-    (homographs); `record` keeps those the decision permits.
+    (homographs); `record` keeps those in today's vocabulary.
     """
     by_id = {term["id"]: term for term in curriculum}
     by_key: dict[str, list[str]] = {}
@@ -1419,7 +1350,6 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
             state_path, curriculum, now_value=args.now
         )
         result = _context(state, curriculum, now, state_path)
-        result["decision_id"] = None
         result["lookup"] = None
         if result["active"]:
             binary = _lookup_binary()
@@ -1433,11 +1363,6 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
             # vocabulary and is rewritten only when that changes.
             manifest = _write_manifest(state_path, known)
             result["lookup"] = {"command": str(binary), "vocabulary": manifest["path"]}
-            result["decision_id"] = _reserve_decision(state, now, len(known))
-            state["updated_at"] = now.isoformat()
-            _validate_state(state, curriculum)
-            durable = _atomic_write(state_path, state)
-            write_durability = _combined_durability(write_durability, durable)
     result["write_durability"] = write_durability
     return result
 
@@ -1453,32 +1378,20 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     with _locked(state_path):
         state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
         progress = state["progress"]
-        decision = progress["pending_decisions"].get(args.decision)
-        if decision is None:
-            raise StateError("Unknown, expired, or already-used exposure decision")
-        permitted = _permitted_terms(state, curriculum, decision)
+        today_ids = {term["id"] for term in _vocabulary(state, curriculum, now.date())[0]}
         # A Spanish form shared by several entries (porque, él/el) counts as the
-        # entries the decision permits; it is an error only if none are.
+        # entries in today's vocabulary; it is an error only if none are.
         used: list[str] = []
         outside: list[str] = []
         for token, ids in candidates:
-            allowed = [term_id for term_id in ids if term_id in permitted]
+            allowed = [term_id for term_id in ids if term_id in today_ids]
             if not allowed:
                 outside.extend(ids)
             used.extend(term_id for term_id in allowed if term_id not in used)
         if outside:
             raise StateError(
-                "Terms were not part of the reserved active set: "
-                f"{', '.join(sorted(set(outside)))}"
+                f"Terms are not in today's vocabulary: {', '.join(sorted(set(outside)))}"
             )
-        created_at = _parse_timestamp(
-            decision["created_at"], state["config"]["timezone"], field="created_at"
-        )
-        age_seconds = now.timestamp() - created_at.timestamp()
-        if age_seconds < 0:
-            raise StateError("Clock is before the reserved exposure decision")
-        if age_seconds > MAX_DECISION_AGE_SECONDS:
-            raise StateError("Exposure decision has expired")
         last_exposure = progress["last_exposure_at"]
         if last_exposure is not None and now.timestamp() < _parse_timestamp(
             last_exposure, state["config"]["timezone"], field="last_exposure_at"
@@ -1500,7 +1413,6 @@ def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
                 first_uses.append(term_id)
 
         progress["last_exposure_at"] = now.isoformat()
-        del progress["pending_decisions"][args.decision]
         state["updated_at"] = now.isoformat()
         _validate_state(state, curriculum)
         durable = _atomic_write(state_path, state)
@@ -1749,9 +1661,6 @@ def _cmd_vocab(args: argparse.Namespace) -> dict[str, Any]:
             while term["id"] in seen_ids:
                 term["id"], suffix = f"{base}-{suffix}", suffix + 1
             seen_ids.add(term["id"])
-        # Decisions were issued against the old curriculum; a reply in flight
-        # simply records nothing.
-        state["progress"]["pending_decisions"] = {}
         if args.words_per_week is not None:
             config["batch_size"] = _words_per_week(args.words_per_week)
             config["cadence_days"] = DEFAULT_CADENCE_DAYS
@@ -1854,7 +1763,9 @@ def _parser() -> argparse.ArgumentParser:
         help="Comma-separated Spanish words actually used, as ambient-lookup prints them "
         "(or curriculum ids)",
     )
-    record.add_argument("--decision", required=True)
+    record.add_argument(
+        "--decision", help="Ignored; accepted so older instructions keep working"
+    )
     record.set_defaults(handler=_cmd_record)
 
     status = subparsers.add_parser("status", help="Show progress and today's context")

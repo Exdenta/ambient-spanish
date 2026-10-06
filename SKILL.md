@@ -47,15 +47,14 @@ The vocabulary grows from the calendar alone. The learner picks a regime — 5, 
 5. Record the words actually used, as the last tool call before the reply:
 
    ```bash
-   python3 <skill-root>/scripts/ambient_state.py record \
-     --decision <decision_id> --used <spanish1>,<spanish2>,<spanish3>
+   python3 <skill-root>/scripts/ambient_state.py record --used <spanish1>,<spanish2>,<spanish3>
    ```
 
    `--used` lists the dictionary forms exactly as the lookup printed them (`abrir`, `ventana`). Omit the call if nothing fit. `record` rejects words outside the vocabulary.
 
 6. Send the full reply as the final text message, after `record`. A message that only describes the reply leaves the user with nothing. Never add a sign-off after `record`.
 
-7. Treat `ok: true` as recorded. Each `decision_id` is single-use. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
+7. Treat `ok: true` as recorded. `write_durability: uncertain` means the transition is visible but the filesystem could not confirm crash durability; do not retry it. If recording returns `ok: false`, send the reply anyway and never claim progress was saved when it was not.
 
 Run `context` once per reply.
 

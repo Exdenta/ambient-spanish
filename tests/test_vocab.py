@@ -214,7 +214,7 @@ class VocabCompositionTests(VocabTestCase):
         # Eight baseline words plus the first weekly batch, available immediately.
         self.assertEqual(11, context["vocabulary_count"])
         self.assertNotIn("learning", context)
-        self.run_cli("record", "--decision", context["decision_id"], "--used", "plazo,casa")
+        self.run_cli("record", "--used", "plazo,casa")
         status = self.run_cli("status")
         self.assertEqual("user", status["curriculum"]["source"])
         self.assertEqual("A2", status["curriculum"]["build"]["level"])
@@ -304,8 +304,7 @@ class VocabHistoryTests(VocabTestCase):
     def use(self, *term_ids: str, now: str) -> None:
         context = self.run_cli("context", "--now", now)
         self.run_cli(
-            "record", "--decision", context["decision_id"], "--used", ",".join(term_ids),
-            "--now", now,
+            "record", "--used", ",".join(term_ids), "--now", now,
         )
 
     def test_keep_known_preserves_the_vocabulary_and_queue_order(self) -> None:
@@ -372,13 +371,13 @@ class VocabHistoryTests(VocabTestCase):
         self.assertNotIn("casa", terms)
         self.assertEqual(1, terms["casa-hogar"]["use_count"])
 
-    def test_rebuild_drops_pending_decisions(self) -> None:
+    def test_rebuild_writes_a_current_state_and_keeps_the_previous_one(self) -> None:
         self.run_cli("vocab", "--level", "A1")
         self.run_cli("context", "--now", "2026-10-05T10:00:00+02:00")
-        self.assertTrue(self.read_state()["progress"]["pending_decisions"])
         self.run_cli("vocab", "--level", "A0", "--now", "2026-10-05T11:00:00+02:00")
         state = self.read_state()
-        self.assertEqual({}, state["progress"]["pending_decisions"])
+        self.assertEqual(7, state["schema_version"])
+        self.assertNotIn("pending_decisions", state["progress"])
         self.assertNotIn("offers", state["progress"])
         self.assertTrue((self.root / "state.json.previous").exists())
         self.assertTrue((self.root / "curriculum.json.previous").exists())

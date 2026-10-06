@@ -1,4 +1,4 @@
-# State contract v6
+# State contract v7
 
 Read this only when maintaining, migrating, or troubleshooting persistent state.
 
@@ -25,7 +25,6 @@ Every command resolves the curriculum in this order:
 - Usage history stays attached to curriculum ids:
   - A used term whose Spanish form moved to a new id has its history moved, or merged if the new id already has some.
   - A used term the new build left out is appended to the known set, so every `progress.terms` id still exists.
-- `pending_decisions` is cleared, because those decisions were issued against the old curriculum.
 - The previous personal curriculum and state are copied to `*.previous`. Then `vocab` writes the curriculum, then `curriculum.meta.json` (a build summary), then the state, then the vocabulary file (the live vocabulary, known count plus one batch), each atomically.
   - A crash between the curriculum and state writes can leave a state that fails validation against the new curriculum (for example, a used term the new curriculum lacks). Re-running `vocab` does not reliably repair this, because it first validates the state against the curriculum now on disk and fails the same way. Restore the `*.previous` curriculum and state pair, then re-run `vocab`.
 
@@ -43,8 +42,7 @@ Do not delete the personal curriculum by hand. Its baseline would then index the
 - `config.timezone`: IANA timezone used for day boundaries. Default: `Europe/Madrid`.
 - `config.dialect`: Output dialect hint. Default: `es-ES`.
 - `config.paused`: Stops substitution without deleting progress.
-- `progress.last_exposure_at`: Latest recorded use. It provides monotonic-clock protection but does not cap or gate anything.
-- `progress.pending_decisions`: One-time reservations returned by `context` and consumed by `record`. Each holds `scope: "known_all"` (the scope name; it means the whole vocabulary) and `vocab_size`, the vocabulary size when `context` ran. `record` permits `curriculum[:vocab_size]`, so `configure --words-per-week`, `--baseline-known` or `--timezone` between `context` and `record` cannot change what the reply was allowed to use. A decision without `vocab_size` (scoped, from before this field) is recomputed from the configuration for its own local date, and a decision that holds a `term_ids` list is honoured as written.
+- `progress.last_exposure_at`: Latest recorded use. `record` refuses to run with the clock before it. It does not cap or gate anything.
 - `progress.terms`: Observational usage history. `use_count` and `introduced_at` never affect the vocabulary or unlocking.
 
 ## Vocabulary derivation
@@ -79,12 +77,14 @@ The binary resolves from `AMBIENT_LOOKUP_BIN`, then `<repo>/rust/ambient-lookup/
 2. A curriculum id.
 3. The accent-folded Spanish form, only if it matches exactly one entry.
 
-A Spanish form shared by several entries (homographs such as `porque` conjunction and noun) keeps only the entries the decision permits; it is an error only if none are permitted. A token that matches nothing fails with `Unknown curriculum terms`.
+A Spanish form shared by several entries (homographs such as `porque` conjunction and noun) keeps only the entries in today's vocabulary; it is an error only if none are (`Terms are not in today's vocabulary`). A token that matches nothing fails with `Unknown curriculum terms`.
+
+`--decision` is accepted and ignored, so older instructions keep working. `context` returns no `decision_id` and writes nothing when the state is already at the current schema (it may refresh `vocabulary.txt`), so it reports `write_durability: not-written`.
 
 ## Invariants
 
 1. Message count never changes the vocabulary or unlocking.
-2. A reply may draw on any term of the vocabulary of the day its decision was issued. There is no density cap and no probabilistic exposure gate.
+2. A reply may draw on any term of today's vocabulary. There is no density cap and no probabilistic exposure gate.
 3. No term is glossed in a reply. The hover mod shows the English.
 4. Vocabulary membership is derived solely from `start_date`, `cadence_days`, `batch_size`, and `baseline_known_count`.
 5. Missed time never causes a multi-batch catch-up: elapsed days advance `batch_index`, so skipped batches simply join the vocabulary rather than queueing.
@@ -93,13 +93,9 @@ A Spanish form shared by several entries (homographs such as `porque` conjunctio
 8. Test-time clock overrides require `AMBIENT_SPANISH_ALLOW_TIME_OVERRIDE=1`; ordinary runtime uses the system clock.
 9. `last_exposure_at` must equal the newest `terms[*].last_used_at`.
 10. Exact integers reject booleans and numeric lookalikes.
-11. A `record` transition requires the unexpired decision id issued for that reply, and the resolved `--used` terms must lie in the permitted set (`curriculum[:vocab_size]` of the decision, or its legacy `term_ids`).
+11. A `record` transition requires the resolved `--used` terms to lie in today's vocabulary and the clock not to be before `last_exposure_at`.
 
 Mutating commands return `write_durability: confirmed` after both the file and parent directory sync. If the replacement is visible but the filesystem cannot confirm the directory sync, they return `write_durability: uncertain` while keeping `ok: true`; this avoids claiming that an already-visible transition failed.
-
-## Decision lifetime
-
-Decisions expire after 24 hours. Replies that legitimately used no Spanish leave their reservation unconsumed, so at `MAX_PENDING_DECISIONS` (128) `context` evicts the oldest reservation rather than failing closed. Eviction only invalidates a stale anti-replay token; it never touches term history.
 
 ## Migration rule
 
@@ -120,3 +116,5 @@ The v5 to v6 migration removes the density cap and its bookkeeping, because the 
 The same migration moves pacing to weekly: `cadence_days` becomes 7 and `batch_size` becomes `max(1, round(batch_size * 7 / cadence_days))` (an old 3 words every 3 days becomes 7 per week). It rebases so today's vocabulary size does not change: the old size as of the migration's local date is computed with the old pacing, `baseline_known_count` becomes that size minus the new batch size (floored at 0; when the floor applies the vocabulary grows to one new batch), and `start_date` becomes the migration's local date. A `start_date` still in the future is left as is.
 
 `configure --words-per-week N` rebases the same way, so the current vocabulary size neither jumps nor shrinks when the pace changes (unless `--baseline-known` is given in the same call, which then sets the baseline itself). `vocab --words-per-week` needs no rebase, since a rebuild sets the baseline from the known words.
+
+The v6 to v7 migration drops `progress.pending_decisions`, because `record` now checks the used words against today's vocabulary instead of a reservation; term history is untouched. The original is first preserved as `state.json.schema-v6.backup`.

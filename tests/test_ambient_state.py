@@ -135,7 +135,7 @@ class TierDerivationTests(CliTestCase):
         self.assertEqual(3, context["words_per_week"])
         self.assertEqual(7, context["cadence_days"])
         self.assertEqual("2026-08-22", context["next_batch_date"])
-        self.assertTrue(context["decision_id"].startswith("d_"))
+        self.assertNotIn("decision_id", context)
 
     def test_context_has_one_vocabulary_and_no_learning_tier(self) -> None:
         self.init()
@@ -207,7 +207,7 @@ class TierDerivationTests(CliTestCase):
         self.assertFalse(context["active"])
         self.assertEqual("before_start_date", context["reason"])
         self.assertIsNone(context["lookup"])
-        self.assertIsNone(context["decision_id"])
+        self.assertNotIn("decision_id", context)
 
     def test_completed_curriculum_stays_active_with_no_new_words(self) -> None:
         self.init("--baseline-known", "12")
@@ -259,8 +259,6 @@ class RecordTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         recorded = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t00,t02",
             "--now",
@@ -275,11 +273,9 @@ class RecordTests(CliTestCase):
     def test_repeat_use_increments_the_counter(self) -> None:
         self.init()
         for minute, expected in ((10, 1), (20, 2)):
-            context = self.run_cli("context", "--now", f"2026-08-15T{minute}:00:00+02:00")
+            self.run_cli("context", "--now", f"2026-08-15T{minute}:00:00+02:00")
             self.run_cli(
                 "record",
-                "--decision",
-                context["decision_id"],
                 "--used",
                 "t00",
                 "--now",
@@ -293,8 +289,6 @@ class RecordTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-22T10:00:00+02:00")
         self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t01,t04",
             "--now",
@@ -308,8 +302,6 @@ class RecordTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-29T10:00:00+02:00")
         self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t07",
             "--now",
@@ -318,53 +310,24 @@ class RecordTests(CliTestCase):
         status = self.run_cli("status", "--now", "2026-08-29T10:10:00+02:00")
         self.assertEqual(["t07"], self.ids(status["used_terms"]))
 
-    def test_decision_is_single_use(self) -> None:
-        self.init()
-        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        self.run_cli(
-            "record",
-            "--decision",
-            context["decision_id"],
-            "--used",
-            "t00",
-            "--now",
-            "2026-08-15T10:05:00+02:00",
-        )
-        failure = self.run_cli(
-            "record",
-            "--decision",
-            context["decision_id"],
-            "--used",
-            "t01",
-            "--now",
-            "2026-08-15T10:06:00+02:00",
-            ok=False,
-        )
-        self.assertFalse(failure["ok"])
-        self.assertIn("already-used", failure["error"])
-
-    def test_terms_outside_the_reserved_set_are_rejected(self) -> None:
+    def test_terms_outside_todays_vocabulary_are_rejected(self) -> None:
         self.init()
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         failure = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t00,t09",
             "--now",
             "2026-08-15T10:05:00+02:00",
             ok=False,
         )
-        self.assertIn("not part of the reserved active set", failure["error"])
+        self.assertIn("Terms are not in today's vocabulary: t09", failure["error"])
 
     def test_unknown_terms_are_rejected_and_duplicates_collapse(self) -> None:
         self.init()
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         unknown = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "nope",
             "--now",
@@ -375,8 +338,6 @@ class RecordTests(CliTestCase):
         # A repeated word is harmless: it is recorded once.
         duplicate = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t00,t00",
             "--now",
@@ -384,36 +345,64 @@ class RecordTests(CliTestCase):
         )
         self.assertEqual(["t00"], duplicate["recorded"]["used"])
 
-    def test_expired_decision_is_rejected(self) -> None:
+    def test_record_works_without_a_decision_and_ignores_one(self) -> None:
         self.init()
-        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        failure = self.run_cli(
-            "record",
-            "--decision",
-            context["decision_id"],
-            "--used",
-            "t00",
-            "--now",
-            "2026-08-16T11:00:00+02:00",
-            ok=False,
+        self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        bare = self.run_cli(
+            "record", "--used", "t00", "--now", "2026-08-15T10:05:00+02:00"
         )
-        self.assertIn("expired", failure["error"])
+        self.assertEqual(["t00"], bare["recorded"]["used"])
+        ignored = self.run_cli(
+            "record", "--decision", "anything", "--used", "t01",
+            "--now", "2026-08-15T10:06:00+02:00",
+        )
+        self.assertEqual(["t01"], ignored["recorded"]["used"])
+        status = self.run_cli("status", "--now", "2026-08-15T10:10:00+02:00")
+        self.assertEqual(["t00", "t01"], sorted(self.ids(status["used_terms"])))
 
-    def test_clock_rollback_blocks_recording_and_deactivates_context(self) -> None:
+    def test_record_rejects_a_curriculum_word_that_is_not_in_todays_vocabulary(self) -> None:
         self.init()
-        context = self.run_cli("context", "--now", "2026-08-16T10:00:00+02:00")
-        self.run_cli(
-            "record",
-            "--decision",
-            context["decision_id"],
-            "--used",
-            "t00",
-            "--now",
-            "2026-08-16T10:05:00+02:00",
+        before = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+        self.assertEqual(3, before["vocabulary_count"])
+        failure = self.run_cli(
+            "record", "--used", "t03", "--now", "2026-08-15T10:05:00+02:00", ok=False
         )
-        rolled_back = self.run_cli("context", "--now", "2026-08-16T09:00:00+02:00")
-        self.assertFalse(rolled_back["active"])
-        self.assertEqual("clock_before_last_exposure", rolled_back["reason"])
+        self.assertIn("Terms are not in today's vocabulary: t03", failure["error"])
+        # The same word is accepted once its weekly batch has landed.
+        recorded = self.run_cli(
+            "record", "--used", "t03", "--now", "2026-08-22T10:05:00+02:00"
+        )
+        self.assertEqual(["t03"], recorded["recorded"]["used"])
+
+    def test_record_refuses_when_the_clock_is_before_the_last_exposure(self) -> None:
+        self.init()
+        self.run_cli(
+            "record", "--used", "t00", "--now", "2026-08-16T10:05:00+02:00"
+        )
+        failure = self.run_cli(
+            "record", "--used", "t01", "--now", "2026-08-16T09:00:00+02:00", ok=False
+        )
+        self.assertIn("Clock is before the last recorded exposure", failure["error"])
+        status = self.run_cli("status", "--now", "2026-08-16T10:10:00+02:00")
+        self.assertEqual(["t00"], self.ids(status["used_terms"]))
+
+    def test_context_stays_active_when_the_clock_runs_backwards(self) -> None:
+        self.init()
+        self.run_cli("record", "--used", "t00", "--now", "2026-08-16T10:05:00+02:00")
+        context = self.run_cli("context", "--now", "2026-08-16T09:00:00+02:00")
+        self.assertTrue(context["active"])
+        self.assertEqual("active", context["reason"])
+
+    def test_context_on_a_current_state_leaves_the_state_file_untouched(self) -> None:
+        self.init()
+        self.run_cli("record", "--used", "t00", "--now", "2026-08-15T10:05:00+02:00")
+        before = self.state.read_bytes()
+        context = self.run_cli("context", "--now", "2026-08-15T11:00:00+02:00")
+        self.assertEqual("not-written", context["write_durability"])
+        self.assertEqual(before, self.state.read_bytes())
+        again = self.run_cli("context", "--now", "2026-08-15T12:00:00+02:00")
+        self.assertEqual("not-written", again["write_durability"])
+        self.assertEqual(before, self.state.read_bytes())
 
 
 class ConfigurationTests(CliTestCase):
@@ -449,31 +438,6 @@ class ConfigurationTests(CliTestCase):
             self.assertEqual(0, after["batch_index"])
             config = json.loads(self.state.read_text(encoding="utf-8"))["config"]
             self.assertEqual("2026-08-22", config["start_date"])
-
-    def test_configure_between_context_and_record_does_not_reject_the_record(self) -> None:
-        self.init("--baseline-known", "2")
-        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        decision = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
-            "pending_decisions"
-        ][context["decision_id"]]
-        self.assertEqual(5, decision["vocab_size"])
-        self.run_cli("configure", "--words-per-week", "1", "--now", "2026-08-15T10:01:00+02:00")
-        self.run_cli("configure", "--baseline-known", "0", "--now", "2026-08-15T10:02:00+02:00")
-        self.run_cli(
-            "configure", "--timezone", "America/Los_Angeles", "--now", "2026-08-15T10:03:00+02:00"
-        )
-        recorded = self.run_cli(
-            "record", "--decision", context["decision_id"], "--used", "t04",
-            "--now", "2026-08-15T10:05:00+02:00",
-        )
-        self.assertEqual(["t04"], recorded["recorded"]["used"])
-        # ...but the permitted set is still the one issued, not a larger one.
-        other = self.run_cli("context", "--now", "2026-08-15T10:06:00+02:00")
-        failure = self.run_cli(
-            "record", "--decision", other["decision_id"], "--used", "t05",
-            "--now", "2026-08-15T10:07:00+02:00", ok=False,
-        )
-        self.assertIn("not part of the reserved active set", failure["error"])
 
     def test_configure_baseline_known_shifts_the_vocabulary_boundary(self) -> None:
         self.init()
@@ -665,7 +629,7 @@ class MigrationTests(CliTestCase):
     def test_v2_terms_become_baseline_known(self) -> None:
         self.write_state(self.v2_state())
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        self.assertEqual(6, context["schema_version"])
+        self.assertEqual(7, context["schema_version"])
         self.assertEqual(0, context["batch_index"])
         # The three used terms are the baseline; the first weekly batch joins on top.
         expected = min(12, 3 + AMBIENT_STATE.DEFAULT_BATCH_SIZE)
@@ -702,7 +666,7 @@ class MigrationTests(CliTestCase):
         del source["progress"]["pending_decisions"]
         self.write_state(source)
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        self.assertEqual(6, context["schema_version"])
+        self.assertEqual(7, context["schema_version"])
         # Baseline of three plus the default weekly batch, capped by the fixture.
         self.assertEqual(["t00", "t01", "t02"], self.vocabulary_ids()[:3])
         self.assertEqual(min(12, 3 + AMBIENT_STATE.DEFAULT_BATCH_SIZE), context["vocabulary_count"])
@@ -725,11 +689,11 @@ class MigrationTests(CliTestCase):
         }
         self.write_state(source)
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        self.assertEqual(6, context["schema_version"])
+        self.assertEqual(7, context["schema_version"])
         migrated = json.loads(self.state.read_text(encoding="utf-8"))
         self.assertNotIn("known_per_reply", migrated["config"])
         self.assertNotIn("offers", migrated["progress"])
-        self.assertNotIn("d_unbounded", migrated["progress"]["pending_decisions"])
+        self.assertNotIn("pending_decisions", migrated["progress"])
         backup = self.state.with_name(f"{self.state.name}.schema-v3.backup")
         self.assertTrue(backup.exists())
         counts = {
@@ -737,6 +701,98 @@ class MigrationTests(CliTestCase):
             for term_id, term in migrated["progress"]["terms"].items()
         }
         self.assertEqual({"t00": 12, "t01": 5, "t02": 2}, counts)
+
+
+class V7MigrationTests(CliTestCase):
+    def v6_state(self) -> dict:
+        return {
+            "schema_version": 6,
+            "config": {
+                "timezone": "Europe/Madrid",
+                "dialect": "es-MX",
+                "cadence_days": 7,
+                "batch_size": 4,
+                "baseline_known_count": 2,
+                "paused": False,
+                "start_date": "2026-08-15",
+            },
+            "progress": {
+                "last_exposure_at": "2026-08-16T10:00:00+02:00",
+                "pending_decisions": {
+                    "d_scoped": {
+                        "scope": "known_all",
+                        "created_at": "2026-08-16T10:30:00+02:00",
+                        "vocab_size": 6,
+                    },
+                    "d_listed": {
+                        "term_ids": ["t00"],
+                        "created_at": "2026-08-16T10:31:00+02:00",
+                    },
+                },
+                "terms": {
+                    "t00": {
+                        "introduced_at": "2026-08-15T09:00:00+02:00",
+                        "last_used_at": "2026-08-15T10:00:00+02:00",
+                        "use_count": 7,
+                    },
+                    "t04": {
+                        "introduced_at": "2026-08-16T09:00:00+02:00",
+                        "last_used_at": "2026-08-16T10:00:00+02:00",
+                        "use_count": 2,
+                    },
+                },
+            },
+            "created_at": "2026-08-15T09:00:00+02:00",
+            "updated_at": "2026-08-16T10:31:00+02:00",
+        }
+
+    def test_v6_drops_pending_decisions_and_keeps_everything_else(self) -> None:
+        source = self.v6_state()
+        self.write_state(source)
+        context = self.run_cli("context", "--now", "2026-08-17T11:00:00+02:00")
+        self.assertEqual(7, context["schema_version"])
+        self.assertEqual("confirmed", context["write_durability"])
+        backup = self.state.with_name(f"{self.state.name}.schema-v6.backup")
+        self.assertEqual(source, json.loads(backup.read_text(encoding="utf-8")))
+        migrated = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(7, migrated["schema_version"])
+        self.assertEqual({"last_exposure_at", "terms"}, set(migrated["progress"]))
+        self.assertEqual(source["progress"]["terms"], migrated["progress"]["terms"])
+        self.assertEqual(
+            source["progress"]["last_exposure_at"], migrated["progress"]["last_exposure_at"]
+        )
+        self.assertEqual(source["config"], migrated["config"])
+        # Once migrated, the next context writes nothing.
+        before = self.state.read_bytes()
+        again = self.run_cli("context", "--now", "2026-08-17T12:00:00+02:00")
+        self.assertEqual("not-written", again["write_durability"])
+        self.assertEqual(before, self.state.read_bytes())
+
+    def test_a_migrated_v6_state_records_against_todays_vocabulary(self) -> None:
+        self.write_state(self.v6_state())
+        recorded = self.run_cli(
+            "record", "--used", "t05", "--now", "2026-08-17T11:00:00+02:00"
+        )
+        self.assertEqual(["t05"], recorded["recorded"]["used"])
+        failure = self.run_cli(
+            "record", "--used", "t06", "--now", "2026-08-17T11:05:00+02:00", ok=False
+        )
+        self.assertIn("Terms are not in today's vocabulary: t06", failure["error"])
+
+    def test_v5_still_migrates_all_the_way_to_v7(self) -> None:
+        source = V6MigrationTests.v5_state(self)
+        self.write_state(source)
+        self.run_cli("status", "--now", "2026-08-16T11:00:00+02:00")
+        migrated = json.loads(self.state.read_text(encoding="utf-8"))
+        self.assertEqual(7, migrated["schema_version"])
+        self.assertNotIn("pending_decisions", migrated["progress"])
+        self.assertNotIn("offers", migrated["progress"])
+        self.assertEqual(7, migrated["progress"]["terms"]["t00"]["use_count"])
+        backup = self.state.with_name(f"{self.state.name}.schema-v5.backup")
+        self.assertEqual(source, json.loads(backup.read_text(encoding="utf-8")))
+        self.assertFalse(
+            self.state.with_name(f"{self.state.name}.schema-v6.backup").exists()
+        )
 
 
 class LookupContextTests(CliTestCase):
@@ -764,7 +820,7 @@ class LookupContextTests(CliTestCase):
             "ambient-lookup binary not found: run python3 scripts/install.py", failure["error"]
         )
         state = json.loads(self.state.read_text(encoding="utf-8"))
-        self.assertEqual({}, state["progress"]["pending_decisions"])
+        self.assertNotIn("pending_decisions", state["progress"])
 
     def test_binary_resolves_from_the_environment_then_the_repo_build(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -840,8 +896,6 @@ class VocabularyFileTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         recorded = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t00,t05,t08",
             "--now",
@@ -854,8 +908,6 @@ class VocabularyFileTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         recorded = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "palabra00,PALABRA05,t08,palabra00",
             "--now",
@@ -868,56 +920,13 @@ class VocabularyFileTests(CliTestCase):
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         failure = self.run_cli(
             "record",
-            "--decision",
-            context["decision_id"],
             "--used",
             "t11",
             "--now",
             "2026-08-15T10:05:00+02:00",
             ok=False,
         )
-        self.assertIn("not part of the reserved active set", failure["error"])
-
-    def test_decision_is_scoped_not_a_list_of_ids(self) -> None:
-        self.init("--baseline-known", "6")
-        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
-        decision = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
-            "pending_decisions"
-        ][context["decision_id"]]
-        self.assertEqual({"scope", "created_at", "vocab_size"}, set(decision))
-        self.assertEqual("known_all", decision["scope"])
-        self.assertEqual(9, decision["vocab_size"])
-
-    def test_a_scoped_decision_without_vocab_size_is_still_honoured(self) -> None:
-        self.init()
-        state = json.loads(self.state.read_text(encoding="utf-8"))
-        state["progress"]["pending_decisions"] = {
-            "d_old": {"scope": "known_all", "created_at": "2026-08-15T10:00:00+02:00"}
-        }
-        self.write_state(state)
-        recorded = self.run_cli(
-            "record", "--decision", "d_old", "--used", "t02", "--now", "2026-08-15T10:05:00+02:00"
-        )
-        self.assertEqual(["t02"], recorded["recorded"]["used"])
-
-    def test_an_old_term_ids_decision_is_still_honoured(self) -> None:
-        self.init()
-        state = json.loads(self.state.read_text(encoding="utf-8"))
-        state["progress"]["pending_decisions"] = {
-            "d_old": {"term_ids": ["t00", "t01"], "created_at": "2026-08-15T10:00:00+02:00"}
-        }
-        self.write_state(state)
-        recorded = self.run_cli(
-            "record",
-            "--decision",
-            "d_old",
-            "--used",
-            "t01",
-            "--now",
-            "2026-08-15T10:05:00+02:00",
-        )
-        self.assertEqual(["t01"], recorded["recorded"]["used"])
-
+        self.assertIn("Terms are not in today's vocabulary: t11", failure["error"])
 
 class RecordResolutionTests(CliTestCase):
     """`record --used` takes Spanish words as `ambient-lookup` prints them, or ids."""
@@ -951,7 +960,7 @@ class RecordResolutionTests(CliTestCase):
     def used(self, words: str, ok: bool = True) -> dict:
         context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
         return self.run_cli(
-            "record", "--decision", context["decision_id"], "--used", words,
+            "record", "--used", words,
             "--now", "2026-08-15T10:05:00+02:00", ok=ok,
         )
 
@@ -974,20 +983,18 @@ class RecordResolutionTests(CliTestCase):
         failure = self.used("pápa", ok=False)  # folds to both papá and papa
         self.assertIn("Unknown curriculum terms: pápa", failure["error"])
 
-    def test_a_homograph_keeps_only_the_permitted_entries(self) -> None:
+    def test_a_homograph_keeps_only_the_entries_in_the_vocabulary(self) -> None:
         self.assertEqual(["porque"], self.used("porque")["recorded"]["used"])
 
-    def test_a_homograph_with_no_permitted_entry_is_an_error(self) -> None:
-        # Shrink the decision's vocabulary to before either porque entry.
-        context = self.run_cli("context", "--now", "2026-08-15T10:00:00+02:00")
+    def test_a_homograph_with_no_entry_in_the_vocabulary_is_an_error(self) -> None:
+        # Shrink today's vocabulary to before either porque entry.
         state = json.loads(self.state.read_text(encoding="utf-8"))
-        state["progress"]["pending_decisions"][context["decision_id"]]["vocab_size"] = 2
+        state["config"]["batch_size"] = 2
         self.write_state(state)
         failure = self.run_cli(
-            "record", "--decision", context["decision_id"], "--used", "porque",
-            "--now", "2026-08-15T10:05:00+02:00", ok=False,
+            "record", "--used", "porque", "--now", "2026-08-15T10:05:00+02:00", ok=False,
         )
-        self.assertIn("not part of the reserved active set", failure["error"])
+        self.assertIn("Terms are not in today's vocabulary", failure["error"])
 
     def test_the_help_text_names_spanish_words(self) -> None:
         help_text = subprocess.run(
@@ -1037,14 +1044,12 @@ class V6MigrationTests(CliTestCase):
         source = self.v5_state()
         self.write_state(source)
         context = self.run_cli("context", "--now", "2026-08-16T11:00:00+02:00")
-        self.assertEqual(6, context["schema_version"])
+        self.assertEqual(7, context["schema_version"])
         migrated = json.loads(self.state.read_text(encoding="utf-8"))
-        self.assertEqual(6, migrated["schema_version"])
+        self.assertEqual(7, migrated["schema_version"])
         self.assertNotIn("known_per_reply", migrated["config"])
         self.assertNotIn("offers", migrated["progress"])
-        self.assertEqual(
-            [context["decision_id"]], list(migrated["progress"]["pending_decisions"])
-        )
+        self.assertNotIn("pending_decisions", migrated["progress"])
         self.assertEqual(7, migrated["progress"]["terms"]["t00"]["use_count"])
         # 3 words per 3 days is 7 per week; the floor at baseline 0 is accepted.
         self.assertEqual(7, migrated["config"]["batch_size"])
@@ -1098,14 +1103,14 @@ class V6MigrationTests(CliTestCase):
         self.assertIn("already exists with different content", failure["error"])
         self.assertIn("move it aside", failure["error"])
 
-    def test_v4_migrates_through_v5_to_v6(self) -> None:
+    def test_v4_migrates_through_v5_and_v6_to_v7(self) -> None:
         source = self.v5_state()
         source["schema_version"] = 4
         del source["progress"]["offers"]
         source["progress"]["pending_decisions"] = {}
         self.write_state(source)
         context = self.run_cli("context", "--now", "2026-08-16T11:00:00+02:00")
-        self.assertEqual(6, context["schema_version"])
+        self.assertEqual(7, context["schema_version"])
         migrated = json.loads(self.state.read_text(encoding="utf-8"))
         self.assertNotIn("known_per_reply", migrated["config"])
         self.assertNotIn("offers", migrated["progress"])
@@ -1113,51 +1118,13 @@ class V6MigrationTests(CliTestCase):
             self.state.with_name(f"{self.state.name}.schema-v4.backup").exists()
         )
 
-    def test_a_fresh_init_writes_v6_without_the_old_fields(self) -> None:
+    def test_a_fresh_init_writes_v7_without_the_old_fields(self) -> None:
         self.run_cli("init", "--now", "2026-08-15T09:00:00+02:00")
         document = json.loads(self.state.read_text(encoding="utf-8"))
         self.assertNotIn("known_per_reply", document["config"])
         self.assertNotIn("offers", document["progress"])
-        self.assertEqual(6, document["schema_version"])
-
-
-class DecisionHousekeepingTests(CliTestCase):
-    def test_unconsumed_decisions_are_evicted_instead_of_failing(self) -> None:
-        self.init()
-        state = json.loads(self.state.read_text(encoding="utf-8"))
-        state["progress"]["pending_decisions"] = {
-            f"d_stale{index:03d}": {
-                "term_ids": ["t00"],
-                "created_at": f"2026-08-15T10:00:{index % 60:02d}.{index:03d}000+02:00",
-            }
-            for index in range(AMBIENT_STATE.MAX_PENDING_DECISIONS)
-        }
-        self.write_state(state)
-        context = self.run_cli("context", "--now", "2026-08-15T11:00:00+02:00")
-        self.assertTrue(context["active"])
-        pending = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
-            "pending_decisions"
-        ]
-        self.assertEqual(AMBIENT_STATE.MAX_PENDING_DECISIONS, len(pending))
-        self.assertNotIn("d_stale000", pending)
-        self.assertIn(context["decision_id"], pending)
-
-    def test_expired_decisions_are_pruned(self) -> None:
-        self.init()
-        state = json.loads(self.state.read_text(encoding="utf-8"))
-        state["progress"]["pending_decisions"] = {
-            "d_old": {
-                "term_ids": ["t00"],
-                "created_at": "2026-08-15T10:00:00+02:00",
-            }
-        }
-        self.write_state(state)
-        self.run_cli("context", "--now", "2026-08-17T10:00:00+02:00")
-        pending = json.loads(self.state.read_text(encoding="utf-8"))["progress"][
-            "pending_decisions"
-        ]
-        self.assertNotIn("d_old", pending)
-        self.assertEqual(1, len(pending))
+        self.assertNotIn("pending_decisions", document["progress"])
+        self.assertEqual(7, document["schema_version"])
 
 
 # Latin-American forms that must not appear in an es-ES curriculum, mapped to
@@ -1251,7 +1218,7 @@ class ShippedCurriculumTests(unittest.TestCase):
                 command, text=True, capture_output=True, check=True, env=environment
             )
             context = json.loads(result.stdout)
-            self.assertEqual(6, context["schema_version"])
+            self.assertEqual(7, context["schema_version"])
             self.assertEqual(AMBIENT_STATE.DEFAULT_CADENCE_DAYS, context["cadence_days"])
             self.assertEqual(AMBIENT_STATE.DEFAULT_BATCH_SIZE, context["words_per_week"])
             self.assertNotIn("known_per_reply", context)
