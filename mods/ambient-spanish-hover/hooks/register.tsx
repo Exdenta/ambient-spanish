@@ -29,7 +29,8 @@ const FENCE_LANGUAGE = /^\s*```\s*([\w+#.-]+)/
 const MAX_NATIVE = 10000
 const HEADING = /^#{1,6}\s+/
 const QUOTE = /^>\s?/
-const RULE_LINE = /^\s*(---|___)\s*$/
+const ITEM_START = /^\s*([-*+]|\d+[.)])\s|^#{1,6}\s|^>/
+const RULE_LINE =/^\s*(---|___)\s*$/
 const RULE_WIDTH = 40
 const INLINE_SEGMENT = /(`[^`]*`|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|~~[^~]+~~|\[[^\]]*\]\([^)]*\))/
 const LINK = /^\[([^\]]*)\]\(([^)]*)\)$/
@@ -152,16 +153,38 @@ function splitBlocks(index: Index, text: string): Block[] {
   let paragraph: string[] = []
   let fence: { language?: string; rows: string[] } | null = null
 
+  // A list item, heading or quote starts a new item; other rows continue the one before.
+  // Only items holding a word are redrawn, so the rest of a list keeps the engine's own look.
   const flushParagraph = () => {
     if (!paragraph.length) return
-    const lines = paragraph.map(row => parseLine(index, row))
-    const hasWord = lines.some(l => wordsOf(l.chunks).length)
-    blocks.push(
-      hasWord || paragraph.join('\n').length > MAX_NATIVE
-        ? { kind: 'lines', lines }
-        : { kind: 'markdown', raw: paragraph.join('\n') },
-    )
+    const items: string[][] = []
+    for (const row of paragraph) {
+      if (!items.length || ITEM_START.test(row)) items.push([row])
+      else items[items.length - 1].push(row)
+    }
     paragraph = []
+
+    let native: string[] = []
+    const flushNative = () => {
+      if (!native.length) return
+      const raw = native.join('\n')
+      blocks.push(
+        raw.length > MAX_NATIVE
+          ? { kind: 'lines', lines: native.map(row => parseLine(index, row)) }
+          : { kind: 'markdown', raw },
+      )
+      native = []
+    }
+    for (const rows of items) {
+      const lines = rows.map(row => parseLine(index, row))
+      if (lines.some(l => wordsOf(l.chunks).length) || rows.join('\n').length > MAX_NATIVE) {
+        flushNative()
+        blocks.push({ kind: 'lines', lines })
+      } else {
+        native.push(...rows)
+      }
+    }
+    flushNative()
   }
   const flushFence = () => {
     if (!fence) return

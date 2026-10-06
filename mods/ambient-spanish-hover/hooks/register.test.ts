@@ -104,3 +104,13 @@ test('plain English is left to the engine', async ($, on) => {
   const message = await mountMessage($, 'Nothing to translate here, just a terminal.')
   expect(JSON.stringify(await message.drawn())).toContain('engine')
 })
+
+test('in a list only the items holding a word are redrawn', async ($, on) => {
+  stubEngine(on)
+  const message = await mountMessage($, '- plain **English** item\n- I will buscar it\n- another one')
+  const drawn = JSON.stringify(await message.drawn())
+  expect(drawn).toContain('es-buscar')
+  expect(drawn).toContain('plain **English** item')
+  expect(drawn).toContain('another one')
+  expect(drawn.split('"type":"Markdown"').length - 1).toBe(2)
+})
