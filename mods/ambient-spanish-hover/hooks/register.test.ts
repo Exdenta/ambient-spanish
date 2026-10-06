@@ -163,3 +163,91 @@ test('short gloss words are not inflected into Spanish words', async ($, on) => 
   // "to" from every verb gloss must not hide tos.
   expect(await drawnFor($, on, 'A dry tos for days.')).toContain('es-tos')
 })
+
+// ---- shared band state ----
+const letters = (i: number) => String.fromCharCode(97 + (Math.floor(i / 26) % 26), 97 + (i % 26))
+const fixtureWord = (i: number) => `zor${letters(i)}ka`
+const fixtureVocab = (n: number) =>
+  `## noun (${n})\n${Array.from({ length: n }, (_, i) => `${fixtureWord(i)} | ${fixtureWord(i)} | thing`).join('\n')}\n`
+const wordsText = (from: number, count: number) =>
+  Array.from({ length: count }, (_, i) => fixtureWord(from + i)).join(' ')
+
+const mountAt = ($: any, requestId: string, text: string) =>
+  $.ui.mount({ plugin, surface: 'terminal', component: 'AssistantMessage', requestId, props: { text, isFirstOfReply: true } })
+
+// The mounted drawings follow an invalidate by redrawing, so the count is what a session would see.
+const countInvalidations = (on: any) => {
+  const calls = { n: 0 }
+  on('ui.invalidate', (_$: any, e: any, next: any) => {
+    calls.n++
+    return next(e)
+  })
+  return calls
+}
+
+test('many messages with 100+ distinct words converge without endless invalidation', async ($, on) => {
+  stubEngine(on, 'cli', fixtureVocab(240))
+  const calls = countInvalidations(on)
+  const texts = Array.from({ length: 12 }, (_, i) => wordsText(i * 10, 10))
+  const handles = []
+  for (let i = 0; i < texts.length; i++) handles.push(await mountAt($, `m${i}`, texts[i]))
+  const perPass: number[] = [calls.n]
+  for (let pass = 0; pass < 3; pass++) {
+    const before = calls.n
+    for (const h of handles) await h.redraw()
+    perPass.push(calls.n - before)
+  }
+  console.log('invalidations: mount phase, then per full re-render pass', JSON.stringify(perPass))
+  expect(perPass.slice(1)).toEqual([0, 0, 0])
+  expect(perPass[0]).toBeLessThan(texts.length + 1)
+  const drawn = JSON.stringify(await (await mountBand($)).drawn())
+  expect(drawn).toContain(`${fixtureWord(0)} = thing`)
+  expect(drawn).toContain(`${fixtureWord(119)} = thing`)
+})
+
+test('re-rendering an unchanged message does not invalidate again', async ($, on) => {
+  stubEngine(on)
+  const calls = countInvalidations(on)
+  const h = await mountAt($, 'a', 'I will buscar it.')
+  const first = calls.n
+  expect(first).toBe(1)
+  await h.redraw()
+  await h.redraw()
+  expect(calls.n).toBe(first)
+})
+
+test('streaming partial texts of one message leave only the final words', async ($, on) => {
+  stubEngine(on, 'cli', fixtureVocab(10))
+  const calls = countInvalidations(on)
+  const w = [1, 2, 3].map(fixtureWord)
+  const h = await mountAt($, 's', `first ${w[0]}`)
+  await h.redraw({ text: `first ${w[1]} and`, isFirstOfReply: true })
+  await h.redraw({ text: `first ${w[2]} and more`, isFirstOfReply: true })
+  const drawn = JSON.stringify(await (await mountBand($)).drawn())
+  expect(drawn).toContain(`${w[2]} = thing`)
+  expect(drawn).not.toContain(`${w[0]} = thing`)
+  expect(drawn).not.toContain(`${w[1]} = thing`)
+  expect(calls.n).toBeGreaterThan(0)
+})
+
+test('a word in a recent message stays when an older message holds many words', async ($, on) => {
+  stubEngine(on, 'cli', fixtureVocab(900))
+  const old = await mountAt($, 'old', wordsText(100, 250))
+  await mountAt($, 'new', fixtureWord(5))
+  await old.redraw()
+  const drawn = JSON.stringify(await (await mountBand($)).drawn())
+  expect(drawn).toContain(`${fixtureWord(5)} = thing`)
+})
+
+test('past the cap whole oldest messages are dropped, never words of recent ones', async ($, on) => {
+  stubEngine(on, 'cli', fixtureVocab(900))
+  await mountAt($, 'old', wordsText(300, 250))
+  await mountAt($, 'mid', wordsText(0, 100))
+  const recent = await mountAt($, 'recent', fixtureWord(600))
+  await recent.redraw()
+  const drawn = JSON.stringify(await (await mountBand($)).drawn())
+  expect(drawn).toContain(`${fixtureWord(600)} = thing`)
+  expect(drawn).toContain(`${fixtureWord(99)} = thing`)
+  expect(drawn).not.toContain(`${fixtureWord(300)} = thing`)
+  expect(drawn).not.toContain(`${fixtureWord(549)} = thing`)
+})

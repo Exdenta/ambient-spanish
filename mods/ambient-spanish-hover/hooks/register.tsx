@@ -15,8 +15,9 @@ type Index = { exact: Map<string, Word>; english: Set<string> }
 
 // Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
 const VOCAB_FILE = '.codex/state/ambient-spanish/vocabulary.txt'
-const MAX_SEEN = 80
-const MAX_PINNED = 8
+// Distinct words the band keeps, counted over whole messages: a screenful with room to spare.
+const MAX_SEEN = 300
+const MAX_PINNED = 24
 const PLACEHOLDER = 'ES  hover a highlighted word for its English'
 // Flip if the terminal shows no bullet, or two, on a redrawn reply's first block.
 const DRAW_BULLET = false
@@ -300,11 +301,6 @@ let indexAt = 0
 // New words land weekly while a session may stay open, so re-read the file now and then.
 const INDEX_REFRESH_MS = 30_000
 let hasWarned = false
-let isDirty = false
-// Insertion order is recency; the band draws one hidden reveal per entry.
-const seen = new Map<string, Word>()
-// Words in engine-drawn tables: nothing to hover, so the band lists them as plain text.
-const pinned = new Map<string, Word>()
 
 async function vocabPath($: any): Promise<string> {
   const home = await $.env.get('HOME')
@@ -352,18 +348,65 @@ function loadIndex($: any): Promise<Index | null> {
   return indexLoad
 }
 
-function touch(map: Map<string, Word>, word: Word, max: number) {
-  if (!map.has(word.id)) isDirty = true
-  map.delete(word.id)
-  map.set(word.id, word)
-  if (map.size > max) map.delete(map.keys().next().value as string)
-}
+// What each reply block on screen contributes to the band, keyed by the block's own
+// requestId (the engine's message id: stable across redraws and streaming). A block
+// registers its whole word list, so a partial render replaces what it said before.
+type Entry = { hover: Word[]; table: Word[]; sig: string }
+type Band = { hover: Word[]; table: Word[] }
 
-// The band is drawn before a reply's words are known; redraw it once they are.
-function flushBand($: any) {
-  if (!isDirty) return
-  isDirty = false
-  $.ui.invalidate('ui.render')
+function createBand() {
+  // Insertion order is age: the first block registered is the oldest.
+  const entries = new Map<string, Entry>()
+  let flushed = ''
+
+  const distinct = (lists: Word[][], max: number): Word[] => {
+    const out = new Map<string, Word>()
+    for (const list of lists) for (const w of list) if (!out.has(w.id)) out.set(w.id, w)
+    return [...out.values()].slice(0, max)
+  }
+  const countOf = (pick: (e: Entry) => Word[]) => new Set([...entries.values()].flatMap(e => pick(e).map(w => w.id))).size
+
+  // Drops whole oldest blocks, never words of recent ones, and never the newest block.
+  const trim = (pick: (e: Entry) => Word[], max: number) => {
+    while (entries.size > 1 && countOf(pick) > max) {
+      const oldest = entries.keys().next().value as string
+      entries.delete(oldest)
+    }
+  }
+
+  // Union over registered blocks, newest first.
+  const view = (): Band => {
+    const newest = [...entries.values()].reverse()
+    return { hover: distinct(newest.map(e => e.hover), MAX_SEEN), table: distinct(newest.map(e => e.table), MAX_PINNED) }
+  }
+  const keyOf = (b: Band) => `${b.hover.map(w => w.id).join(',')}|${b.table.map(w => w.id).join(',')}`
+
+  return {
+    view,
+    register(id: string, hover: Word[], table: Word[]) {
+      // A reply without words adds nothing, so it takes no entry: the registry stays as
+      // small as the band, however long the session.
+      if (!hover.length && !table.length) {
+        entries.delete(id)
+        return
+      }
+      const sig = `${hover.map(w => w.id).join(',')}|${table.map(w => w.id).join(',')}`
+      const previous = entries.get(id)
+      if (previous?.sig === sig) return
+      entries.set(id, { hover, table, sig }) // a replaced entry keeps its age
+      trim(e => e.hover, MAX_SEEN)
+      trim(e => e.table, MAX_PINNED)
+    },
+    // The band is drawn before a reply's words are known; redraw it once they are, and only
+    // when the words it would show have changed.
+    // Returns true once per change; the caller invalidates ($ cannot be passed around).
+    takeChange(): boolean {
+      const key = keyOf(view())
+      if (key === flushed) return false
+      flushed = key
+      return true
+    },
+  }
 }
 
 async function drawByEngine(next: any, e: any, raw: string): Promise<any> {
@@ -375,6 +418,8 @@ async function drawByEngine(next: any, e: any, raw: string): Promise<any> {
 }
 
 export const register: Register = on => {
+  const band = createBand()
+
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
     if (!(await onCli($))) return next(e)
     const index = await loadIndex($)
@@ -385,10 +430,10 @@ export const register: Register = on => {
     const tableWords = blocks.flatMap(b =>
       b.kind === 'engine' ? b.raw.split('\n').flatMap(row => wordsOf(parseLine(index, row).chunks)) : [],
     )
-    for (const w of tableWords) touch(pinned, w, MAX_PINNED)
-    for (const w of hoverWords) touch(seen, w, MAX_SEEN)
+    // Two blocks sharing one key would replace each other on every redraw and never settle.
+    band.register(e.requestId || `text:${e.props.text}`, hoverWords, tableWords)
     // The reply finishes drawing after turn.complete, so the band must be told here.
-    flushBand($)
+    if (band.takeChange()) $.ui.invalidate('ui.render')
     if (!hoverWords.length) return next(e)
 
     // Sequential: each call walks the engine's drawing chain for one table.
@@ -457,7 +502,8 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, ($, e, next) => {
-    if (e.props.hasSurvey || !(seen.size || pinned.size)) return next(e)
+    const { hover: seen, table: pinned } = band.view()
+    if (e.props.hasSurvey || !(seen.length || pinned.length)) return next(e)
 
     const { Box, Text } = $.ui.resolve(e)
     const pad = PLACEHOLDER.length + 2
@@ -465,24 +511,24 @@ export const register: Register = on => {
     // One hover row always, so a reveal never changes the layout under the pointer.
     return (
       <Box flexDirection="column">
-        {seen.size ? (
+        {seen.length ? (
           <Box height={1}>
             <Text dimColor>{PLACEHOLDER}</Text>
-            {[...seen.values()].map(w => (
+            {seen.map(w => (
               <Box position="absolute" top={0} left={0} display="none" hover={{ scope: `es-${w.id}`, display: 'flex' }}>
                 <Text color="cyan">{`${w.es} = ${w.en}`.padEnd(pad)}</Text>
               </Box>
             ))}
           </Box>
         ) : null}
-        {pinned.size ? <Text color="cyan">{[...pinned.values()].map(w => `${w.es} = ${w.en}`).join('  ·  ')}</Text> : null}
+        {pinned.length ? <Text color="cyan">{pinned.map(w => `${w.es} = ${w.en}`).join('  ·  ')}</Text> : null}
       </Box>
     )
   })
 
   // The band draws before a reply's words are known; redraw it once the turn is over.
   on('turn.complete', ($, e, next) => {
-    flushBand($)
+    if (band.takeChange()) $.ui.invalidate('ui.render')
     return next(e)
   })
 }

@@ -25,7 +25,7 @@ claude plugin update ambient-spanish-hover@ambient-spanish
 | Piece | Job |
 | --- | --- |
 | `ui.render` on `AssistantMessage` | matches words against the skill's `vocabulary.txt`, draws each as its own hoverable `Text` |
-| `ui.render` on `AbovePrompt` | one hidden `spanish = english` entry per recent word, revealed by the same hover `scope` |
+| `ui.render` on `AbovePrompt` | one hidden `spanish = english` entry per word of the replies on screen (about 300 at most, whole oldest replies dropped first), revealed by the same hover `scope` |
 | `turn.complete` | redraws the row once the turn is over |
 
 The vocabulary is read from `~/.codex/state/ambient-spanish/vocabulary.txt`, which `ambient_state.py lookup` rewrites whenever the weekly additions land (the path follows `AMBIENT_SPANISH_STATE` when it is set). The mod re-reads it every 30 seconds, so new words appear without restarting. Every vocabulary word is underlined; there are no bracketed glosses to skip.

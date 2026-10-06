@@ -1,6 +1,6 @@
 {
   "name": "ambient-spanish-hover",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Hover a Spanish word in a reply to see its English in the band above the prompt.",
   "author": { "name": "Exdenta" },
   "homepage": "https://github.com/Exdenta/ambient-spanish/tree/main/mods/ambient-spanish-hover",
