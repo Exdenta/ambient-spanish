@@ -21,7 +21,7 @@ For the hover mod, see [its README](mods/ambient-spanish-hover/README.md#develop
 `references/curriculum.json` is an ordered list; position matters.
 
 - Every word must pass the Peninsular-Spanish blocklist in `tests/test_ambient_state.py`.
-- Pre-known words go at the front of the list, and `baseline_known_count` must rise by the same amount. Otherwise the weekly window shifts over words people already know.
+- Pre-known words go at the front of the list, and `SHIPPED_BASELINE_KNOWN` in `scripts/ambient_state.py` must rise by the same amount, as must the last `CURATED_BANDS` boundary in `scripts/build_lexicon.py` (a test checks they agree). Otherwise the weekly window shifts over words people already know.
 - Don't reorder existing entries without a migration note in `references/state-contract.md`; saved progress is positional.
 
 ## Changing the level packs

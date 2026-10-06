@@ -18,7 +18,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 ### Changed
 - Removed the per-reply density cap (`--known-per-reply`) and the manifest the assistant used to read; state schema v6 migrates v5 state automatically. The hover mod now reloads the vocabulary file every 30 seconds, so weekly additions appear without restarting.
 - Removed the "learning" tier and the bracketed English after new words; hover replaces it. `context` and `status` no longer report `learning`, and `init`/`configure` take `--words-per-week` instead of `--cadence-days`/`--batch-size`.
-- The shipped curriculum starts with a pre-known core, and every word is checked against an `es-ES` blocklist.
+- The shipped curriculum starts with a pre-known core, and every word is checked against an `es-ES` blocklist. A state created against it now starts with that core (the first 321 entries) known; before, nothing set it and the core was taught 10 words a week.
 - The assistant now sends the full reply as the last message after `record`.
 - Spanish appears only in the Claude Code terminal CLI, where the hover mod can show translations. With `CLAUDE_CODE_ENTRYPOINT` set to anything other than `cli` (the desktop app, IDE extensions), `context` returns `active: false` with reason `non_cli_client`. Codex leaves the variable unset and is unaffected.
 - `record` no longer needs a decision id from `context`: it checks the used words against today's vocabulary, and `context` no longer writes the state on every reply. State schema v7 drops `pending_decisions`; a v6 state migrates automatically and keeps a `state.json.schema-v6.backup`. `--decision` is still accepted and ignored.

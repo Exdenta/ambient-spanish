@@ -1168,6 +1168,41 @@ NON_PENINSULAR = {
 
 
 class ShippedCurriculumTests(unittest.TestCase):
+    def test_a_state_created_on_the_shipped_curriculum_knows_its_core(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            state_path = Path(temp_dir) / "state.json"
+            dummy = Path(temp_dir) / "ambient-lookup"
+            dummy.write_text("#!/bin/sh\n", encoding="utf-8")
+            dummy.chmod(0o755)
+            # No --curriculum and no personal curriculum: the shipped one is in use.
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "context", "--state", str(state_path)],
+                text=True,
+                capture_output=True,
+                check=True,
+                env={**os.environ, "AMBIENT_LOOKUP_BIN": str(dummy)},
+            )
+            context = json.loads(result.stdout)
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        core = AMBIENT_STATE.SHIPPED_BASELINE_KNOWN
+        self.assertEqual(core, state["config"]["baseline_known_count"])
+        self.assertEqual(core + AMBIENT_STATE.DEFAULT_BATCH_SIZE, context["vocabulary_count"])
+
+    def test_the_shipped_core_is_easy_words_and_matches_the_lexicon_build(self) -> None:
+        spec = importlib.util.spec_from_file_location(
+            "build_lexicon", ROOT / "scripts" / "build_lexicon.py"
+        )
+        assert spec is not None and spec.loader is not None
+        build_lexicon = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(build_lexicon)
+        core = AMBIENT_STATE.SHIPPED_BASELINE_KNOWN
+        self.assertEqual(build_lexicon.CURATED_BANDS[-1][0], core)
+        packs = AMBIENT_STATE._load_lexicon(AMBIENT_STATE.DEFAULT_LEXICON_PATH)
+        level = {term["id"]: name for name in AMBIENT_STATE.LEVELS for term in packs[name]}
+        curriculum = AMBIENT_STATE._load_curriculum(REAL_CURRICULUM)
+        harder = [t["id"] for t in curriculum[:core] if level[t["id"]] not in ("A0", "A1", "A2")]
+        self.assertEqual([], harder)
+
     def test_shipped_curriculum_loads(self) -> None:
         curriculum = AMBIENT_STATE._load_curriculum(REAL_CURRICULUM)
         self.assertGreaterEqual(len(curriculum), 12)

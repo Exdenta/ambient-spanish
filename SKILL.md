@@ -15,7 +15,7 @@ There is a single vocabulary. Write its Spanish **bare**: no gloss, no brackets,
 
 The vocabulary has thousands of words and is deliberately kept out of your context. Instead you draft the reply in plain English, send the draft to `ambient-lookup`, and it returns only the words and phrases in your draft that have a Spanish equivalent. You then write the final reply using those.
 
-The vocabulary grows from the calendar alone. The learner picks a regime — 5, 10 or 20 new words per week, or their own number (`words_per_week` in `context`, default 10) — and that many curriculum words join the vocabulary every 7 days, whether or not the previous ones were ever used. The first `baseline_known_count` curriculum entries are the learner's starting vocabulary, either the shipped curriculum's A1 core or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
+The vocabulary grows from the calendar alone. The learner picks a regime — 5, 10 or 20 new words per week, or their own number (`words_per_week` in `context`, default 10) — and that many curriculum words join the vocabulary every 7 days, whether or not the previous ones were ever used. The first `baseline_known_count` curriculum entries are the learner's starting vocabulary, either the shipped curriculum's 321-word everyday core or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
 
 ## Runtime workflow
 

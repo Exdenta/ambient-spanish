@@ -44,6 +44,10 @@ DEFAULT_CURRICULUM_PATH = Path(__file__).resolve().parent.parent / "references" 
 DEFAULT_LEXICON_PATH = (
     Path(__file__).resolve().parent.parent / "references" / "levels" / "lexicon.tsv"
 )
+# The shipped curriculum opens with words every learner is taken to know: an A1
+# core and an everyday A2 block. A state created against it starts with them
+# known. CURATED_BANDS in build_lexicon.py ends at the same index.
+SHIPPED_BASELINE_KNOWN = 321
 # A personal curriculum written by `vocab` lives beside the state it indexes,
 # so the two travel together and the shipped curriculum stays the default.
 USER_CURRICULUM_FILENAME = "curriculum.json"
@@ -114,8 +118,12 @@ def _curriculum_source(value: str | None, state_path: Path) -> tuple[Path, str]:
     return DEFAULT_CURRICULUM_PATH, "shipped"
 
 
-def _curriculum_path(value: str | None, state_path: Path) -> Path:
-    return _curriculum_source(value, state_path)[0]
+def _curriculum_and_baseline(
+    value: str | None, state_path: Path
+) -> tuple[list[dict[str, str]], int]:
+    """The curriculum in use, and the baseline a state created against it starts from."""
+    path, source = _curriculum_source(value, state_path)
+    return _load_curriculum(path), SHIPPED_BASELINE_KNOWN if source == "shipped" else 0
 
 
 def _lexicon_path(value: str | None) -> Path:
@@ -1048,6 +1056,7 @@ def _load_or_create_state(
     curriculum: list[dict[str, str]],
     *,
     now_value: str | None,
+    baseline_known_count: int = 0,
 ) -> tuple[dict[str, Any], datetime, str]:
     if state_path.exists():
         provisional = _read_json(state_path)
@@ -1094,6 +1103,7 @@ def _load_or_create_state(
         dialect=DEFAULT_DIALECT,
         cadence_days=DEFAULT_CADENCE_DAYS,
         batch_size=DEFAULT_BATCH_SIZE,
+        baseline_known_count=min(baseline_known_count, len(curriculum)),
     )
     durable = _atomic_write(state_path, state)
     return state, now, "confirmed" if durable else "uncertain"
@@ -1315,7 +1325,7 @@ def _resolve_used(
 
 def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
+    curriculum, default_baseline = _curriculum_and_baseline(args.curriculum, state_path)
     now = _parse_now(args.now, args.timezone)
     start = _parse_date(args.start_date, "start_date") if args.start_date else now.date()
     with _locked(state_path):
@@ -1329,7 +1339,9 @@ def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
             dialect=args.dialect,
             cadence_days=DEFAULT_CADENCE_DAYS,
             batch_size=_words_per_week(args.words_per_week),
-            baseline_known_count=args.baseline_known,
+            baseline_known_count=default_baseline
+            if args.baseline_known is None
+            else args.baseline_known,
             start_date=start,
         )
         _validate_state(state, curriculum)
@@ -1344,10 +1356,10 @@ def _cmd_init(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
+    curriculum, baseline = _curriculum_and_baseline(args.curriculum, state_path)
     with _locked(state_path):
         state, now, write_durability = _load_or_create_state(
-            state_path, curriculum, now_value=args.now
+            state_path, curriculum, now_value=args.now, baseline_known_count=baseline
         )
         result = _context(state, curriculum, now, state_path)
         result["lookup"] = None
@@ -1369,14 +1381,16 @@ def _cmd_context(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_record(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
+    curriculum, baseline = _curriculum_and_baseline(args.curriculum, state_path)
     tokens = _split_ids(args.used)
     candidates, unknown = _resolve_used(tokens, curriculum)
     if unknown:
         raise StateError(f"Unknown curriculum terms: {', '.join(sorted(unknown))}")
 
     with _locked(state_path):
-        state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
+        state, now, _ = _load_or_create_state(
+            state_path, curriculum, now_value=args.now, baseline_known_count=baseline
+        )
         progress = state["progress"]
         today_ids = {term["id"] for term in _vocabulary(state, curriculum, now.date())[0]}
         # A Spanish form shared by several entries (porque, él/el) counts as the
@@ -1428,10 +1442,11 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
     curriculum_path, curriculum_source = _curriculum_source(args.curriculum, state_path)
     curriculum = _load_curriculum(curriculum_path)
+    baseline = SHIPPED_BASELINE_KNOWN if curriculum_source == "shipped" else 0
     by_id = {term["id"]: term for term in curriculum}
     with _locked(state_path):
         state, now, write_durability = _load_or_create_state(
-            state_path, curriculum, now_value=args.now
+            state_path, curriculum, now_value=args.now, baseline_known_count=baseline
         )
     context = _context(state, curriculum, now, state_path)
     context["write_durability"] = write_durability
@@ -1469,9 +1484,11 @@ def _cmd_status(args: argparse.Namespace) -> dict[str, Any]:
 
 def _cmd_configure(args: argparse.Namespace) -> dict[str, Any]:
     state_path = _state_path(args.state)
-    curriculum = _load_curriculum(_curriculum_path(args.curriculum, state_path))
+    curriculum, baseline = _curriculum_and_baseline(args.curriculum, state_path)
     with _locked(state_path):
-        state, now, _ = _load_or_create_state(state_path, curriculum, now_value=args.now)
+        state, now, _ = _load_or_create_state(
+            state_path, curriculum, now_value=args.now, baseline_known_count=baseline
+        )
         config = state["config"]
         changes: dict[str, Any] = {}
         if args.timezone is not None:
@@ -1742,8 +1759,8 @@ def _parser() -> argparse.ArgumentParser:
     init.add_argument(
         "--baseline-known",
         type=int,
-        default=0,
-        help="Leading curriculum items to treat as already known at start",
+        help="Leading curriculum items to treat as already known at start "
+        f"(default: {SHIPPED_BASELINE_KNOWN} for the shipped curriculum, else 0)",
     )
     init.add_argument("--start-date")
     init.add_argument("--force", action="store_true")
