@@ -15,6 +15,8 @@ type Index = { exact: Map<string, Word>; english: Set<string> }
 
 // Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
 const VOCAB_FILE = '.codex/state/ambient-spanish/vocabulary.txt'
+// Names the vocabulary file when `ambient_state.py --state` keeps it elsewhere.
+const POINTER_FILE = '.codex/state/ambient-spanish/vocabulary.path'
 // Distinct words the band keeps, counted over whole messages: a screenful with room to spare.
 const MAX_SEEN = 300
 const MAX_PINNED = 24
@@ -305,7 +307,13 @@ let hasWarned = false
 async function vocabPath($: any): Promise<string> {
   const home = await $.env.get('HOME')
   const state: string | undefined = await $.env.get('AMBIENT_SPANISH_STATE')
-  return state ? `${state.replace(/[^/]*$/, '')}vocabulary.txt` : `${home}/${VOCAB_FILE}`
+  if (state) return `${state.replace(/[^/]*$/, '')}vocabulary.txt`
+  // A state moved with --state leaves a pointer beside the default one.
+  try {
+    const target = (await $.fs.read(`${home}/${POINTER_FILE}`)).trim()
+    if (target) return target
+  } catch {}
+  return `${home}/${VOCAB_FILE}`
 }
 
 // Hover only works in the terminal CLI; the desktop app and IDE extensions set another entrypoint.

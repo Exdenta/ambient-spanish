@@ -22,8 +22,12 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 try:
     import fcntl
-except ImportError:  # pragma: no cover - Unix is the supported Codex runtime.
+except ImportError:  # pragma: no cover - Windows has no fcntl.
     fcntl = None
+    try:
+        import msvcrt
+    except ImportError:
+        msvcrt = None
 
 
 SCHEMA_VERSION = 7
@@ -34,6 +38,9 @@ DEFAULT_CADENCE_DAYS = 7  # one week between additions to the vocabulary
 DEFAULT_BATCH_SIZE = 10  # new words per week
 LEGACY_V4_KNOWN_PER_REPLY = 18  # v4 required a cap; only the migration path needs it.
 MANIFEST_FILENAME = "vocabulary.txt"
+# Beside the default state: names the vocabulary file when the state lives elsewhere
+# (`--state` is per command, so the hover mod cannot see it).
+POINTER_FILENAME = "vocabulary.path"
 LOOKUP_BIN_ENV = "AMBIENT_LOOKUP_BIN"
 LOOKUP_TIMEOUT_SECONDS = 30
 ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
@@ -215,18 +222,38 @@ def _atomic_write(path: Path, value: Any) -> bool:
             temp_path.unlink()
 
 
+def _lock_file(lock_file: Any) -> None:
+    if fcntl is not None:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+    elif msvcrt is not None:  # pragma: no cover - Windows only
+        lock_file.seek(0)
+        while True:
+            try:
+                # LK_LOCK gives up after about ten seconds; keep waiting, like flock.
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_LOCK, 1)
+                return
+            except OSError:
+                continue
+
+
+def _unlock_file(lock_file: Any) -> None:
+    if fcntl is not None:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+    elif msvcrt is not None:  # pragma: no cover - Windows only
+        lock_file.seek(0)
+        msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+
+
 @contextmanager
 def _locked(state_path: Path) -> Iterator[None]:
     lock_path = state_path.with_suffix(state_path.suffix + ".lock")
     lock_path.parent.mkdir(parents=True, exist_ok=True)
     with lock_path.open("a+", encoding="utf-8") as lock_file:
-        if fcntl is not None:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        _lock_file(lock_file)
         try:
             yield
         finally:
-            if fcntl is not None:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            _unlock_file(lock_file)
 
 
 def _load_curriculum(path: Path) -> list[dict[str, str]]:
@@ -1182,6 +1209,19 @@ def _manifest_text(known: list[dict[str, str]]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _write_pointer(manifest_path: Path) -> None:
+    """Point the default location at a vocabulary file kept somewhere else."""
+    pointer = DEFAULT_STATE_PATH.parent / POINTER_FILENAME
+    try:
+        if manifest_path == DEFAULT_STATE_PATH.parent / MANIFEST_FILENAME:
+            pointer.unlink(missing_ok=True)
+        elif not pointer.exists() or pointer.read_text(encoding="utf-8").strip() != str(manifest_path):
+            pointer.parent.mkdir(parents=True, exist_ok=True)
+            pointer.write_text(f"{manifest_path}\n", encoding="utf-8")
+    except OSError:
+        pass  # a missing pointer only costs the mod its custom path
+
+
 def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, Any]:
     """Refresh the vocabulary manifest only when its content changed.
 
@@ -1207,6 +1247,7 @@ def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, 
             temporary = Path(handle.name)
         temporary.replace(path)
         refreshed = True
+    _write_pointer(path)
     return {
         "path": str(path),
         "digest": digest,
@@ -1402,10 +1443,14 @@ def _cmd_lookup(args: argparse.Namespace) -> dict[str, Any]:
                 check=False,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
-            raise StateError(f"ambient-lookup failed: {exc}") from exc
-        if completed.returncode != 0:
-            raise StateError(f"ambient-lookup failed: {completed.stderr.strip()}")
-        result["matches"] = [line for line in completed.stdout.splitlines() if line.strip()]
+            result["warning"] = f"ambient-lookup failed: {exc}"
+        else:
+            if completed.returncode != 0:
+                result["warning"] = f"ambient-lookup failed: {completed.stderr.strip()}"
+            else:
+                result["matches"] = [
+                    line for line in completed.stdout.splitlines() if line.strip()
+                ]
     return result
 
 

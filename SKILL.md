@@ -31,7 +31,7 @@ Resolve this skill's directory as `<skill-root>`.
    EOF
    ```
 
-   If it returns an error, or `active` is `false`, send the draft as is and do not run `record`. Otherwise `matches` holds one line per distinct word or phrase of your draft that has Spanish in the vocabulary: `english: spanish | spanish`. These are dictionary forms, there only to confirm the words are in the vocabulary. You adapt them yourself (conjugation, gender, number) and choose the candidate that fits what you meant.
+   If it returns an error, a `warning`, or `active` is `false`, send the draft as is and do not run `record`. Otherwise `matches` holds one line per distinct word or phrase of your draft that has Spanish in the vocabulary: `english: spanish | spanish`. These are dictionary forms, there only to confirm the words are in the vocabulary. You adapt them yourself (conjugation, gender, number) and choose the candidate that fits what you meant.
 
 3. Write the final reply, substituting:
    - Only the words the lookup returned, and only where the sense fits what you meant. Pick the right candidate (`work` the verb is `trabajar`, the noun is `trabajo`) and skip a word whose candidates all miss.
@@ -64,6 +64,7 @@ Resolve this skill's directory as `<skill-root>`.
   - `vale` and `guay` are the ordinary Peninsular fillers. Avoid regionalisms from any single Latin-American country.
   - `tests/test_ambient_state.py` enforces this for the shipped curriculum via a blocklist. Any term added to `references/curriculum.json` must pass it.
 - **Substitute words; never translate sentences.** The only Spanish permitted is the words the lookup returned for this reply, inflected to fit. Everything else stays English — articles, prepositions, pronouns, `y`/`o`/`no`/`se`, auxiliaries, and copulas included, unless that exact word is a listed term. The reliable self-check: the sentence's *grammar* must still be English. If a reader could parse a clause as a Spanish sentence, it went too far — that is translation, and it is a defect even when every listed term was used correctly.
+- **Never change the reply's language.** Answer in the language the user wrote in, or their usual language if they have said which. The overlay assumes an English reply; if the reply is in another language, or the user is writing in another language, skip the lookup and answer plainly. A Spanish reply is never the result of this skill, even when the user is learning Spanish and every word is in the vocabulary.
 - Spanish is permitted outside the lookup results only when the user's own request independently calls for Spanish.
 - No quizzes, exercises, grammar drills, corrections, streak pressure, or lesson summaries unless explicitly requested.
 - Never alter code, commands, paths, JSON, logs, errors, quotations, citations, generated artifacts, table headers that name real fields, or any other exact text to insert Spanish. Substitute only in your own prose.

@@ -64,7 +64,7 @@ The agent does not read the vocabulary. Per reply it pipes its draft to `ambient
 {"active": <bool>, "reason": <as in context>, "matches": ["english: spanish | spanish", ...]}
 ```
 
-An inactive lookup, or an empty draft, returns no matches without running the binary. A binary that exits non-zero, or runs longer than 30 seconds, fails the command with `ambient-lookup failed: <its stderr>`. `lookup` writes the state only when `context` would (creating or migrating it).
+An inactive lookup, or an empty draft, returns no matches without running the binary. A binary that exits non-zero, or runs longer than 30 seconds, does not fail the command: it returns no matches and a `warning` of `ambient-lookup failed: <its stderr>`, so a reply is never blocked. (A binary that is missing still fails the command.) `lookup` writes the state only when `context` would (creating or migrating it).
 
 `context` returns the same check without running the binary, plus, instead of any term list:
 
@@ -75,7 +75,7 @@ An inactive lookup, or an empty draft, returns no matches without running the bi
 
 The binary resolves from `AMBIENT_LOOKUP_BIN`, then `<repo>/rust/ambient-lookup/target/release/ambient-lookup`. If it does not exist, an active `context` or `lookup` fails with `ambient-lookup binary not found: run python3 scripts/install.py` (which builds it with cargo). An inactive one (paused, outside the CLI, before the start date) needs no binary, and `context` returns `lookup: null`. `status` never needs it and reports `lookup_binary` (a path or `null`).
 
-`context` and `lookup` write the whole vocabulary to `vocabulary.txt` beside the state file, as `id | spanish | english` lines grouped by kind, and the lookup binary reads it. The hover mod reads it too, and that is the only reason it is a file the mod can rely on. It is a derived artifact: deleting it is safe and the next `context` or `lookup` rewrites it. It is rewritten only when its content changes (when a weekly batch lands), so readers can cache it.
+`context` and `lookup` write the whole vocabulary to `vocabulary.txt` beside the state file, as `id | spanish | english` lines grouped by kind, and the lookup binary reads it. The hover mod reads it too, and that is the only reason it is a file the mod can rely on. When the state is not at the default location, `vocabulary.path` beside the default state names the vocabulary file, so the hover mod can follow `--state`. It is a derived artifact: deleting it is safe and the next `context` or `lookup` rewrites it. It is rewritten only when its content changes (when a weekly batch lands), so readers can cache it.
 
 ## `record --used`
 

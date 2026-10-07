@@ -27,6 +27,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust/ambient-lookup
       - run: cargo clippy --manifest-path rust/ambient-lookup/Cargo.toml --all-targets -- -D warnings
       - run: cargo test --manifest-path rust/ambient-lookup/Cargo.toml
 
@@ -37,7 +40,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Plugin tests and validation run locally and need no login.
-      - run: npm install -g @anthropic-ai/claude-code
+      # Plugin tests and validation run locally and need no login. The version is
+      # pinned so CI does not change under us; bump it on purpose.
+      - run: npm install -g @anthropic-ai/claude-code@2.1.292
       - run: claude plugin validate mods/ambient-spanish-hover
       - run: claude plugin test mods/ambient-spanish-hover

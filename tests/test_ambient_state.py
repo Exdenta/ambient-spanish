@@ -78,6 +78,8 @@ class CliTestCase(unittest.TestCase):
         environment = os.environ.copy()
         environment["AMBIENT_SPANISH_ALLOW_TIME_OVERRIDE"] = "1"
         environment["AMBIENT_LOOKUP_BIN"] = str(self.lookup_bin)
+        # The default state directory lives under HOME; keep it out of the real one.
+        environment["HOME"] = self.temp_dir.name
         return subprocess.run(
             command, text=True, capture_output=True, check=False, env=environment, input=input
         )
@@ -902,11 +904,22 @@ class LookupCommandTests(CliTestCase):
         result = self.run_cli("lookup", "--now", self.NOW, input="  \n")
         self.assertEqual([], result["matches"])
 
-    def test_a_failing_binary_is_an_error(self) -> None:
+    def test_a_failing_binary_degrades_to_no_matches(self) -> None:
         self.init()
         self.use_binary("echo broken >&2\nexit 3")
-        failure = self.run_cli("lookup", "--now", self.NOW, input="open", ok=False)
-        self.assertEqual("ambient-lookup failed: broken", failure["error"])
+        result = self.run_cli("lookup", "--now", self.NOW, input="open")
+        self.assertTrue(result["active"])
+        self.assertEqual([], result["matches"])
+        self.assertEqual("ambient-lookup failed: broken", result["warning"])
+
+    def test_a_custom_state_leaves_a_pointer_at_the_default_location(self) -> None:
+        self.init()
+        self.run_cli("lookup", "--now", self.NOW, input="open")
+        pointer = Path(self.temp_dir.name) / ".codex/state/ambient-spanish/vocabulary.path"
+        self.assertEqual(
+            str(self.state.parent.resolve() / "vocabulary.txt"),
+            pointer.read_text(encoding="utf-8").strip(),
+        )
 
     def test_lookup_leaves_the_state_untouched(self) -> None:
         self.init()

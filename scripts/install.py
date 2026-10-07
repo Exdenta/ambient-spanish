@@ -63,6 +63,12 @@ def rule_block(skill_root: Path) -> str:
             f"draft to `python3 {skill_root}/scripts/ambient_state.py lookup` once,",
             "substitute the matches it returns, then `record` the ones you used. Pause",
             "with `ambient_state.py configure --pause`.",
+            "",
+            "Reply in the language the user wrote in, or in their usual language if they",
+            "have set one. The overlay only adds Spanish words to that reply and never",
+            "changes its language: if the reply is not in English, or the user is not",
+            "writing in English, skip the lookup and write it plainly. When a reply",
+            "is in English, keep its grammar English.",
             RULE_END,
         ]
     )
