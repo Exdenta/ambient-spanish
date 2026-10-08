@@ -4,6 +4,9 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Fixed
+- The hover mod no longer redraws replies on the desktop app or phone (stretched word gaps, plain yellow code); only the terminal surface gets the redraw.
+
 ### Added
 - `ambient-lookup`, a Rust tool the assistant sends its draft to. It returns only the words that have Spanish equivalents, so the vocabulary never enters the assistant's context. The installer builds it with `cargo`, so Rust is now required.
 - One vocabulary with a weekly regime chosen at setup (5, 10, 20 or a custom number of new words per week, `configure --words-per-week`). New words are added automatically each week, and the hover mod underlines every one.

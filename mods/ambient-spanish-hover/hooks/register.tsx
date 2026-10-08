@@ -317,6 +317,8 @@ async function vocabPath($: any): Promise<string> {
 }
 
 // Hover only works in the terminal CLI; the desktop app and IDE extensions set another entrypoint.
+// A CLI session mirrored to the phone or desktop app still draws each message for that
+// surface too, so hooks also check `e.surface`: only the terminal gets the redraw.
 let isCli: Promise<boolean> | undefined
 const onCli = ($: any): Promise<boolean> =>
   (isCli ??= Promise.resolve($.env.get('CLAUDE_CODE_ENTRYPOINT')).then(v => v === 'cli', () => false))
@@ -429,7 +431,7 @@ export const register: Register = on => {
   const band = createBand()
 
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
-    if (!(await onCli($))) return next(e)
+    if (e.surface !== 'terminal' || !(await onCli($))) return next(e)
     const index = await loadIndex($)
     if (!index) return next(e)
 
@@ -511,7 +513,7 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'AbovePrompt' }, ($, e, next) => {
     const { hover: seen, table: pinned } = band.view()
-    if (e.props.hasSurvey || !(seen.length || pinned.length)) return next(e)
+    if (e.surface !== 'terminal' || e.props.hasSurvey || !(seen.length || pinned.length)) return next(e)
 
     const { Box, Text } = $.ui.resolve(e)
     const pad = PLACEHOLDER.length + 2

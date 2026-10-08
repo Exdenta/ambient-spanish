@@ -121,6 +121,23 @@ test('outside the CLI the engine draws everything', async ($, on) => {
   expect(JSON.stringify(await message.drawn())).not.toContain('es-buscar')
 })
 
+test('a CLI session mirrored to the phone is drawn by the engine', async ($, on) => {
+  stubEngine(on)
+  for (const component of ['AssistantMessage', 'AbovePrompt'] as const) {
+    const ui = await $.ui.mount({
+      plugin,
+      surface: 'mobile',
+      component,
+      props: component === 'AssistantMessage'
+        ? { text: 'I will buscar the file.', isFirstOfReply: true }
+        : { hasSurvey: false, isWorking: false, maxRows: 5, bodyColumns: 40 },
+    })
+    const drawn = JSON.stringify(await ui.drawn())
+    expect(drawn).not.toContain('es-buscar')
+    expect(drawn).not.toContain('hover a highlighted word')
+  }
+})
+
 const B1 = [
   '## verb (14)',
   'comer | comer | to eat', 'morir | morir | to die', 'mover | mover | to move', 'pagar | pagar | to pay',
