@@ -1240,7 +1240,7 @@ class ShippedCurriculumTests(unittest.TestCase):
                 text=True,
                 capture_output=True,
                 check=True,
-                env={**os.environ, "AMBIENT_LOOKUP_BIN": str(dummy)},
+                env={**os.environ, "AMBIENT_LOOKUP_BIN": str(dummy), "HOME": temp_dir},
             )
             context = json.loads(result.stdout)
             state = json.loads(state_path.read_text(encoding="utf-8"))
@@ -1308,7 +1308,8 @@ class ShippedCurriculumTests(unittest.TestCase):
             dummy = Path(temp_dir) / "ambient-lookup"
             dummy.write_text("#!/bin/sh\n", encoding="utf-8")
             dummy.chmod(0o755)
-            environment = {**os.environ, "AMBIENT_LOOKUP_BIN": str(dummy)}
+            # The pointer files land under HOME; keep them out of the real state directory.
+            environment = {**os.environ, "AMBIENT_LOOKUP_BIN": str(dummy), "HOME": temp_dir}
             result = subprocess.run(
                 command, text=True, capture_output=True, check=True, env=environment
             )

@@ -134,7 +134,7 @@ Hover needs a terminal that reports the mouse pointer. See the [mod's README](mo
 
 ## How it works
 
-For each reply, the assistant:
+In the Claude Code CLI the [hover mod](#hover-translations-claude-code) swaps words on screen (`ambient-lookup --swap`), and the assistant does nothing per reply. Everywhere else (Codex), for each reply the assistant:
 1. drafts the reply in English and pipes the draft to `ambient_state.py lookup`, which checks that Spanish is on and runs `ambient-lookup`, a Rust tool that returns the words and phrases that have a Spanish equivalent in your vocabulary, so the assistant never loads the word list;
 2. writes the final reply with those words;
 3. runs `record` with the words it actually used.

@@ -1,6 +1,6 @@
 ---
 name: ambient-spanish
-description: Persistent opt-in ambient Spanish substitution overlay for ordinary conversations. Use automatically on every user-facing reply after the user enables this skill, and when the user asks about Spanish progress, learned words, exposure, pacing, density, state, pause or resume, dialect, or configuration. Draft the reply in English, pipe the draft to `ambient_state.py lookup`, which returns the words that have Spanish equivalents in the learner's vocabulary (the assistant never loads the vocabulary itself), and write the final reply with them and no glosses or brackets (the hover mod shows translations), keep the sentence's grammar English rather than translating it, and add new words to the vocabulary weekly from elapsed calendar time, never from message count.
+description: Persistent opt-in ambient Spanish substitution overlay for ordinary conversations. Where the Claude Code hover mod swaps words on screen, replies are left in plain English; elsewhere (Codex) use it automatically on every user-facing reply after the user enables this skill. Also use it when the user asks about Spanish progress, learned words, exposure, pacing, density, state, pause or resume, dialect, or configuration. Draft the reply in English, pipe the draft to `ambient_state.py lookup`, which returns the words that have Spanish equivalents in the learner's vocabulary (the assistant never loads the vocabulary itself), and write the final reply with them and no glosses or brackets (the hover mod shows translations), keep the sentence's grammar English rather than translating it, and add new words to the vocabulary weekly from elapsed calendar time, never from message count.
 ---
 
 # Ambient Spanish
@@ -18,6 +18,8 @@ The vocabulary has thousands of words and is deliberately kept out of your conte
 The vocabulary grows from the calendar alone. The learner picks a regime — 5, 10 or 20 new words per week, or their own number (`words_per_week` in `status`, default 10) — and that many curriculum words join the vocabulary every 7 days, whether or not the previous ones were ever used. The first `baseline_known_count` curriculum entries are the learner's starting vocabulary, either the shipped curriculum's 321-word everyday core or a personal curriculum built by `vocab` from a CEFR level pack (A0–C1) and the user's own word lists.
 
 ## Runtime workflow
+
+**Claude Code CLI with the hover mod: skip this section.** The mod swaps safe words on screen (`mods/ambient-spanish-hover/README.md`, 'Display-side swap'), so write replies in plain English and make no `lookup` or `record` call. Usage is then not recorded; it never affects the vocabulary. The steps below are for Codex and anywhere the mod is not running.
 
 Resolve this skill's directory as `<skill-root>`.
 

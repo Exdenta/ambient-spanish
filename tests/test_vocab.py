@@ -73,6 +73,8 @@ class VocabTestCase(unittest.TestCase):
         environment = os.environ.copy()
         environment["AMBIENT_SPANISH_ALLOW_TIME_OVERRIDE"] = "1"
         environment["AMBIENT_LOOKUP_BIN"] = str(self.lookup_bin)
+        # The default state directory lives under HOME; keep it out of the real one.
+        environment["HOME"] = self.temp_dir.name
         environment.pop("AMBIENT_SPANISH_CURRICULUM", None)
         environment.pop("AMBIENT_SPANISH_LEXICON", None)
         return subprocess.run(

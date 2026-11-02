@@ -283,11 +283,18 @@ fn joined(text: &str, left: &Token, right: &Token) -> bool {
     gap == "-" || (!gap.is_empty() && gap.chars().all(|c| c == ' ' || c == '\t' || c == '\u{a0}'))
 }
 
-pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
+/// One place in the draft where a vocabulary word or phrase occurs.
+pub(crate) struct Occurrence {
+    pub start: usize,
+    pub end: usize,
+    pub candidates: Vec<usize>,
+    /// Per candidate: the draft spells it other than its dictionary form (a plural).
+    pub inflected: Vec<bool>,
+}
+
+pub(crate) fn occurrences(index: &Index, text: &str) -> Vec<Occurrence> {
     let tokens = tokenize(index, text);
-    let mut found: Vec<Match> = Vec::new();
-    let mut seen_text: HashSet<String> = HashSet::new();
-    let mut seen_sets: HashSet<String> = HashSet::new();
+    let mut found = Vec::new();
     let mut i = 0;
     while i < tokens.len() {
         let mut advanced = false;
@@ -307,30 +314,48 @@ pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
             let key = window.iter().map(|t| t.norm.as_str()).collect::<Vec<_>>().join(" ");
             let Some(forms) = index.forms.get(&key) else { continue };
             let surfaces: Vec<&str> = window.iter().map(|t| t.surface.as_str()).collect();
+            let spelled = letters(&surfaces.join(" "));
             let mut candidates: Vec<usize> = Vec::new();
+            let mut inflected: Vec<bool> = Vec::new();
             for (at, form) in forms {
                 if index.key_ok(&surfaces, form) && !candidates.contains(at) {
                     candidates.push(*at);
+                    inflected.push(letters(&form.words.join(" ")) != spelled);
                 }
             }
             if candidates.is_empty() {
                 continue;
             }
-            let span = text[window[0].start..window[len - 1].end].to_string();
-            let set_key = {
-                let mut ids = candidates.clone();
-                ids.sort_unstable();
-                ids.iter().map(|n| n.to_string()).collect::<Vec<_>>().join(",")
-            };
-            if seen_text.insert(span.to_lowercase()) && seen_sets.insert(set_key) {
-                found.push(Match { text: span, candidates });
-            }
+            found.push(Occurrence { start: window[0].start, end: window[len - 1].end, candidates, inflected });
             i += len;
             advanced = true;
             break;
         }
         if !advanced {
             i += 1;
+        }
+    }
+    found
+}
+
+/// Lowercase letters only, so hyphens and spacing do not count as inflection.
+fn letters(s: &str) -> String {
+    s.chars().filter(|c| c.is_alphabetic()).flat_map(char::to_lowercase).collect()
+}
+
+pub fn find_matches(index: &Index, text: &str) -> Vec<Match> {
+    let mut found: Vec<Match> = Vec::new();
+    let mut seen_text: HashSet<String> = HashSet::new();
+    let mut seen_sets: HashSet<String> = HashSet::new();
+    for o in occurrences(index, text) {
+        let span = text[o.start..o.end].to_string();
+        let set_key = {
+            let mut ids = o.candidates.clone();
+            ids.sort_unstable();
+            ids.iter().map(|n| n.to_string()).collect::<Vec<_>>().join(",")
+        };
+        if seen_text.insert(span.to_lowercase()) && seen_sets.insert(set_key) {
+            found.push(Match { text: span, candidates: o.candidates });
         }
     }
     found
