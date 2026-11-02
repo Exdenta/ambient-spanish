@@ -11,12 +11,19 @@ type Block =
   | { kind: 'markdown'; raw: string }
   | { kind: 'code'; source: string; language?: string }
   | { kind: 'spacer' }
-type Index = { exact: Map<string, Word>; english: Set<string> }
+type Index = { exact: Map<string, Word>; byId: Map<string, Word>; english: Set<string> }
 
 // Relative to $HOME, unless AMBIENT_SPANISH_STATE moves the state; rewritten when weekly words land.
 const VOCAB_FILE = '.codex/state/ambient-spanish/vocabulary.txt'
 // Names the vocabulary file when `ambient_state.py --state` keeps it elsewhere.
 const POINTER_FILE = '.codex/state/ambient-spanish/vocabulary.path'
+// Names the ambient-lookup binary; `ambient_state.py` rewrites it beside the vocabulary.
+const LOOKUP_POINTER_FILE = '.codex/state/ambient-spanish/lookup.path'
+// `ambient-lookup --swap` wraps each swapped word as OPEN id SEP shown CLOSE (private-use characters).
+const SWAPPED = /\uE000([^\uE001]*)\uE001([^\uE002]*)\uE002/
+const SWAPPED_ALL = new RegExp(SWAPPED.source, 'g')
+const SWAP_CACHE_MAX = 64
+const SWAP_TIMEOUT_MS = 3000
 // Distinct words the band keeps, counted over whole messages: a screenful with room to spare.
 const MAX_SEEN = 300
 const MAX_PINNED = 24
@@ -118,6 +125,7 @@ function verbForms(inf: string): string[] {
 
 function buildIndex(raw: string): Index {
   const exact = new Map<string, Word>()
+  const byId = new Map<string, Word>()
   const english = new Set<string>([...ENGLISH_FUNCTION_WORDS, ...ENGLISH_LOOKALIKES, ...ENGLISH_HOMOGRAPHS])
   const derived: [string, Word][] = []
   let pos = ''
@@ -135,8 +143,9 @@ function buildIndex(raw: string): Index {
     for (const w of en.toLowerCase().split(/[^a-z]+/)) if (w) addEnglish(english, w)
 
     const n = normalize(es)
-    if (ENGLISH_HOMOGRAPHS.has(n)) continue
     const word: Word = { id, es, en }
+    byId.set(id, word)
+    if (ENGLISH_HOMOGRAPHS.has(n)) continue
     exact.set(n, word)
 
     if (pos === 'verb') {
@@ -156,7 +165,7 @@ function buildIndex(raw: string): Index {
   }
   // An exact vocabulary form always beats a generated one.
   for (const [form, word] of derived) if (!exact.has(form)) exact.set(form, word)
-  return { exact, english }
+  return { exact, byId, english }
 }
 
 function lookup(index: Index, token: string): Word | undefined {
@@ -166,6 +175,19 @@ function lookup(index: Index, token: string): Word | undefined {
 
 // Splits a plain run around the Spanish words it holds.
 function pieceRun(index: Index, text: string, style: { bold?: boolean; italic?: boolean; strike?: boolean }): Piece[] {
+  if (SWAPPED.test(text)) {
+    // A swapped word keeps its own inflected spelling; the rest of the run is matched as usual.
+    const pieces: Piece[] = []
+    let last = 0
+    for (const m of text.matchAll(SWAPPED_ALL)) {
+      if (m.index > last) pieces.push(...pieceRun(index, text.slice(last, m.index), style))
+      const word = index.byId.get(m[1])
+      pieces.push(word ? { text: m[2], word, ...style } : { text: m[2], ...style })
+      last = m.index + m[0].length
+    }
+    if (last < text.length) pieces.push(...pieceRun(index, text.slice(last), style))
+    return pieces
+  }
   const pieces: Piece[] = []
   let last = 0
   for (const m of text.matchAll(/[\p{L}\p{M}]+/gu)) {
@@ -257,7 +279,7 @@ function splitBlocks(index: Index, text: string): Block[] {
         flushNative()
         blocks.push({ kind: 'lines', lines })
       } else {
-        native.push(...rows)
+        native.push(...rows.map(stripSwap))
       }
     }
     flushNative()
@@ -295,6 +317,8 @@ function splitBlocks(index: Index, text: string): Block[] {
   return blocks
 }
 
+const stripSwap = (text: string) => text.replace(SWAPPED_ALL, '$2')
+
 const wordsOf = (chunks: Piece[][]): Word[] => chunks.flat().flatMap(p => (p.word ? [p.word] : []))
 
 let indexLoad: Promise<Index | null> | undefined
@@ -322,6 +346,45 @@ async function vocabPath($: any): Promise<string> {
 let isCli: Promise<boolean> | undefined
 const onCli = ($: any): Promise<boolean> =>
   (isCli ??= Promise.resolve($.env.get('CLAUDE_CODE_ENTRYPOINT')).then(v => v === 'cli', () => false))
+
+// Set AMBIENT_SPANISH_SWAP=0 to show replies as written.
+async function lookupBinary($: any): Promise<string | null> {
+  const fromEnv: string | undefined = await $.env.get('AMBIENT_LOOKUP_BIN')
+  if (fromEnv) return fromEnv
+  try {
+    const home = await $.env.get('HOME')
+    return (await $.fs.read(`${home}/${LOOKUP_POINTER_FILE}`)).trim() || null
+  } catch {
+    return null
+  }
+}
+
+const swapped = new Map<string, string>()
+let hasWarnedSwap = false
+
+// Display-side substitution: the transcript and the model keep the English.
+async function swapText($: any, text: string): Promise<string> {
+  if (!text.trim() || (await $.env.get('AMBIENT_SPANISH_SWAP')) === '0') return text
+  const cached = swapped.get(text)
+  if (cached !== undefined) return cached
+  let out = text
+  try {
+    const binary = await lookupBinary($)
+    if (binary) {
+      const run = await $.process.run([binary, '--vocab', await vocabPath($), '--swap'], { stdin: text, timeoutMs: SWAP_TIMEOUT_MS })
+      if (run.exitCode === 0 && run.stdout) out = run.stdout
+    }
+  } catch {
+    if (!hasWarnedSwap) {
+      hasWarnedSwap = true
+      $.ui.toast('ambient-spanish-hover: ambient-lookup --swap failed; replies show as written')
+    }
+  }
+  swapped.set(text, out)
+  // A streamed reply caches every prefix; drop the oldest.
+  if (swapped.size > SWAP_CACHE_MAX) swapped.delete(swapped.keys().next().value as string)
+  return out
+}
 
 function loadIndex($: any): Promise<Index | null> {
   const stale = indexLoad && Date.now() - indexAt > INDEX_REFRESH_MS
@@ -432,10 +495,12 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
     if (e.surface !== 'terminal' || !(await onCli($))) return next(e)
+    const text = await swapText($, e.props.text)
+    const withText = (t: string) => (t === e.props.text ? e : { ...e, props: { ...e.props, text: t } })
     const index = await loadIndex($)
-    if (!index) return next(e)
+    if (!index) return next(withText(stripSwap(text)))
 
-    const blocks = splitBlocks(index, e.props.text)
+    const blocks = splitBlocks(index, text)
     const hoverWords = blocks.flatMap(b => (b.kind === 'lines' ? b.lines.flatMap(l => wordsOf(l.chunks)) : []))
     const tableWords = blocks.flatMap(b =>
       b.kind === 'engine' ? b.raw.split('\n').flatMap(row => wordsOf(parseLine(index, row).chunks)) : [],
@@ -444,7 +509,7 @@ export const register: Register = on => {
     band.register(e.requestId || `text:${e.props.text}`, hoverWords, tableWords)
     // The reply finishes drawing after turn.complete, so the band must be told here.
     if (band.takeChange()) $.ui.invalidate('ui.render')
-    if (!hoverWords.length) return next(e)
+    if (!hoverWords.length) return next(withText(stripSwap(text)))
 
     // Sequential: each call walks the engine's drawing chain for one table.
     const engineNodes: any[] = []

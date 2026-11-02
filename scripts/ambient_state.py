@@ -41,6 +41,8 @@ MANIFEST_FILENAME = "vocabulary.txt"
 # Beside the default state: names the vocabulary file when the state lives elsewhere
 # (`--state` is per command, so the hover mod cannot see it).
 POINTER_FILENAME = "vocabulary.path"
+# Beside the default state: names the `ambient-lookup` binary, which the hover mod runs with --swap.
+LOOKUP_POINTER_FILENAME = "lookup.path"
 LOOKUP_BIN_ENV = "AMBIENT_LOOKUP_BIN"
 LOOKUP_TIMEOUT_SECONDS = 30
 ENTRYPOINT_ENV = "CLAUDE_CODE_ENTRYPOINT"
@@ -1222,6 +1224,23 @@ def _write_pointer(manifest_path: Path) -> None:
         pass  # a missing pointer only costs the mod its custom path
 
 
+def _write_lookup_pointer() -> None:
+    """Tell the hover mod where the repo's own `ambient-lookup` build is.
+
+    An AMBIENT_LOOKUP_BIN override is left out: the mod reads that variable itself.
+    """
+    binary = DEFAULT_LOOKUP_BIN if DEFAULT_LOOKUP_BIN.is_file() else None
+    pointer = DEFAULT_STATE_PATH.parent / LOOKUP_POINTER_FILENAME
+    try:
+        if binary is None:
+            pointer.unlink(missing_ok=True)
+        elif not pointer.exists() or pointer.read_text(encoding="utf-8").strip() != str(binary):
+            pointer.parent.mkdir(parents=True, exist_ok=True)
+            pointer.write_text(f"{binary}\n", encoding="utf-8")
+    except OSError:
+        pass  # without it the mod keeps showing the assistant's own text
+
+
 def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, Any]:
     """Refresh the vocabulary manifest only when its content changed.
 
@@ -1248,6 +1267,7 @@ def _write_manifest(state_path: Path, known: list[dict[str, str]]) -> dict[str, 
         temporary.replace(path)
         refreshed = True
     _write_pointer(path)
+    _write_lookup_pointer()
     return {
         "path": str(path),
         "digest": digest,

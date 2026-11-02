@@ -8,6 +8,7 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - The hover mod no longer redraws replies on the desktop app or phone (stretched word gaps, plain yellow code); only the terminal surface gets the redraw.
 
 ### Added
+- `ambient-lookup --swap` prints the draft with the Spanish for the words it can swap safely: it reads the neighbouring words to decide the part of speech, keeps only the candidates of that kind, and conjugates regular present-tense verbs. Hover mod 0.4.0 runs every reply through it, so the screen shows the swaps without the assistant spending tool calls on them. Code, tables, quotes, names and number words stay. `AMBIENT_SPANISH_SWAP=0` turns it off; `ambient_state.py` writes `lookup.path` beside the vocabulary so the mod finds the binary.
 - `ambient-lookup`, a Rust tool the assistant sends its draft to. It returns only the words that have Spanish equivalents, so the vocabulary never enters the assistant's context. The installer builds it with `cargo`, so Rust is now required.
 - One vocabulary with a weekly regime chosen at setup (5, 10, 20 or a custom number of new words per week, `configure --words-per-week`). New words are added automatically each week, and the hover mod underlines every one.
 - Vocabulary level packs A0–C1 (`references/levels/lexicon.tsv`, about 4,500 words). A1–C1 are graded from ELELex textbook frequencies (CC BY-NC-SA 4.0); A0 is hand-picked.

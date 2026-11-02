@@ -6,11 +6,20 @@ const VOCAB = '## verb (1)\nbuscar | buscar | to look for\n## noun (1)\ndato | d
 const mountMessage = ($: any, text: string) =>
   $.ui.mount({ plugin, surface: 'terminal', component: 'AssistantMessage', props: { text, isFirstOfReply: true } })
 
-function stubEngine(on: any, entrypoint = 'cli', vocab = VOCAB) {
-  on('env.get', (_$: any, e: any) => ({ value: e.name === 'CLAUDE_CODE_ENTRYPOINT' ? entrypoint : '/home/test' }))
-  on('fs.read', () => ({ value: vocab }))
+function stubEngine(on: any, entrypoint = 'cli', vocab = VOCAB, env: Record<string, string> = {}, swapOut?: string) {
+  on('env.get', (_$: any, e: any) => ({
+    value: e.name === 'CLAUDE_CODE_ENTRYPOINT' ? entrypoint : (env[e.name] ?? (e.name === 'HOME' ? '/home/test' : undefined)),
+  }))
+  on('fs.read', (_$: any, e: any) => ({
+    value: e.path.endsWith('lookup.path') ? '/bin/ambient-lookup\n' : e.path.endsWith('vocabulary.path') ? '' : vocab,
+  }))
+  on('process.run', (_$: any, e: any) => {
+    calls.push(e.argv)
+    return { value: swapOut === undefined ? { exitCode: 1, stdout: '', stderr: 'no swap' } : { exitCode: 0, stdout: swapOut, stderr: '' } }
+  })
   on('ui.render', () => ({ type: 'Text', props: {}, children: ['engine'] }))
 }
+const calls: string[][] = []
 
 test('a known Spanish word becomes a hover target and fills the band', async ($, on) => {
   stubEngine(on)
@@ -267,4 +276,38 @@ test('past the cap whole oldest messages are dropped, never words of recent ones
   expect(drawn).toContain(`${fixtureWord(99)} = thing`)
   expect(drawn).not.toContain(`${fixtureWord(300)} = thing`)
   expect(drawn).not.toContain(`${fixtureWord(549)} = thing`)
+})
+
+const swap = (id: string, shown: string) => `\uE000${id}\uE001${shown}\uE002`
+
+test('a word the lookup swapped is a hover target even though the reply was English', async ($, on) => {
+  calls.length = 0
+  stubEngine(on, 'cli', VOCAB, {}, `Read the ${swap('dato', 'datos')} now.`)
+  const message = await mountMessage($, 'Read the data now.')
+  const drawn = JSON.stringify(await message.drawn())
+  expect(drawn).toContain('es-dato')
+  expect(drawn).toContain('datos')
+  expect(drawn).not.toContain('data now')
+  expect(calls[0]).toEqual(['/bin/ambient-lookup', '--vocab', '/home/test/.codex/state/ambient-spanish/vocabulary.txt', '--swap'])
+  expect(JSON.stringify(await (await mountBand($)).drawn())).toContain('dato = piece of data')
+})
+
+test('a failed lookup leaves the reply as written', async ($, on) => {
+  stubEngine(on)
+  const message = await mountMessage($, 'Read the data now.')
+  expect(JSON.stringify(await message.drawn())).toContain('engine')
+})
+
+test('AMBIENT_SPANISH_SWAP=0 never runs the lookup', async ($, on) => {
+  calls.length = 0
+  stubEngine(on, 'cli', VOCAB, { AMBIENT_SPANISH_SWAP: '0' }, swap('dato', 'datos'))
+  await mountMessage($, 'Read the other data now.')
+  expect(calls).toEqual([])
+})
+
+test('a swapped word the vocabulary file lacks shows as plain Spanish text', async ($, on) => {
+  stubEngine(on, 'cli', VOCAB, {}, `Read the ${swap('gone', 'ido')} now.`)
+  const drawn = JSON.stringify(await (await mountMessage($, 'Read the gone now.')).drawn())
+  expect(drawn).not.toContain('\uE000')
+  expect(drawn).toContain('engine')
 })
