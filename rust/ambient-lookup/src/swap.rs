@@ -236,7 +236,7 @@ fn replacement(index: &Index, words: &Words, text: &str, o: &Occurrence) -> Opti
     let strong = first_before.is_some_and(|w| BEFORE_NOUN.contains(&w) || words.adjectives.contains(w) || ends_like_adjective(w));
     let gloss_len = |kind: &str| usable.iter().filter(|&&(at, _)| index.entries[at].kind == kind).map(|&(at, _)| index.entries[at].english.split(" / ").count()).min();
     // "Spanish words": the adjective ("Spanish") fits better than the noun ("Spanish / Castilian").
-    let adjective_fits = gloss_len("adjective").is_some_and(|a| gloss_len("noun").map_or(true, |n| a < n));
+    let adjective_fits = gloss_len("adjective").is_some_and(|a| gloss_len("noun").is_none_or(|n| a < n));
     // "you add", "it returns the words": a Spanish present, when the verb is regular.
     let subject = subject_person(words, &before);
     let surface_s = lower.ends_with('s') && !lower.ends_with("ss");
@@ -334,7 +334,7 @@ fn replacement(index: &Index, words: &Words, text: &str, o: &Occurrence) -> Opti
 /// Whether `pos` opens a sentence, line or list item.
 fn starts_sentence(text: &str, pos: usize) -> bool {
     let head = text[..pos].trim_end_matches([' ', '\t', '*', '_', '#', '>', '-', '"', '(', '[']);
-    head.chars().last().map_or(true, |c| matches!(c, '.' | '!' | '?' | ':' | '\n') || c.is_ascii_digit())
+    head.chars().last().is_none_or(|c| matches!(c, '.' | '!' | '?' | ':' | '\n') || c.is_ascii_digit())
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
